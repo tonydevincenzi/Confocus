@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\addons">
+      <UniqueIdentifier>{bf86c530-dc09-46f9-8646-1ebf0f315801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\examples">
+      <UniqueIdentifier>{c690cbab-0b14-43d5-81bf-b4ce1e50539f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin">
+      <UniqueIdentifier>{f757388e-31aa-40eb-816d-6625d257c9ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\data">
+      <UniqueIdentifier>{c35f195b-4ba3-4944-ae57-a36eb6b9f3c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\data\shaders">
+      <UniqueIdentifier>{f9262939-aaf0-42b0-99d9-d3d710fb6a29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\addons\ofxFBOTexture.cpp">
+      <Filter>src\addons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\addons\ofxShader.cpp">
+      <Filter>src\addons</Filter>
+    </ClCompile>
+    <ClCompile Include="src\examples\shaderBlur.cpp">
+      <Filter>src\examples</Filter>
+    </ClCompile>
+    <ClCompile Include="grabVideo.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="testApp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Desktop\blurexmaple\_shaderBlurExampleUpdated\src\testApp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\addons\ofxFBOTexture.h">
+      <Filter>src\addons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\addons\ofxShader.h">
+      <Filter>src\addons</Filter>
+    </ClInclude>
+    <ClInclude Include="src\examples\shaderBlur.h">
+      <Filter>src\examples</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\targetver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="grabVideo.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\shaders\simpleBlurVertical.vert">
+      <Filter>bin\data\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\simpleBlurHorizontal.frag">
+      <Filter>bin\data\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\simpleBlurHorizontal.vert">
+      <Filter>bin\data\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\simpleBlurVertical.frag">
+      <Filter>bin\data\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

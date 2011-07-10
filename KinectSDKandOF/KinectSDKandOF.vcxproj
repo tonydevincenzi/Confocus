@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7830A449-2D27-43D9-8922-B8B33B8F19E3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>KinectSDKandOF</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(MSRKINECTSDK)\inc;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>$(MSRKINECTSDK)\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>C:\Users\Erika\Documents\Visual Studio 2010\Projects\KinectSDKandOFBlur\KinectSDKandOF\bin\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Erika\Documents\Visual Studio 2010\Projects\KinectedConference\KinectSDKandOF\src;C:\Users\Erika\Documents\Visual Studio 2010\Projects\KinectSDKandOFBlur\KinectSDKandOF\bin;C:\Users\Erika\Documents\Visual Studio 2010\Projects\KinectSDKandOFBlur\KinectSDKandOF\src\examples;C:\Users\Erika\Documents\Visual Studio 2010\Projects\KinectSDKandOFBlur\KinectSDKandOF\src\addons;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\graphics;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\app;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\sound;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\utils;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\communication;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\video;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworks\events;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glut\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\quicktime\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\rtAudio\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\freetype\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\freetype\include\freetype2;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\freeImage\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\fmodex\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\videoInput\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glee\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glu\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\poco\include;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glut\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworksCompiled\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\poco\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glu\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\glee\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\videoInput\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\fmodex\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\quicktime\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\freetype\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\FreeImage\lib\vs2010;C:\Users\Erika\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\rtAudio\lib\vs2010</AdditionalLibraryDirectories>
+      <AdditionalDependencies>advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;dsound.lib;fmodex_vc.lib;FreeImage.lib;GLee.lib;glu32.lib;GLu32.lib;glut32.lib;libfreetype.lib;openframeworksLibDebug.lib;OpenGL32.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;PocoUtilmtd.lib;PocoXMLmtd.lib;qtmlClient.lib;rtAudioD.lib;setupapi.lib;videoInput.lib;amstrmid.lib;avrt.lib;dmoguids.lib;Msdmo.lib;MSRKinectNUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>atlthunk.lib;LIBC.lib;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="grabVideo.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\addons\ofxFBOTexture.cpp" />
+    <ClCompile Include="src\addons\ofxShader.cpp" />
+    <ClCompile Include="src\examples\shaderBlur.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="testApp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Desktop\blurexmaple\_shaderBlurExampleUpdated\src\testApp.h" />
+    <ClInclude Include="grabVideo.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\addons\ofxFBOTexture.h" />
+    <ClInclude Include="src\addons\ofxShader.h" />
+    <ClInclude Include="src\examples\shaderBlur.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\shaders\simpleBlurHorizontal.frag" />
+    <None Include="bin\data\shaders\simpleBlurHorizontal.vert" />
+    <None Include="bin\data\shaders\simpleBlurVertical.frag" />
+    <None Include="bin\data\shaders\simpleBlurVertical.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
+      <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
