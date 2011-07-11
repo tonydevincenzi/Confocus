@@ -1,7 +1,6 @@
 #include "testApp.h"
 
 
-
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofBackground(255,255,255);	
@@ -9,12 +8,18 @@ void testApp::setup(){
 	blur.setup(640, 480);
 	hasCamera = grabber.initGrabber(640, 480);
 	
+	
+	printf("initializing\n");
+	g_videoGrabber.Video_Zero();
+	g_videoGrabber.Video_Init();
+	printf("gathering data\n");
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 	ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
 	grabber.update();
+	g_videoGrabber.Video_Update();
 }
 
 //--------------------------------------------------------------
@@ -40,7 +45,11 @@ void testApp::draw(){
 	ofDrawBitmapString("move mouse to control blur", 20, 20);
 	
 }
-
+//-------------------------------------------------------------
+void testApp::exit(){
+	printf("cleaning up\n");
+	g_videoGrabber.Video_UnInit();
+}
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 }

@@ -59,7 +59,7 @@ HRESULT VideoGrabber::Video_Init()
     }
 	
 	m_hEvVideoProcessStop=CreateEvent(NULL,FALSE,FALSE,NULL);
-	m_hThVideoProcess=CreateThread(NULL,0,Video_ProcessThread,this,0,NULL);
+	//m_hThVideoProcess=CreateThread(NULL,0,Video_ProcessThread,this,0,NULL);
 
 	return hr;
 }
@@ -67,7 +67,7 @@ HRESULT VideoGrabber::Video_Init()
 
 void VideoGrabber::Video_UnInit( )
 {
-    
+    /*
     // Stop the Nui processing thread
     if(m_hEvVideoProcessStop!=NULL)
     {
@@ -82,7 +82,7 @@ void VideoGrabber::Video_UnInit( )
         }
         CloseHandle(m_hEvVideoProcessStop);
     }
-
+	*/
     NuiShutdown( );
 
     if( m_hNextVideoFrameEvent && ( m_hNextVideoFrameEvent != INVALID_HANDLE_VALUE ) )
@@ -96,25 +96,30 @@ void VideoGrabber::Video_UnInit( )
 
 
 
-DWORD WINAPI VideoGrabber::Video_ProcessThread(LPVOID pParam)
+//DWORD WINAPI VideoGrabber::Video_ProcessThread(LPVOID pParam)
+int VideoGrabber::Video_Update()
+
 {
-    VideoGrabber *pthis=(VideoGrabber *) pParam;
+    //VideoGrabber *pthis=(VideoGrabber *) pParam;
     HANDLE                hEvents[2];
     int                    nEventIdx;
 
     // Configure events to be listened on
-    hEvents[0]=pthis->m_hEvVideoProcessStop;
-    hEvents[1]=pthis->m_hNextVideoFrameEvent;
+    //hEvents[0]=pthis->m_hEvVideoProcessStop;
+    //hEvents[1]=pthis->m_hNextVideoFrameEvent;
+	hEvents[0]=m_hEvVideoProcessStop;
+    hEvents[1]=m_hNextVideoFrameEvent;
 
     // Main thread loop
-    while(1)
-    {
+    //while(1)
+    //{
         // Wait for an event to be signalled
         nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,100);
         //printf("index obtained %d\n",nEventIdx);
         // If the stop event, stop looping and exit
         if(nEventIdx==0)
-            break;            
+        //    break;            
+			return 1;
 
         // Process signal events
         switch(nEventIdx)
@@ -125,14 +130,15 @@ DWORD WINAPI VideoGrabber::Video_ProcessThread(LPVOID pParam)
                 break;
 				*/
             case 1:
-                pthis->Video_GotVideoAlert();
+                //pthis->Video_GotVideoAlert();
+				Video_GotVideoAlert();
                 break;
 				/*
             case 3:
                 pthis->Nui_GotSkeletonAlert( );
                 break;*/
         }
-    }
+    //}
 
     return (0);
 }
@@ -157,15 +163,12 @@ void VideoGrabber::Video_GotVideoAlert( )
     if( LockedRect.Pitch != 0 )
     {
         BYTE * pBuffer = (BYTE*) LockedRect.pBits;
-		//printf("depth pitch %d\n",LockedRect.Pitch);
-		//LockedRect.pBytes;
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
 		printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
     }
     else
     {
-        //OutputDebugString( L"Buffer length of received texture is bogus\r\n" );
-		printf("buffer length of recieved texture is bogus\n");
+        printf("buffer length of recieved texture is bogus\n");
     }
 	printf("frame end\n");
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );

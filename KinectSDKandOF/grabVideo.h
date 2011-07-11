@@ -19,6 +19,7 @@ public:
     void                    Video_GotVideoAlert( );
     //void                    Nui_GotSkeletonAlert( );
     void                    Video_Zero();
+	int						Video_Update();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel, HWND hWnd, int WhichSkeletonColor );
@@ -31,7 +32,7 @@ public:
     //HWND m_hWnd;
 
 private:
-    static DWORD WINAPI     Video_ProcessThread(LPVOID pParam);
+    //static DWORD WINAPI     Video_ProcessThread(LPVOID pParam);
 
 
     // NUI and draw stuff

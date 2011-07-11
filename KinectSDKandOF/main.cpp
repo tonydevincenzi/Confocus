@@ -22,13 +22,10 @@
 
 // For CLSID_CMSRKinectAudio GUID
 //#include "MSRKinectAudio.h"
-#include "grabVideo.h"
 
 #include "ofMain.h"
 #include "testApp.h"
 #include "ofAppGlutWindow.h"
-
-VideoGrabber	g_videoGrabber;
 
 //========================================================================
 
@@ -41,12 +38,6 @@ void wait ( int seconds )
 
 int main( ){
 
-	printf("initializing\n");
-	g_videoGrabber.Video_Zero();
-	g_videoGrabber.Video_Init();
-	printf("gathering data\n");
-//	wait(10);
-
 	ofAppGlutWindow window;
 	ofSetupOpenGL(&window, 1024,768, OF_WINDOW);			// <-------- setup the GL context
 
@@ -54,9 +45,6 @@ int main( ){
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
 	ofRunApp( new testApp());
-
-	printf("cleaning up\n");
-	g_videoGrabber.Video_UnInit();
 
 }
 
