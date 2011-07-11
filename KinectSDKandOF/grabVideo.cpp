@@ -168,15 +168,13 @@ void VideoGrabber::Video_GotVideoAlert( )
     {
         //BYTE * pBuffer = (BYTE*) LockedRect.pBits;
 		pBuffer = (BYTE*) LockedRect.pBits;
-		
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-		//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
+		//printf("%d\n", LockedRect.Pitch);
     }
     else
     {
         printf("buffer length of recieved texture is bogus\n");
     }
-	printf("frame end\n");
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
 }
 
@@ -185,4 +183,19 @@ void VideoGrabber::print_bytes( ) {
 	printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
 
+int VideoGrabber::getImageWidth() {
+	return KINECT_WIDTH;
+}
 
+int VideoGrabber::getImageHeight() {
+	return KINECT_HEIGHT;
+}
+
+BYTE* VideoGrabber::getAlphaPixels() {
+	int totalPixels = 640*480*4;
+	printf("%d\n",totalPixels);
+	for (int i = 3; i < totalPixels; i= i + 4) {
+		pBuffer[i] = 255;
+	}
+	return pBuffer;
+}

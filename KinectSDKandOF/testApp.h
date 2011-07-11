@@ -31,6 +31,11 @@ class testApp : public ofBaseApp{
 
 		shaderBlur blur;
 		VideoGrabber g_videoGrabber;
+		ofTexture		texColorAlpha;
+		unsigned char 	* colorAlphaPixels;
+		
+		int imageWidth; 
+		int imageHeight; 
 };
 
 #endif

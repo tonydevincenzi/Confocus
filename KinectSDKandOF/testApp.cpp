@@ -8,24 +8,38 @@ void testApp::setup(){
 	blur.setup(640, 480);
 	hasCamera = grabber.initGrabber(640, 480);
 	
+	imageWidth = g_videoGrabber.getImageWidth();
+	imageHeight = g_videoGrabber.getImageHeight();
 	
 	printf("initializing\n");
 	g_videoGrabber.Video_Zero();
 	g_videoGrabber.Video_Init();
 	printf("gathering data\n");
+
+	texColorAlpha.allocate(imageWidth,imageHeight,GL_RGBA);
+	//colorAlphaPixels1	= new unsigned char [WIDTH*HEIGHT*4];
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 	ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
 	grabber.update();
+	
 	g_videoGrabber.Video_Update();
 	g_videoGrabber.print_bytes();
+	printf("loading data\n");
+	colorAlphaPixels = g_videoGrabber.getAlphaPixels();
+	//printf("%d %d %d %d \n", colorAlphaPixels[0],colorAlphaPixels[1],colorAlphaPixels[2],colorAlphaPixels[3]);
+	texColorAlpha.loadData(colorAlphaPixels, imageWidth,imageHeight, GL_RGBA);
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	printf("drawing image\n");
+	texColorAlpha.draw(0,0,imageWidth,imageHeight);
 	
+	/*
 	blur.setBlurParams(4, (float)mouseX / 100.0);
 	blur.beginRender();
 		
@@ -44,7 +58,7 @@ void testApp::draw(){
 	blur.draw(0, 0, 640, 480, true);
 	
 	ofDrawBitmapString("move mouse to control blur", 20, 20);
-	
+	*/
 }
 //-------------------------------------------------------------
 void testApp::exit(){

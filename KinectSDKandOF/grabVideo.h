@@ -10,6 +10,9 @@
 
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
+#define KINECT_WIDTH 640;
+#define KINECT_HEIGHT 480;
+
 class VideoGrabber
 {
 public:
@@ -21,6 +24,9 @@ public:
     void                    Video_Zero();
 	int						Video_Update();
 	void					print_bytes();
+	int						getImageWidth();
+	int						getImageHeight();
+	BYTE*					getAlphaPixels();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel, HWND hWnd, int WhichSkeletonColor );
