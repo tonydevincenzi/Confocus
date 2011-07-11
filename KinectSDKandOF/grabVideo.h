@@ -20,6 +20,7 @@ public:
     //void                    Nui_GotSkeletonAlert( );
     void                    Video_Zero();
 	int						Video_Update();
+	void					print_bytes();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel, HWND hWnd, int WhichSkeletonColor );
@@ -61,4 +62,5 @@ private:
     int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
+	BYTE *		  pBuffer;
 };

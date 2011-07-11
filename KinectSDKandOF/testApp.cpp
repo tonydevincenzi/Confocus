@@ -20,6 +20,7 @@ void testApp::update(){
 	ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
 	grabber.update();
 	g_videoGrabber.Video_Update();
+	g_videoGrabber.print_bytes();
 }
 
 //--------------------------------------------------------------

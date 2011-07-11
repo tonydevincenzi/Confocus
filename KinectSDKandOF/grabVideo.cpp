@@ -54,7 +54,6 @@ HRESULT VideoGrabber::Video_Init()
     if( FAILED( hr ) )
     {
 		printf("failed to open NuiImagesStream");
-        //MessageBoxResource(m_hWnd,IDS_ERROR_VIDEOSTREAM,MB_OK | MB_ICONHAND);
         return hr;
     }
 	
@@ -90,7 +89,12 @@ void VideoGrabber::Video_UnInit( )
         CloseHandle( m_hNextVideoFrameEvent );
         m_hNextVideoFrameEvent = NULL;
     }
-
+	if( m_hEvVideoProcessStop && ( m_hEvVideoProcessStop != INVALID_HANDLE_VALUE ) )
+    {
+		CloseHandle(m_hEvVideoProcessStop);
+	    m_hEvVideoProcessStop = NULL;
+    }
+	
 }
 
 
@@ -162,9 +166,11 @@ void VideoGrabber::Video_GotVideoAlert( )
     pTexture->LockRect( 0, &LockedRect, NULL, 0 );
     if( LockedRect.Pitch != 0 )
     {
-        BYTE * pBuffer = (BYTE*) LockedRect.pBits;
+        //BYTE * pBuffer = (BYTE*) LockedRect.pBits;
+		pBuffer = (BYTE*) LockedRect.pBits;
+		
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-		printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
+		//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
     }
     else
     {
@@ -172,6 +178,11 @@ void VideoGrabber::Video_GotVideoAlert( )
     }
 	printf("frame end\n");
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
+}
+
+void VideoGrabber::print_bytes( ) {
+	//2560 bytes per line = 640 * 4 (4 bytes per pixel)
+	printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
 
 
