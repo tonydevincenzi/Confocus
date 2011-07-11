@@ -1,0 +1,39 @@
+VC++ Directories-->Include Directories:
+
+$(VCInstallDir)include
+$(VCInstallDir)atlmfc\include
+$(WindowsSdkDir)include
+$(FrameworkSDKDir)\include
+$(MSRKINECTSDK)\inc
+D:\msradt2\kinect_redmond\unmanaged_core\inc_public
+
+VC++ Directories--Library Directories:
+$(VCInstallDir)lib
+$(VCInstallDir)atlmfc\lib
+$(WindowsSdkDir)lib
+$(FrameworkSDKDir)\lib
+$(MSRKINECTSDK)\lib
+
+C/C++ --> Additional Include Directories:
+C:\Program Files %28x86%29\Microsoft Research KinectSDK\inc
+
+C/C++ --> Language --> Treat wcHAR_t As Built in Type:
+No(/Zc:wchar_t-)
+
+Linker-->General-->Additional Library Directoreis:
+C:\Program Files %28x86%29\Microsoft Research KinectSDK\lib
+
+Linker--> Input--> Additional Dependencies:
+kernel32.lib
+user32.lib
+gdi32.lib
+winspool.lib
+comdlg32.lib
+advapi32.lib
+shell32.lib
+ole32.lib
+oleaut32.lib
+uuid.lib
+odbc32.lib
+odbccp32.lib
+MSRKinectNUI.lib
