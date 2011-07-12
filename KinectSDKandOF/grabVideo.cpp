@@ -128,20 +128,31 @@ int VideoGrabber::Video_Update()
         // Process signal events
         switch(nEventIdx)
         {
-            /*case 1:
-                pthis->Nui_GotDepthAlert();
-                pthis->m_FramesTotal++;
+            /*case 2:
+                //pthis->Nui_GotDepthAlert();
+                //pthis->m_FramesTotal++;
+				Video_GotDepthAlert();
+				m_FramesTotal++;
                 break;
-				*/
-            case 1:
+				
+				
+            case 4:
                 //pthis->Video_GotVideoAlert();
 				Video_GotVideoAlert();
                 break;
-				/*
-            case 3:
-                pthis->Nui_GotSkeletonAlert( );
-                break;*/
+				
+				
+            case 1:
+                //pthis->Nui_GotSkeletonAlert( );
+				Video_GotSkeletonAlert( );
+                break;
+				*/
+				
         }
+
+		Video_GotVideoAlert();
+		Video_GotSkeletonAlert();
+		//Video_GotDepthAlert();
     //}
 
     return (0);
@@ -161,7 +172,7 @@ void VideoGrabber::Video_GotVideoAlert( )
         return;
     }
 
-    NuiImageBuffer * pTexture = pImageFrame->pFrameTexture;
+    NuiImageBuffer * pTexture = pImageFrame->pFrameTexture; //pTexture is a pointer to NuiImageBuffer, which is used to access or manipulate frame data as a texture resource
     KINECT_LOCKED_RECT LockedRect;
     pTexture->LockRect( 0, &LockedRect, NULL, 0 );
     if( LockedRect.Pitch != 0 )
@@ -178,9 +189,10 @@ void VideoGrabber::Video_GotVideoAlert( )
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
 }
 
+
 void VideoGrabber::print_bytes( ) {
 	//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-	printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
+	//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
 
 int VideoGrabber::getImageWidth() {
@@ -192,10 +204,52 @@ int VideoGrabber::getImageHeight() {
 }
 
 BYTE* VideoGrabber::getAlphaPixels() {
+	
 	int totalPixels = 640*480*4;
 	printf("%d\n",totalPixels);
 	for (int i = 3; i < totalPixels; i= i + 4) {
 		pBuffer[i] = 255;
 	}
+	
 	return pBuffer;
+}
+
+BYTE* VideoGrabber::getDepthPixels() {
+	return (BYTE*) m_rgbWk;
+}
+
+void VideoGrabber::Video_GotSkeletonAlert( )
+{
+    NUI_SKELETON_FRAME SkeletonFrame;
+
+    HRESULT hr = NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
+
+    bool bFoundSkeleton = true;
+    for( int i = 0 ; i < NUI_SKELETON_COUNT ; i++ )
+    {
+        if( SkeletonFrame.SkeletonData[i].eTrackingState == NUI_SKELETON_TRACKED )
+        {
+            bFoundSkeleton = false;
+
+			float head_z=SkeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_HEAD].z;
+				
+			if (head_z!=0){
+				//printf("HandLeft X=%4.2f    ",hand_l_x,"HandLeft Y=%4.2f    ",hand_l_y,"HandLeft Z=%4.2f    \r",hand_l_z);
+				//printf("HandRight X=%4.2f    ",hand_r_x,"HandRight Y=%4.2f    ",hand_r_y,"HandRight Z=%4.2f    \r",hand_r_z); 
+				printf("head Z=%4.2f   /r", head_z);
+			}else{
+				NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
+			}
+        }
+    }
+
+    // no skeletons!
+    //
+    if( bFoundSkeleton )
+    {
+        return;
+    }
+
+    // smooth out the skeleton data
+    NuiTransformSmooth(&SkeletonFrame,NULL);
 }

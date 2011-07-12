@@ -49,9 +49,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Desktop\blurexmaple\_shaderBlurExampleUpdated\src\testApp.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\addons\ofxFBOTexture.h">
       <Filter>src\addons</Filter>
     </ClInclude>
@@ -71,6 +68,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="grabVideo.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="testApp.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

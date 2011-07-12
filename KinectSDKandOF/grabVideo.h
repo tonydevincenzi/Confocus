@@ -18,21 +18,22 @@ class VideoGrabber
 public:
     HRESULT Video_Init();
     void                    Video_UnInit( );
-    //void                    Nui_GotDepthAlert( );
+    void                    Video_GotDepthAlert( );
     void                    Video_GotVideoAlert( );
-    //void                    Nui_GotSkeletonAlert( );
+    void                    Video_GotSkeletonAlert( );
     void                    Video_Zero();
 	int						Video_Update();
 	void					print_bytes();
 	int						getImageWidth();
 	int						getImageHeight();
 	BYTE*					getAlphaPixels();
+	BYTE*                   getDepthPixels();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel, HWND hWnd, int WhichSkeletonColor );
     //void                    Nui_DrawSkeletonSegment( NUI_SKELETON_DATA * pSkel, int numJoints, ... );
 
-    //RGBQUAD                 Nui_ShortToQuad_Depth( USHORT s );
+    RGBQUAD                 Nui_ShortToQuad_Depth( USHORT s );
 
     //static LONG CALLBACK    WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -50,10 +51,10 @@ private:
     HANDLE        m_hThVideoProcess;
     HANDLE        m_hEvVideoProcessStop;
 
-    //HANDLE        m_hNextDepthFrameEvent;
+    HANDLE        m_hNextDepthFrameEvent;
+	HANDLE        m_pDepthStreamHandle;
     HANDLE        m_hNextVideoFrameEvent;
-    //HANDLE        m_hNextSkeletonEvent;
-    //HANDLE        m_pDepthStreamHandle;
+    HANDLE        m_hNextSkeletonEvent;
     HANDLE        m_pVideoStreamHandle;
     //HFONT         m_hFontFPS;
     //HPEN          m_Pen[6];
@@ -68,5 +69,6 @@ private:
     int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
-	BYTE *		  pBuffer;
+	BYTE *		  pBuffer; //r,g,b,alpha of each pixel
+
 };
