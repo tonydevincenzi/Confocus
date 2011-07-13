@@ -34,11 +34,10 @@ class testApp : public ofBaseApp{
 		VideoGrabber g_videoGrabber;
 		ofTexture		texColorAlpha;
 		unsigned char 	* colorAlphaPixels;
-		ofTexture		texGray;
-		unsigned char 	* grayPixels;
 		
 		int imageWidth; 
 		int imageHeight; 
+		int headPositionX, headPositionY;
 };
 
 #endif
