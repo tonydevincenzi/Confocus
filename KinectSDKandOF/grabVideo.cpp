@@ -1,4 +1,3 @@
-/*test*/
 //#include <fstream>
 //using namespace std;
 
@@ -174,7 +173,7 @@ void VideoGrabber::Video_GotVideoAlert( )
     if( LockedRect.Pitch != 0 )
     {
         //BYTE * pBuffer = (BYTE*) LockedRect.pBits;
-		pBuffer = (BYTE*) LockedRect.pBits;
+		m_rgbBuffer = (BYTE*) LockedRect.pBits;
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
 		//printf("%d\n", LockedRect.Pitch);
     }
@@ -183,6 +182,24 @@ void VideoGrabber::Video_GotVideoAlert( )
         printf("buffer length of recieved texture is bogus\n");
     }
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
+	Kinect_FormatRGBForOutput();
+}
+
+void VideoGrabber::Kinect_FormatRGBForOutput() {
+	int totalPixels = KINECT_HEIGHT*KINECT_WIDTH*4;
+	printf("%d\n",totalPixels);
+	for (int i = 3; i < totalPixels; i= i + 4) {
+		//set alpha to 255
+		m_rgbBuffer[i] = 255;
+
+		//invert the rgb order
+		int blue = m_rgbBuffer[i-1];
+		int green = m_rgbBuffer[i-2];
+		int red = m_rgbBuffer[i-3];
+		m_rgbBuffer[i-1] = red;
+		m_rgbBuffer[i-3] = blue;
+
+	}
 }
 
 void VideoGrabber::print_bytes( ) {
@@ -202,9 +219,9 @@ BYTE* VideoGrabber::getAlphaPixels() {
 	int totalPixels = 640*480*4;
 	//printf("%d\n",totalPixels);
 	for (int i = 3; i < totalPixels; i= i + 4) {
-		pBuffer[i] = 255;
+		m_rgbBuffer[i] = 255;
 	}
-	return pBuffer;
+	return m_rgbBuffer;
 }
 
 POINT         m_Points[NUI_SKELETON_POSITION_COUNT];

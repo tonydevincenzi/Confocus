@@ -1,4 +1,3 @@
-/*test*/
 #pragma once
 //#ifndef GRAB_VIDEO_H
 //#define GRAB_VIDEO_H
@@ -15,8 +14,8 @@
 
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
-#define KINECT_WIDTH 640;
-#define KINECT_HEIGHT 480;
+const int KINECT_WIDTH = 640;
+const int KINECT_HEIGHT= 480;
 
 
 class VideoGrabber
@@ -56,6 +55,7 @@ private:
     //DrawDevice    m_DrawDepth;
     //DrawDevice    m_DrawVideo;
 
+	void		  Kinect_FormatRGBForOutput();
     // thread handling
     HANDLE        m_hThVideoProcess;
     HANDLE        m_hEvVideoProcessStop;
@@ -78,6 +78,6 @@ private:
     int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
-	BYTE *		  pBuffer;
+	BYTE *		  m_rgbBuffer;
 
 };
