@@ -16,11 +16,8 @@ void testApp::setup(){
 	g_videoGrabber.Video_Init();
 	printf("gathering data\n");
 
-	texColorAlpha.allocate(imageWidth,imageHeight,GL_RGBA); //r,g,b texture
-	colorAlphaPixels= new unsigned char [imageWidth*imageHeight*4]; // r,g,b,alpha for each pixels
-
-	//texGray.allocate(imageWidth,imageHeight,GL_RGBA); // gray depth texture
-	//grayPixels=new unsigned char [imageWidth*imageHeight*4];
+	texColorAlpha.allocate(imageWidth,imageHeight,GL_RGBA);
+	//colorAlphaPixels1	= new unsigned char [WIDTH*HEIGHT*4];
 }
 
 //--------------------------------------------------------------
@@ -31,16 +28,18 @@ void testApp::update(){
 	g_videoGrabber.Video_Update();
 	g_videoGrabber.print_bytes();
 	printf("loading data\n");
-	
 	colorAlphaPixels = g_videoGrabber.getAlphaPixels();
-	//grayPixels=g_videoGrabber.getDepthPixels();
-	//printf("size of grayPixels ="
-	//printf("%d \n",sizeof(grayPixels));
 	//printf("%d %d %d %d \n", colorAlphaPixels[0],colorAlphaPixels[1],colorAlphaPixels[2],colorAlphaPixels[3]);
-	//printf("depthData");
-	//printf("%d %d %d %d \n", grayPixels[0],grayPixels[1],grayPixels[2],grayPixels[3]);
 	texColorAlpha.loadData(colorAlphaPixels, imageWidth,imageHeight, GL_RGBA);
-	//texGray.loadData(grayPixels,imageWidth,imageHeight, GL_RGBA);
+    
+	//int n= g_videoGrabber.getJointsPixels();
+	//printf("%d\n",n);
+
+	g_videoGrabber.getJointsPoints();
+	headPositionX=g_videoGrabber.headJoints_x;
+	headPositionY=g_videoGrabber.headJoints_y;
+	printf("%d\n",headPositionX);
+
 
 }
 
@@ -48,7 +47,7 @@ void testApp::update(){
 void testApp::draw(){
 	printf("drawing image\n");
 	texColorAlpha.draw(0,0,imageWidth,imageHeight);
-	//texGray.draw(0,0,imageWidth,imageHeight);
+	ofCircle(headPositionX,headPositionY,20);
 	/*
 	blur.setBlurParams(4, (float)mouseX / 100.0);
 	blur.beginRender();
