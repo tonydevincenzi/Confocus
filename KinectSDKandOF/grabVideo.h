@@ -14,8 +14,10 @@
 
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
-const int KINECT_WIDTH = 640;
-const int KINECT_HEIGHT= 480;
+const int VIDEO_WIDTH = 640;
+const int VIDEO_HEIGHT= 480;
+const int DEPTH_WIDTH = 320;
+const int DEPTH_HEIGHT= 240;
 
 
 class VideoGrabber
@@ -25,12 +27,12 @@ public:
     void                    Video_UnInit( );
     //void                    Nui_GotDepthAlert( );
     void                    Video_GotVideoAlert( );
+	void                    Kinect_GotDepthAlert( );
     void                    Video_GotSkeletonAlert( );
     void                    Video_Zero();
 	int						Video_Update();
 	void					print_bytes();
-	int						getImageWidth();
-	int						getImageHeight();
+	RGBQUAD*				Kinect_getDepthPixels();
 	BYTE*					getAlphaPixels();
 	void                     getJointsPoints();
 
@@ -56,14 +58,15 @@ private:
     //DrawDevice    m_DrawVideo;
 
 	void		  Kinect_FormatRGBForOutput();
+	RGBQUAD       Kinect_DepthToRGB( USHORT s );
     // thread handling
     HANDLE        m_hThVideoProcess;
     HANDLE        m_hEvVideoProcessStop;
-
-    //HANDLE        m_hNextDepthFrameEvent;
+    //HANDLE        m_hNextSkeletonFrameEvent;
+    HANDLE        m_hNextDepthFrameEvent;
     HANDLE        m_hNextVideoFrameEvent;
-    //HANDLE        m_hNextSkeletonEvent;
-    //HANDLE        m_pDepthStreamHandle;
+    HANDLE        m_hNextSkeletonEvent;
+    HANDLE        m_pDepthStreamHandle;
     HANDLE        m_pVideoStreamHandle;
     //HFONT         m_hFontFPS;
     //HPEN          m_Pen[6];
@@ -72,12 +75,12 @@ private:
     //HGDIOBJ       m_SkeletonOldObj;
     //int           m_PensTotal;
     //POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
-    RGBQUAD       m_rgbWk[640*480];
+    //RGBQUAD       m_rgbWk[640*480];
     //int           m_LastSkeletonFoundTime;
     bool          m_bScreenBlanked;
     int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
 	BYTE *		  m_rgbBuffer;
-
+	RGBQUAD		  m_rgbDepth[640*480];
 };

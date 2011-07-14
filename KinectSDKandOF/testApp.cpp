@@ -1,4 +1,3 @@
-/*test*/
 #include "testApp.h"
 
 
@@ -6,49 +5,54 @@
 void testApp::setup(){	
 	ofBackground(255,255,255);	
 	
-	blur.setup(640, 480);
-	hasCamera = grabber.initGrabber(640, 480);
+	//blur.setup(640, 480);
+	//hasCamera = grabber.initGrabber(640, 480);
 	
-	imageWidth = g_videoGrabber.getImageWidth();
-	imageHeight = g_videoGrabber.getImageHeight();
 	
 	printf("initializing\n");
 	g_videoGrabber.Video_Zero();
 	g_videoGrabber.Video_Init();
 	printf("gathering data\n");
 
-	texColorAlpha.allocate(imageWidth,imageHeight,GL_RGBA);
+	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	//colorAlphaPixels1	= new unsigned char [WIDTH*HEIGHT*4];
+	texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
-	grabber.update();
+	//ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
+	//grabber.update();
 	
 	g_videoGrabber.Video_Update();
-	g_videoGrabber.print_bytes();
+	//g_videoGrabber.print_bytes();
 	printf("loading data\n");
 	colorAlphaPixels = g_videoGrabber.getAlphaPixels();
-	//printf("%d %d %d %d \n", colorAlphaPixels[0],colorAlphaPixels[1],colorAlphaPixels[2],colorAlphaPixels[3]);
-	texColorAlpha.loadData(colorAlphaPixels, imageWidth,imageHeight, GL_RGBA);
-    
+	grayPixels = (BYTE*)g_videoGrabber.Kinect_getDepthPixels();	
+	if(colorAlphaPixels != NULL) {
+		//printf("%d %d %d %d \n", colorAlphaPixels[0],colorAlphaPixels[1],colorAlphaPixels[2],colorAlphaPixels[3]);
+		texColorAlpha.loadData(colorAlphaPixels, VIDEO_WIDTH,VIDEO_HEIGHT, GL_RGBA);	
+	}
+	if (grayPixels != NULL) {
+		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+	}
 	//int n= g_videoGrabber.getJointsPixels();
 	//printf("%d\n",n);
-
+	
 	g_videoGrabber.getJointsPoints();
 	headPositionX=g_videoGrabber.headJoints_x;
 	headPositionY=g_videoGrabber.headJoints_y;
 	printf("%d\n",headPositionX);
-
+	
 
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	printf("drawing image\n");
-	texColorAlpha.draw(0,0,imageWidth,imageHeight);
-	ofCircle(headPositionX,headPositionY,20);
+	texColorAlpha.draw(0,0,VIDEO_WIDTH,VIDEO_HEIGHT);
+	texGray.draw(0,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+	//ofCircle(headPositionX,headPositionY,20);
 	/*
 	blur.setBlurParams(4, (float)mouseX / 100.0);
 	blur.beginRender();

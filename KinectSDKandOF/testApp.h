@@ -1,4 +1,3 @@
-/*test*/
 #ifndef _TEST_APP
 #define _TEST_APP
 
@@ -33,10 +32,9 @@ class testApp : public ofBaseApp{
 		shaderBlur blur;
 		VideoGrabber g_videoGrabber;
 		ofTexture		texColorAlpha;
+		ofTexture		texGray;
 		unsigned char 	* colorAlphaPixels;
-		
-		int imageWidth; 
-		int imageHeight; 
+		unsigned char	* grayPixels;
 		int headPositionX, headPositionY;
 };
 

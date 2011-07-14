@@ -18,10 +18,10 @@
 
 void VideoGrabber::Video_Zero()
 {
-    //m_hNextDepthFrameEvent = NULL;
+    m_hNextDepthFrameEvent = NULL;
     m_hNextVideoFrameEvent = NULL;
     //m_hNextSkeletonEvent = NULL;
-    //m_pDepthStreamHandle = NULL;
+    m_pDepthStreamHandle = NULL;
     m_pVideoStreamHandle = NULL;
     m_hThVideoProcess=NULL;
     m_hEvVideoProcessStop=NULL;
@@ -36,6 +36,7 @@ void VideoGrabber::Video_Zero()
     m_FramesTotal = 0;
     //m_LastFPStime = -1;
     m_LastFramesTotal = 0;
+	m_rgbBuffer = NULL;
 }
 
 HRESULT VideoGrabber::Video_Init()
@@ -43,10 +44,14 @@ HRESULT VideoGrabber::Video_Init()
 	HRESULT hr;
 
     m_hNextVideoFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
+	m_hNextDepthFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	
 	hr = NuiInitialize( 
         NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON | NUI_INITIALIZE_FLAG_USES_COLOR);
-    
+    if( FAILED( hr ) )
+    {
+		printf("failed to inialize nui");
+	}
 	hr = NuiImageStreamOpen(
         NUI_IMAGE_TYPE_COLOR,
         NUI_IMAGE_RESOLUTION_640x480,
@@ -57,6 +62,18 @@ HRESULT VideoGrabber::Video_Init()
     if( FAILED( hr ) )
     {
 		printf("failed to open NuiImagesStream");
+        return hr;
+    }
+	hr = NuiImageStreamOpen(
+        NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX,
+        NUI_IMAGE_RESOLUTION_320x240,
+        0,
+        2,
+        m_hNextDepthFrameEvent,
+        &m_pDepthStreamHandle );
+    if( FAILED( hr ) )
+    {
+    	printf("failed to open NuiImagesStream");
         return hr;
     }
 	
@@ -92,11 +109,21 @@ void VideoGrabber::Video_UnInit( )
         CloseHandle( m_hNextVideoFrameEvent );
         m_hNextVideoFrameEvent = NULL;
     }
+    if( m_hNextDepthFrameEvent && ( m_hNextDepthFrameEvent != INVALID_HANDLE_VALUE ) )
+    {
+        CloseHandle( m_hNextDepthFrameEvent );
+        m_hNextDepthFrameEvent = NULL;
+    }
+    /*if( m_hNextSkeletonFrameEvent && ( m_hNextSkeletonFrameEvent != INVALID_HANDLE_VALUE ) )
+    {
+        CloseHandle( m_hNextSkeletonFrameEvent );
+        m_hNextSkeletonFrameEvent = NULL;
+    }
 	if( m_hEvVideoProcessStop && ( m_hEvVideoProcessStop != INVALID_HANDLE_VALUE ) )
     {
 		CloseHandle(m_hEvVideoProcessStop);
 	    m_hEvVideoProcessStop = NULL;
-    }
+    }*/
 	
 }
 
@@ -108,7 +135,7 @@ int VideoGrabber::Video_Update()
 
 {
     //VideoGrabber *pthis=(VideoGrabber *) pParam;
-    HANDLE                hEvents[2];
+    HANDLE                hEvents[3];
     int                    nEventIdx;
 
     // Configure events to be listened on
@@ -116,38 +143,38 @@ int VideoGrabber::Video_Update()
     //hEvents[1]=pthis->m_hNextVideoFrameEvent;
 	hEvents[0]=m_hEvVideoProcessStop;
     hEvents[1]=m_hNextVideoFrameEvent;
-
+	hEvents[2]=m_hNextDepthFrameEvent;
+	//hEvents[3]=m_hNextSkeletonFrameEvent;
     // Main thread loop
     //while(1)
     //{
         // Wait for an event to be signalled
-        nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,100);
-        //printf("index obtained %d\n",nEventIdx);
+        nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
+        printf("index obtained %d\n",nEventIdx);
         // If the stop event, stop looping and exit
         if(nEventIdx==0)
-        //    break;            
+            //break;            
 			return 1;
-
+		
         // Process signal events
         switch(nEventIdx)
         {
-            /*case 1:
-                pthis->Nui_GotDepthAlert();
-                pthis->m_FramesTotal++;
+            case 2:
+                Kinect_GotDepthAlert();
                 break;
-				*/
-            //case 1:
-                //pthis->Video_GotVideoAlert();
-				//Video_GotVideoAlert();
-                //break;
-				/*
+				
+            case 1:
+                Video_GotVideoAlert();
+				break;
+				
             case 3:
-                pthis->Nui_GotSkeletonAlert( );
-                break;*/
+                //Video_GotSkeletonAlert( );
+                break;
         }
-
-		Video_GotVideoAlert();
-		Video_GotSkeletonAlert();
+		
+		//Video_GotVideoAlert();
+		//Video_GotSkeletonAlert();
+		//Kinect_GotDepthAlert();
     //}
 
     return (0);
@@ -185,8 +212,9 @@ void VideoGrabber::Video_GotVideoAlert( )
 	Kinect_FormatRGBForOutput();
 }
 
+
 void VideoGrabber::Kinect_FormatRGBForOutput() {
-	int totalPixels = KINECT_HEIGHT*KINECT_WIDTH*4;
+	int totalPixels = VIDEO_HEIGHT*VIDEO_WIDTH*4;
 	printf("%d\n",totalPixels);
 	for (int i = 3; i < totalPixels; i= i + 4) {
 		//set alpha to 255
@@ -200,6 +228,54 @@ void VideoGrabber::Kinect_FormatRGBForOutput() {
 		m_rgbBuffer[i-3] = blue;
 
 	}
+	for (int i = 3; i < totalPixels; i= i + 4) {
+		m_rgbBuffer[i] = 255;
+	}
+}
+
+void VideoGrabber::Kinect_GotDepthAlert( ) {
+	const NUI_IMAGE_FRAME * pImageFrame = NULL;
+
+    HRESULT hr = NuiImageStreamGetNextFrame(
+        m_pDepthStreamHandle,
+        0,
+        &pImageFrame );
+
+    if( FAILED( hr ) )
+    {
+    	printf("Unable to get the frame after recieving alert for depth frame \n");
+		return;
+    }
+
+    NuiImageBuffer * pTexture = pImageFrame->pFrameTexture;
+    KINECT_LOCKED_RECT LockedRect;
+    pTexture->LockRect( 0, &LockedRect, NULL, 0 );
+    if( LockedRect.Pitch != 0 )
+    {
+        BYTE * pBuffer = (BYTE*) LockedRect.pBits;
+
+        // draw the bits to the bitmap
+        RGBQUAD * rgbrun = m_rgbDepth;
+        USHORT * pBufferRun = (USHORT*) pBuffer;
+        for( int y = 0 ; y < DEPTH_HEIGHT ; y++ )
+        {
+            for( int x = 0 ; x < DEPTH_WIDTH ; x++ )
+            {
+                RGBQUAD quad = Kinect_DepthToRGB( *pBufferRun );
+                pBufferRun++;
+                *rgbrun = quad;
+                rgbrun++;
+            }
+        }
+		
+    }
+    else
+    {
+        printf( "Buffer length of received texture is bogus\r\n" );
+    }
+
+    NuiImageStreamReleaseFrame( m_pDepthStreamHandle, pImageFrame );
+
 }
 
 void VideoGrabber::print_bytes( ) {
@@ -207,23 +283,33 @@ void VideoGrabber::print_bytes( ) {
 	//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
 
-int VideoGrabber::getImageWidth() {
-	return KINECT_WIDTH;
-}
-
-int VideoGrabber::getImageHeight() {
-	return KINECT_HEIGHT;
-}
 
 BYTE* VideoGrabber::getAlphaPixels() {
-	int totalPixels = 640*480*4;
-	//printf("%d\n",totalPixels);
-	for (int i = 3; i < totalPixels; i= i + 4) {
-		m_rgbBuffer[i] = 255;
-	}
 	return m_rgbBuffer;
 }
 
+RGBQUAD* VideoGrabber::Kinect_getDepthPixels() {
+	return m_rgbDepth;
+}
+RGBQUAD VideoGrabber::Kinect_DepthToRGB( USHORT s )
+{
+    USHORT RealDepth = (s & 0xfff8) >> 3;
+    USHORT Player = s & 7;
+
+    // transform 13-bit depth information into an 8-bit intensity appropriate
+    // for display (we disregard information in most significant bit)
+    BYTE l = 255 - (BYTE)(256*RealDepth/0x0fff);
+
+    RGBQUAD q;
+    
+    q.rgbRed = l / 2;
+    q.rgbBlue = l / 2;
+    q.rgbGreen = l / 2;
+ 
+	return q;
+}
+
+/*
 POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 void VideoGrabber::Video_GotSkeletonAlert( )
 {
@@ -241,8 +327,8 @@ void VideoGrabber::Video_GotSkeletonAlert( )
             bFoundSkeleton = false;
 
 			
-			int scaleX = KINECT_WIDTH; //scaling up to image coordinates
-			int scaleY = KINECT_HEIGHT;
+			int scaleX = VIDEO_WIDTH; //scaling up to image coordinates
+			int scaleY = VIDEO_HEIGHT;
 			float fx=0,fy=0;
 			//POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 			NUI_SKELETON_DATA * pSkel;
@@ -271,7 +357,7 @@ void VideoGrabber::Video_GotSkeletonAlert( )
             }else{
             NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
             }
-			*/	
+			*//*	
         }
     }
 
@@ -290,3 +376,4 @@ void VideoGrabber::getJointsPoints() {
 	headJoints_y=m_Points[3].y;
 }
 
+*/
