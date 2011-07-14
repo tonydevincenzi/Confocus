@@ -16,7 +16,7 @@
 #include "MSR_NuiApi.h"
 
 
-void VideoGrabber::Video_Zero()
+void KinectGrabber::Kinect_Zero()
 {
     m_hNextDepthFrameEvent = NULL;
     m_hNextVideoFrameEvent = NULL;
@@ -39,7 +39,7 @@ void VideoGrabber::Video_Zero()
 	m_rgbBuffer = NULL;
 }
 
-HRESULT VideoGrabber::Video_Init()
+HRESULT KinectGrabber::Kinect_Init()
 {
 	HRESULT hr;
 
@@ -85,7 +85,7 @@ HRESULT VideoGrabber::Video_Init()
 }
 
 
-void VideoGrabber::Video_UnInit( )
+void KinectGrabber::Kinect_UnInit( )
 {
     /*
     // Stop the Nui processing thread
@@ -131,11 +131,11 @@ void VideoGrabber::Video_UnInit( )
 
 
 
-//DWORD WINAPI VideoGrabber::Video_ProcessThread(LPVOID pParam)
-int VideoGrabber::Video_Update()
+//DWORD WINAPI KinectGrabber::Video_ProcessThread(LPVOID pParam)
+int KinectGrabber::Kinect_Update()
 
 {
-    //VideoGrabber *pthis=(VideoGrabber *) pParam;
+    //KinectGrabber *pthis=(KinectGrabber *) pParam;
     HANDLE                hEvents[4];
     int                    nEventIdx;
 
@@ -166,23 +166,20 @@ int VideoGrabber::Video_Update()
                 break;
 				
             case 1:
-                Video_GotVideoAlert();
+                Kinect_GotVideoAlert();
 				break;
 				
             case 3:
-                //Video_GotSkeletonAlert();
+                //Kinect_GotSkeletonAlert();
                 break;
         }
-		Video_GotSkeletonAlert();
-		//Video_GotVideoAlert();
-		//Video_GotSkeletonAlert();
-		//Kinect_GotDepthAlert();
-    //}
+		Kinect_GotSkeletonAlert();
+		
 
     return (0);
 }
 
-void VideoGrabber::Video_GotVideoAlert( )
+void KinectGrabber::Kinect_GotVideoAlert( )
 {
     const NUI_IMAGE_FRAME * pImageFrame = NULL;
 
@@ -201,10 +198,8 @@ void VideoGrabber::Video_GotVideoAlert( )
     pTexture->LockRect( 0, &LockedRect, NULL, 0 );
     if( LockedRect.Pitch != 0 )
     {
-        //BYTE * pBuffer = (BYTE*) LockedRect.pBits;
-		m_rgbBuffer = (BYTE*) LockedRect.pBits;
+        m_rgbBuffer = (BYTE*) LockedRect.pBits;
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-		//printf("%d\n", LockedRect.Pitch);
     }
     else
     {
@@ -215,7 +210,7 @@ void VideoGrabber::Video_GotVideoAlert( )
 }
 
 
-void VideoGrabber::Kinect_FormatRGBForOutput() {
+void KinectGrabber::Kinect_FormatRGBForOutput() {
 	int totalPixels = VIDEO_HEIGHT*VIDEO_WIDTH*4;
 	//printf("%d\n",totalPixels);
 	for (int i = 3; i < totalPixels; i= i + 4) {
@@ -235,7 +230,7 @@ void VideoGrabber::Kinect_FormatRGBForOutput() {
 	}
 }
 
-void VideoGrabber::Kinect_GotDepthAlert( ) {
+void KinectGrabber::Kinect_GotDepthAlert( ) {
 	const NUI_IMAGE_FRAME * pImageFrame = NULL;
 
     HRESULT hr = NuiImageStreamGetNextFrame(
@@ -280,20 +275,20 @@ void VideoGrabber::Kinect_GotDepthAlert( ) {
 
 }
 
-void VideoGrabber::print_bytes( ) {
+void KinectGrabber::print_bytes( ) {
 	//2560 bytes per line = 640 * 4 (4 bytes per pixel)
 	//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
 
 
-BYTE* VideoGrabber::getAlphaPixels() {
+BYTE* KinectGrabber::getAlphaPixels() {
 	return m_rgbBuffer;
 }
 
-RGBQUAD* VideoGrabber::Kinect_getDepthPixels() {
+RGBQUAD* KinectGrabber::Kinect_getDepthPixels() {
 	return m_rgbDepth;
 }
-RGBQUAD VideoGrabber::Kinect_DepthToRGB( USHORT s )
+RGBQUAD KinectGrabber::Kinect_DepthToRGB( USHORT s )
 {
     USHORT RealDepth = (s & 0xfff8) >> 3;
     USHORT Player = s & 7;
@@ -313,7 +308,7 @@ RGBQUAD VideoGrabber::Kinect_DepthToRGB( USHORT s )
 
 
 POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
-void VideoGrabber::Video_GotSkeletonAlert( )
+void KinectGrabber::Kinect_GotSkeletonAlert( )
 {
     NUI_SKELETON_FRAME SkeletonFrame;
 
@@ -373,7 +368,7 @@ void VideoGrabber::Video_GotSkeletonAlert( )
     NuiTransformSmooth(&SkeletonFrame,NULL);
 }
 
-void VideoGrabber::getJointsPoints() {
+void KinectGrabber::getJointsPoints() {
 	headJoints_x=m_Points[3].x;
 	headJoints_y=m_Points[3].y;
 }

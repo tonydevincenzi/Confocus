@@ -30,7 +30,7 @@ class testApp : public ofBaseApp{
 		bool hasCamera;
 
 		shaderBlur blur;
-		VideoGrabber g_videoGrabber;
+		KinectGrabber g_kinectGrabber;
 		ofTexture		texColorAlpha;
 		ofTexture		texGray;
 		unsigned char 	* colorAlphaPixels;

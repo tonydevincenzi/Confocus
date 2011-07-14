@@ -20,17 +20,16 @@ const int DEPTH_WIDTH = 320;
 const int DEPTH_HEIGHT= 240;
 
 
-class VideoGrabber
+class KinectGrabber
 {
 public:
-    HRESULT Video_Init();
-    void                    Video_UnInit( );
-    //void                    Nui_GotDepthAlert( );
-    void                    Video_GotVideoAlert( );
+    HRESULT Kinect_Init();
+    void                    Kinect_UnInit( );
+    void                    Kinect_GotVideoAlert( );
 	void                    Kinect_GotDepthAlert( );
-    void                    Video_GotSkeletonAlert( );
-    void                    Video_Zero();
-	int						Video_Update();
+    void                    Kinect_GotSkeletonAlert( );
+    void                    Kinect_Zero();
+	int						Kinect_Update();
 	void					print_bytes();
 	RGBQUAD*				Kinect_getDepthPixels();
 	BYTE*					getAlphaPixels();
@@ -50,7 +49,7 @@ public:
 	int           headJoints_y;
 
 private:
-    //static DWORD WINAPI     Video_ProcessThread(LPVOID pParam);
+    //static DWORD WINAPI     Kinect_ProcessThread(LPVOID pParam);
 
 
     // NUI and draw stuff

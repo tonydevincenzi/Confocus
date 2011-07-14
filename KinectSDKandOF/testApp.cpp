@@ -10,8 +10,8 @@ void testApp::setup(){
 	
 	
 	printf("initializing\n");
-	g_videoGrabber.Video_Zero();
-	g_videoGrabber.Video_Init();
+	g_kinectGrabber.Kinect_Zero();
+	g_kinectGrabber.Kinect_Init();
 	//printf("gathering data\n");
 
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
@@ -24,24 +24,23 @@ void testApp::update(){
 	//ofSetWindowTitle(ofToString(ofGetFrameRate(), 2.0));
 	//grabber.update();
 	
-	g_videoGrabber.Video_Update();
-	//g_videoGrabber.print_bytes();
+	g_kinectGrabber.Kinect_Update();
+	//g_kinectGrabber.print_bytes();
 	//printf("loading data\n");
-	colorAlphaPixels = g_videoGrabber.getAlphaPixels();
-	grayPixels = (BYTE*)g_videoGrabber.Kinect_getDepthPixels();	
+	colorAlphaPixels = g_kinectGrabber.getAlphaPixels();
+	grayPixels = (BYTE*)g_kinectGrabber.Kinect_getDepthPixels();	
 	if(colorAlphaPixels != NULL) {
-		//printf("%d %d %d %d \n", colorAlphaPixels[0],colorAlphaPixels[1],colorAlphaPixels[2],colorAlphaPixels[3]);
 		texColorAlpha.loadData(colorAlphaPixels, VIDEO_WIDTH,VIDEO_HEIGHT, GL_RGBA);	
 	}
 	if (grayPixels != NULL) {
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-	//int n= g_videoGrabber.getJointsPixels();
+	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
-	g_videoGrabber.getJointsPoints();
-	headPositionX=g_videoGrabber.headJoints_x;
-	headPositionY=g_videoGrabber.headJoints_y;
+	g_kinectGrabber.getJointsPoints();
+	headPositionX=g_kinectGrabber.headJoints_x;
+	headPositionY=g_kinectGrabber.headJoints_y;
 	//printf("position: %d\n",headPositionX);
 	
 
@@ -77,7 +76,7 @@ void testApp::draw(){
 //-------------------------------------------------------------
 void testApp::exit(){
 	printf("cleaning up\n");
-	g_videoGrabber.Video_UnInit();
+	g_kinectGrabber.Kinect_UnInit();
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
