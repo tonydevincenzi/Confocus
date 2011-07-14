@@ -20,7 +20,7 @@ void VideoGrabber::Video_Zero()
 {
     m_hNextDepthFrameEvent = NULL;
     m_hNextVideoFrameEvent = NULL;
-    //m_hNextSkeletonEvent = NULL;
+    m_hNextSkeletonEvent = NULL;
     m_pDepthStreamHandle = NULL;
     m_pVideoStreamHandle = NULL;
     m_hThVideoProcess=NULL;
@@ -31,7 +31,7 @@ void VideoGrabber::Video_Zero()
     //m_SkeletonOldObj = NULL;
     //m_PensTotal = 6;
     //ZeroMemory(m_Points,sizeof(m_Points));
-   // m_LastSkeletonFoundTime = -1;
+    //m_LastSkeletonFoundTime = -1;
     m_bScreenBlanked = false;
     m_FramesTotal = 0;
     //m_LastFPStime = -1;
@@ -45,6 +45,7 @@ HRESULT VideoGrabber::Video_Init()
 
     m_hNextVideoFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	m_hNextDepthFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
+	m_hNextSkeletonFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	
 	hr = NuiInitialize( 
         NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON | NUI_INITIALIZE_FLAG_USES_COLOR);
@@ -114,11 +115,11 @@ void VideoGrabber::Video_UnInit( )
         CloseHandle( m_hNextDepthFrameEvent );
         m_hNextDepthFrameEvent = NULL;
     }
-    /*if( m_hNextSkeletonFrameEvent && ( m_hNextSkeletonFrameEvent != INVALID_HANDLE_VALUE ) )
+    if( m_hNextSkeletonFrameEvent && ( m_hNextSkeletonFrameEvent != INVALID_HANDLE_VALUE ) )
     {
         CloseHandle( m_hNextSkeletonFrameEvent );
         m_hNextSkeletonFrameEvent = NULL;
-    }
+    }/*
 	if( m_hEvVideoProcessStop && ( m_hEvVideoProcessStop != INVALID_HANDLE_VALUE ) )
     {
 		CloseHandle(m_hEvVideoProcessStop);
@@ -135,7 +136,7 @@ int VideoGrabber::Video_Update()
 
 {
     //VideoGrabber *pthis=(VideoGrabber *) pParam;
-    HANDLE                hEvents[3];
+    HANDLE                hEvents[4];
     int                    nEventIdx;
 
     // Configure events to be listened on
@@ -144,13 +145,14 @@ int VideoGrabber::Video_Update()
 	hEvents[0]=m_hEvVideoProcessStop;
     hEvents[1]=m_hNextVideoFrameEvent;
 	hEvents[2]=m_hNextDepthFrameEvent;
-	//hEvents[3]=m_hNextSkeletonFrameEvent;
+	hEvents[3]=m_hNextSkeletonFrameEvent;
     // Main thread loop
     //while(1)
     //{
         // Wait for an event to be signalled
         nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
-        printf("index obtained %d\n",nEventIdx);
+        if (nEventIdx ==3 ) 
+				printf("index obtained %d\n",nEventIdx);
         // If the stop event, stop looping and exit
         if(nEventIdx==0)
             //break;            
@@ -168,10 +170,10 @@ int VideoGrabber::Video_Update()
 				break;
 				
             case 3:
-                //Video_GotSkeletonAlert( );
+                //Video_GotSkeletonAlert();
                 break;
         }
-		
+		Video_GotSkeletonAlert();
 		//Video_GotVideoAlert();
 		//Video_GotSkeletonAlert();
 		//Kinect_GotDepthAlert();
@@ -215,7 +217,7 @@ void VideoGrabber::Video_GotVideoAlert( )
 
 void VideoGrabber::Kinect_FormatRGBForOutput() {
 	int totalPixels = VIDEO_HEIGHT*VIDEO_WIDTH*4;
-	printf("%d\n",totalPixels);
+	//printf("%d\n",totalPixels);
 	for (int i = 3; i < totalPixels; i= i + 4) {
 		//set alpha to 255
 		m_rgbBuffer[i] = 255;
@@ -309,7 +311,7 @@ RGBQUAD VideoGrabber::Kinect_DepthToRGB( USHORT s )
 	return q;
 }
 
-/*
+
 POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 void VideoGrabber::Video_GotSkeletonAlert( )
 {
@@ -357,7 +359,7 @@ void VideoGrabber::Video_GotSkeletonAlert( )
             }else{
             NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
             }
-			*//*	
+			*/	
         }
     }
 
@@ -375,5 +377,3 @@ void VideoGrabber::getJointsPoints() {
 	headJoints_x=m_Points[3].x;
 	headJoints_y=m_Points[3].y;
 }
-
-*/

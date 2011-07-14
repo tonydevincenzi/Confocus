@@ -12,7 +12,7 @@ void testApp::setup(){
 	printf("initializing\n");
 	g_videoGrabber.Video_Zero();
 	g_videoGrabber.Video_Init();
-	printf("gathering data\n");
+	//printf("gathering data\n");
 
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	//colorAlphaPixels1	= new unsigned char [WIDTH*HEIGHT*4];
@@ -26,7 +26,7 @@ void testApp::update(){
 	
 	g_videoGrabber.Video_Update();
 	//g_videoGrabber.print_bytes();
-	printf("loading data\n");
+	//printf("loading data\n");
 	colorAlphaPixels = g_videoGrabber.getAlphaPixels();
 	grayPixels = (BYTE*)g_videoGrabber.Kinect_getDepthPixels();	
 	if(colorAlphaPixels != NULL) {
@@ -42,17 +42,17 @@ void testApp::update(){
 	g_videoGrabber.getJointsPoints();
 	headPositionX=g_videoGrabber.headJoints_x;
 	headPositionY=g_videoGrabber.headJoints_y;
-	printf("%d\n",headPositionX);
+	//printf("position: %d\n",headPositionX);
 	
 
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-	printf("drawing image\n");
+	//printf("drawing image\n");
 	texColorAlpha.draw(0,0,VIDEO_WIDTH,VIDEO_HEIGHT);
 	texGray.draw(0,0,DEPTH_WIDTH,DEPTH_HEIGHT);
-	//ofCircle(headPositionX,headPositionY,20);
+	ofCircle(headPositionX,headPositionY,20);
 	/*
 	blur.setBlurParams(4, (float)mouseX / 100.0);
 	blur.beginRender();

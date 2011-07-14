@@ -34,7 +34,7 @@ public:
 	void					print_bytes();
 	RGBQUAD*				Kinect_getDepthPixels();
 	BYTE*					getAlphaPixels();
-	void                     getJointsPoints();
+	void                    getJointsPoints();
 
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
@@ -62,7 +62,7 @@ private:
     // thread handling
     HANDLE        m_hThVideoProcess;
     HANDLE        m_hEvVideoProcessStop;
-    //HANDLE        m_hNextSkeletonFrameEvent;
+    HANDLE        m_hNextSkeletonFrameEvent;
     HANDLE        m_hNextDepthFrameEvent;
     HANDLE        m_hNextVideoFrameEvent;
     HANDLE        m_hNextSkeletonEvent;
