@@ -9,7 +9,7 @@
 #include "resource.h"
 #include <iostream>
 #include <vector>
-
+#include <process.h>
 
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
@@ -33,7 +33,7 @@ public:
 	RGBQUAD*				Kinect_getDepthPixels();
 	BYTE*					getAlphaPixels();
 	void                    getJointsPoints();
-
+	CRITICAL_SECTION*		Kinect_getRGBLock();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel);
@@ -79,6 +79,8 @@ private:
     int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
-	BYTE *		  m_rgbBuffer;
+	BYTE 		  m_rgbBuffer[4*VIDEO_HEIGHT*VIDEO_WIDTH];
 	RGBQUAD		  m_rgbDepth[640*480];
+	CRITICAL_SECTION rgbLock;
+	bool			newRGBData;
 };

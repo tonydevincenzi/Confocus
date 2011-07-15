@@ -1,6 +1,5 @@
 #include "testApp.h"
 
-
 //--------------------------------------------------------------
 void testApp::setup(){	
 	ofBackground(255,255,255);	
@@ -25,16 +24,21 @@ void testApp::update(){
 	//grabber.update();
 	
 	g_kinectGrabber.Kinect_Update();
-	//g_kinectGrabber.print_bytes();
-	//printf("loading data\n");
+	
+	//EnterCriticalSection (g_kinectGrabber.Kinect_getRGBLock());	
 	colorAlphaPixels = g_kinectGrabber.getAlphaPixels();
-	grayPixels = (BYTE*)g_kinectGrabber.Kinect_getDepthPixels();	
 	if(colorAlphaPixels != NULL) {
 		texColorAlpha.loadData(colorAlphaPixels, VIDEO_WIDTH,VIDEO_HEIGHT, GL_RGBA);	
 	}
+	//EnterCriticalSection (g_kinectGrabber.Kinect_getRGBLock());
+	
+	//printf("requesting pixel data\n");
+	grayPixels = (BYTE*)g_kinectGrabber.Kinect_getDepthPixels();	
 	if (grayPixels != NULL) {
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
+	//printf("done requesting\n");
+	
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
