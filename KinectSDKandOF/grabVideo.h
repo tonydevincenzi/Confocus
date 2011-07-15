@@ -11,7 +11,6 @@
 #include <vector>
 
 
-
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
 const int VIDEO_WIDTH = 640;
@@ -59,8 +58,8 @@ private:
 	void		  Kinect_FormatRGBForOutput();
 	RGBQUAD       Kinect_DepthToRGB( USHORT s );
     // thread handling
-    HANDLE        m_hThVideoProcess;
-    HANDLE        m_hEvVideoProcessStop;
+    //HANDLE        m_hThVideoProcess;
+    //HANDLE        m_hEvVideoProcessStop;
     HANDLE        m_hNextSkeletonFrameEvent;
     HANDLE        m_hNextDepthFrameEvent;
     HANDLE        m_hNextVideoFrameEvent;

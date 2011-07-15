@@ -23,8 +23,8 @@ void KinectGrabber::Kinect_Zero()
     m_hNextSkeletonEvent = NULL;
     m_pDepthStreamHandle = NULL;
     m_pVideoStreamHandle = NULL;
-    m_hThVideoProcess=NULL;
-    m_hEvVideoProcessStop=NULL;
+   // m_hThVideoProcess=NULL;
+   // m_hEvVideoProcessStop=NULL;
     //ZeroMemory(m_Pen,sizeof(m_Pen));
     //m_SkeletonDC = NULL;
     //m_SkeletonBMP = NULL;
@@ -53,6 +53,12 @@ HRESULT KinectGrabber::Kinect_Init()
     {
 		printf("failed to inialize nui");
 	}
+	hr = NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
+    if( FAILED( hr ) )
+    {
+		printf("failed to open skeleton tracking.");//    MessageBoxResource(m_hWnd,IDS_ERROR_SKELETONTRACKING,MB_OK | MB_ICONHAND);
+        return hr;
+    }
 	hr = NuiImageStreamOpen(
         NUI_IMAGE_TYPE_COLOR,
         NUI_IMAGE_RESOLUTION_640x480,
@@ -77,9 +83,6 @@ HRESULT KinectGrabber::Kinect_Init()
     	printf("failed to open NuiImagesStream");
         return hr;
     }
-	
-	m_hEvVideoProcessStop=CreateEvent(NULL,FALSE,FALSE,NULL);
-	//m_hThVideoProcess=CreateThread(NULL,0,Video_ProcessThread,this,0,NULL);
 
 	return hr;
 }
@@ -87,22 +90,7 @@ HRESULT KinectGrabber::Kinect_Init()
 
 void KinectGrabber::Kinect_UnInit( )
 {
-    /*
-    // Stop the Nui processing thread
-    if(m_hEvVideoProcessStop!=NULL)
-    {
-        // Signal the thread
-        SetEvent(m_hEvVideoProcessStop);
 
-        // Wait for thread to stop
-        if(m_hThVideoProcess!=NULL)
-        {
-            WaitForSingleObject(m_hThVideoProcess,INFINITE);
-            CloseHandle(m_hThVideoProcess);
-        }
-        CloseHandle(m_hEvVideoProcessStop);
-    }
-	*/
     NuiShutdown( );
 
     if( m_hNextVideoFrameEvent && ( m_hNextVideoFrameEvent != INVALID_HANDLE_VALUE ) )
@@ -119,13 +107,7 @@ void KinectGrabber::Kinect_UnInit( )
     {
         CloseHandle( m_hNextSkeletonFrameEvent );
         m_hNextSkeletonFrameEvent = NULL;
-    }/*
-	if( m_hEvVideoProcessStop && ( m_hEvVideoProcessStop != INVALID_HANDLE_VALUE ) )
-    {
-		CloseHandle(m_hEvVideoProcessStop);
-	    m_hEvVideoProcessStop = NULL;
-    }*/
-	
+    }
 }
 
 
@@ -136,41 +118,37 @@ int KinectGrabber::Kinect_Update()
 
 {
     //KinectGrabber *pthis=(KinectGrabber *) pParam;
-    HANDLE                hEvents[4];
+    HANDLE                hEvents[3];
     int                    nEventIdx;
 
     // Configure events to be listened on
-    //hEvents[0]=pthis->m_hEvVideoProcessStop;
-    //hEvents[1]=pthis->m_hNextVideoFrameEvent;
-	hEvents[0]=m_hEvVideoProcessStop;
-    hEvents[1]=m_hNextVideoFrameEvent;
-	hEvents[2]=m_hNextDepthFrameEvent;
-	hEvents[3]=m_hNextSkeletonFrameEvent;
-    // Main thread loop
-    //while(1)
-    //{
-        // Wait for an event to be signalled
-        nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
-        if (nEventIdx ==3 ) 
-				printf("index obtained %d\n",nEventIdx);
-        // If the stop event, stop looping and exit
-        if(nEventIdx==0)
-            //break;            
-			return 1;
+    //hEvents[0]=m_hEvVideoProcessStop;
+    hEvents[0]=m_hNextVideoFrameEvent;
+	hEvents[1]=m_hNextDepthFrameEvent;
+	hEvents[2]=m_hNextSkeletonFrameEvent;
+    
+    // Wait for an event to be signalled
+    nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
+    if (nEventIdx ==2) 
+	printf("index obtained %d\n",nEventIdx);
+    // If the stop event, stop looping and exit
+    //if(nEventIdx==0)
+        //break;            
+	//	return 1;
 		
         // Process signal events
         switch(nEventIdx)
         {
-            case 2:
-                Kinect_GotDepthAlert();
-                break;
-				
-            case 1:
+            case 0:
                 Kinect_GotVideoAlert();
 				break;
-				
-            case 3:
-                //Kinect_GotSkeletonAlert();
+			
+			case 1:
+                Kinect_GotDepthAlert();
+                break;
+					
+            case 2:
+          //      Kinect_GotSkeletonAlert();
                 break;
         }
 		Kinect_GotSkeletonAlert();
@@ -198,15 +176,17 @@ void KinectGrabber::Kinect_GotVideoAlert( )
     pTexture->LockRect( 0, &LockedRect, NULL, 0 );
     if( LockedRect.Pitch != 0 )
     {
+		//pthread_mutex_lock(&image_buffer);
         m_rgbBuffer = (BYTE*) LockedRect.pBits;
+		Kinect_FormatRGBForOutput();
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-    }
+		//pthread_mutex_unlock(&image_buffer);
+	}
     else
     {
         printf("buffer length of recieved texture is bogus\n");
     }
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
-	Kinect_FormatRGBForOutput();
 }
 
 
@@ -337,7 +317,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 				m_Points[j].x = (int) ( fx * scaleX + 0.5f );
 				m_Points[j].y = (int) ( fy * scaleY + 0.5f );
 			}
-
+			/*
 			if(m_Points[3].x!=0){
 				//printf("headPosition");
 				//printf("head Z=%4.2f /r", m_Points[3].x);
@@ -346,7 +326,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
             }else{
 				NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
             }
-
+			*/
 			/*
             float head_z=SkeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_HEAD].z;
             if (head_z!=0){
@@ -366,6 +346,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 
     // smooth out the skeleton data
     NuiTransformSmooth(&SkeletonFrame,NULL);
+
 }
 
 void KinectGrabber::getJointsPoints() {
