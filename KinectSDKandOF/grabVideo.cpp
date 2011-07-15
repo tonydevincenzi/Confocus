@@ -239,15 +239,29 @@ void KinectGrabber::Kinect_GotDepthAlert( ) {
 
         // draw the bits to the bitmap
         RGBQUAD * rgbrun = m_rgbDepth;
+		USHORT * depthrun = m_depthBuffer;
+		USHORT * playerrun = m_playerBuffer;
         USHORT * pBufferRun = (USHORT*) pBuffer;
         for( int y = 0 ; y < DEPTH_HEIGHT ; y++ )
         {
             for( int x = 0 ; x < DEPTH_WIDTH ; x++ )
             {
+				// set the color (just for visualization)
                 RGBQUAD quad = Kinect_DepthToRGB( *pBufferRun );
-                pBufferRun++;
                 *rgbrun = quad;
                 rgbrun++;
+				
+				USHORT RealDepth = (*pBufferRun & 0xfff8) >> 3;
+				*depthrun = RealDepth;
+				depthrun++;
+
+				USHORT Player = *pBufferRun  & 7;
+				*playerrun = Player;
+				playerrun++;
+
+				//inc buffer pointer
+				pBufferRun++;
+				    
             }
         }
 		
@@ -286,7 +300,6 @@ CRITICAL_SECTION* KinectGrabber::Kinect_getRGBLock() {
 RGBQUAD KinectGrabber::Kinect_DepthToRGB( USHORT s )
 {
     USHORT RealDepth = (s & 0xfff8) >> 3;
-    USHORT Player = s & 7;
 
     // transform 13-bit depth information into an 8-bit intensity appropriate
     // for display (we disregard information in most significant bit)

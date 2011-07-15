@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(255,255,255);	
+	ofBackground(0,0,0);	
 	
 	//blur.setup(640, 480);
 	//hasCamera = grabber.initGrabber(640, 480);
@@ -25,19 +25,15 @@ void testApp::update(){
 	
 	g_kinectGrabber.Kinect_Update();
 	
-	//EnterCriticalSection (g_kinectGrabber.Kinect_getRGBLock());	
 	colorAlphaPixels = g_kinectGrabber.getAlphaPixels();
 	if(colorAlphaPixels != NULL) {
 		texColorAlpha.loadData(colorAlphaPixels, VIDEO_WIDTH,VIDEO_HEIGHT, GL_RGBA);	
 	}
-	//EnterCriticalSection (g_kinectGrabber.Kinect_getRGBLock());
 	
-	//printf("requesting pixel data\n");
 	grayPixels = (BYTE*)g_kinectGrabber.Kinect_getDepthPixels();	
 	if (grayPixels != NULL) {
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-	//printf("done requesting\n");
 	
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);

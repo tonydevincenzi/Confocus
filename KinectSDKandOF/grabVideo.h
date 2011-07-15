@@ -80,7 +80,10 @@ private:
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
 	BYTE 		  m_rgbBuffer[4*VIDEO_HEIGHT*VIDEO_WIDTH];
-	RGBQUAD		  m_rgbDepth[640*480];
+	RGBQUAD		  m_rgbDepth[VIDEO_HEIGHT*VIDEO_WIDTH];
+	USHORT		  m_depthBuffer[VIDEO_HEIGHT*VIDEO_WIDTH];
+	USHORT		  m_playerBuffer[VIDEO_HEIGHT*VIDEO_WIDTH];
+
 	CRITICAL_SECTION rgbLock;
 	bool			newRGBData;
 };
