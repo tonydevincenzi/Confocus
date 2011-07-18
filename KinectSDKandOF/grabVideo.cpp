@@ -281,7 +281,7 @@ void KinectGrabber::print_bytes( ) {
 }
 
 
-BYTE* KinectGrabber::getAlphaPixels() {
+BYTE* KinectGrabber::Kinect_getAlphaPixels() {
 	if (newRGBData) {
 		newRGBData = false;
 		return m_rgbBuffer;
@@ -289,14 +289,23 @@ BYTE* KinectGrabber::getAlphaPixels() {
 	return NULL;
 }
 
+/*CRITICAL_SECTION* KinectGrabber::Kinect_getRGBLock() {
+	return &rgbLock;
+}*/
+
+
+USHORT* KinectGrabber::Kinect_getPlayerBuffer() {
+	return m_playerBuffer;
+}
+
+USHORT* KinectGrabber::Kinect_getDepthBuffer() {
+	return m_depthBuffer;
+}
+
+//use for visualizing depth
 RGBQUAD* KinectGrabber::Kinect_getDepthPixels() {
 	return m_rgbDepth;
 }
-
-CRITICAL_SECTION* KinectGrabber::Kinect_getRGBLock() {
-	return &rgbLock;
-}
-
 RGBQUAD KinectGrabber::Kinect_DepthToRGB( USHORT s )
 {
     USHORT RealDepth = (s & 0xfff8) >> 3;

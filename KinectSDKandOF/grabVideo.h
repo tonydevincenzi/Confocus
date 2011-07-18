@@ -31,9 +31,11 @@ public:
 	int						Kinect_Update();
 	void					print_bytes();
 	RGBQUAD*				Kinect_getDepthPixels();
-	BYTE*					getAlphaPixels();
+	BYTE*					Kinect_getAlphaPixels();
+	USHORT*					Kinect_getDepthBuffer();
+	USHORT*					Kinect_getPlayerBuffer();
 	void                    getJointsPoints();
-	CRITICAL_SECTION*		Kinect_getRGBLock();
+	//CRITICAL_SECTION*		Kinect_getRGBLock();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel);
@@ -81,9 +83,9 @@ private:
     int           m_LastFramesTotal;
 	BYTE 		  m_rgbBuffer[4*VIDEO_HEIGHT*VIDEO_WIDTH];
 	RGBQUAD		  m_rgbDepth[VIDEO_HEIGHT*VIDEO_WIDTH];
-	USHORT		  m_depthBuffer[VIDEO_HEIGHT*VIDEO_WIDTH];
-	USHORT		  m_playerBuffer[VIDEO_HEIGHT*VIDEO_WIDTH];
+	USHORT		  m_depthBuffer[DEPTH_HEIGHT*DEPTH_WIDTH];
+	USHORT		  m_playerBuffer[DEPTH_HEIGHT*DEPTH_WIDTH];
 
-	CRITICAL_SECTION rgbLock;
+	//CRITICAL_SECTION rgbLock;
 	bool			newRGBData;
 };

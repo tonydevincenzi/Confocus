@@ -26,6 +26,10 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 		
+
+		// move this when a separate "features" file is made.
+		BYTE* highlightRGB(BYTE* videoBuff, USHORT* playerBuff);
+
 		ofVideoGrabber grabber;
 		bool hasCamera;
 
@@ -33,8 +37,10 @@ class testApp : public ofBaseApp{
 		KinectGrabber g_kinectGrabber;
 		ofTexture		texColorAlpha;
 		ofTexture		texGray;
+		ofTexture		texHighlight;
 		unsigned char 	* colorAlphaPixels;
 		unsigned char	* grayPixels;
+		unsigned char	* highlightPixels;
 		int headPositionX, headPositionY;
 };
 
