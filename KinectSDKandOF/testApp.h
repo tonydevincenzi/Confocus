@@ -1,12 +1,13 @@
+//#pragma once
+
 #ifndef _TEST_APP
 #define _TEST_APP
-
 
 #include "ofMain.h"
 #include "ofxFBOTexture.h"
 #include "ofxShader.h"
-
 #include "shaderBlur.h"
+
 #include "grabVideo.h"
 
 class testApp : public ofBaseApp{
@@ -28,7 +29,7 @@ class testApp : public ofBaseApp{
 		
 
 		// TODO: move this when a separate "features" file is made.
-		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* highlightBuffer);
+		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, USHORT* depthBuff, BYTE* highlightBuffer);
 
 		ofVideoGrabber grabber;
 		bool hasCamera;

@@ -9,12 +9,17 @@
 //#include <strsafe.h>
 //#include <conio.h>
 
-
-
 #include "stdafx.h"
 #include "grabVideo.h"
 #include "MSR_NuiApi.h"
 
+
+void KinectGrabber::Kinect_getPixPos(LONG depthX, LONG depthY, USHORT depthValue, LONG *pColorX, LONG *pColorY) {
+	NuiImageGetColorPixelCoordinatesFromDepthPixel( 
+		NUI_IMAGE_RESOLUTION_640x480,//_In_ NUI_IMAGE_RESOLUTION eColorResolution,
+		NULL, //_In_opt_ CONST NUI_IMAGE_VIEW_AREA *pcViewArea,
+		LONG(depthX), LONG(depthY), depthValue , pColorX, pColorY); 
+}
 
 void KinectGrabber::Kinect_Zero()
 {
@@ -40,8 +45,8 @@ void KinectGrabber::Kinect_Zero()
 	newRGBData = false;
 }
 
-HRESULT KinectGrabber::Kinect_Init()
-{
+HRESULT KinectGrabber::Kinect_Init() {
+	
 	HRESULT hr;
 
     m_hNextVideoFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
@@ -261,7 +266,6 @@ void KinectGrabber::Kinect_GotDepthAlert( ) {
 
 				//inc buffer pointer
 				pBufferRun++;
-				    
             }
         }
 		

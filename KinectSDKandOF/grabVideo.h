@@ -2,11 +2,12 @@
 //#ifndef GRAB_VIDEO_H
 //#define GRAB_VIDEO_H
 
-//#include "MSR_NuiApi.h"
 #include <tchar.h>
 #include <strsafe.h>
 #include <conio.h>
+
 #include "resource.h"
+
 #include <iostream>
 #include <vector>
 #include <process.h>
@@ -35,6 +36,7 @@ public:
 	USHORT*					Kinect_getDepthBuffer();
 	USHORT*					Kinect_getPlayerBuffer();
 	void                    getJointsPoints();
+	void					Kinect_getPixPos(LONG lDepthX, LONG lDepthY, USHORT usDepthValue, LONG *plColorX, LONG *plColorY);
 	//CRITICAL_SECTION*		Kinect_getRGBLock();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
