@@ -13,8 +13,9 @@ void testApp::setup(){
 	g_kinectGrabber.Kinect_Init();
 	//printf("gathering data\n");
 
+	highlightPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
+
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
-	//colorAlphaPixels1	= new unsigned char [WIDTH*HEIGHT*4];
 	texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 	texHighlight.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 }
@@ -36,7 +37,7 @@ void testApp::update(){
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
 
-	highlightPixels = highlightRGB(colorAlphaPixels, g_kinectGrabber.Kinect_getPlayerBuffer());
+	highlightRGB(colorAlphaPixels, g_kinectGrabber.Kinect_getPlayerBuffer(), highlightPixels);
 	if(highlightPixels != NULL) {
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);	
 	}
@@ -57,7 +58,7 @@ void testApp::draw(){
 	//printf("drawing image\n");
 	texColorAlpha.draw(0,0,VIDEO_WIDTH,VIDEO_HEIGHT);
 	//texGray.draw(0,0,DEPTH_WIDTH,DEPTH_HEIGHT);
-	texHighlight.draw(0,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+	texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 	ofCircle(headPositionX,headPositionY,20);
 	/*
 	blur.setBlurParams(4, (float)mouseX / 100.0);
@@ -84,6 +85,7 @@ void testApp::draw(){
 void testApp::exit(){
 	printf("cleaning up\n");
 	g_kinectGrabber.Kinect_UnInit();
+	free(highlightPixels);
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
@@ -121,8 +123,8 @@ void testApp::windowResized(int w, int h){
 
 
 //TODO: move this into a "features" file
-BYTE* testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff) {
-	  BYTE * highlightBuff = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
+void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlightBuff) {
+	  //BYTE* highlightBuff = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 	  if (videoBuff && playerBuff) {
 		  for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
 				for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
@@ -138,10 +140,9 @@ BYTE* testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff) {
 						highlightBuff[4*((y*DEPTH_WIDTH) + x) + 1] = videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 1];
 						highlightBuff[4*((y*DEPTH_WIDTH) + x) + 2] = videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 2];
 						highlightBuff[4*((y*DEPTH_WIDTH) + x) + 3] = 255;
-					
 					}
 				}
 		  }
 	  }
-	  return highlightBuff;
+	  //return highlightBuff;
 }

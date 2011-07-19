@@ -27,8 +27,8 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		
 
-		// move this when a separate "features" file is made.
-		BYTE* highlightRGB(BYTE* videoBuff, USHORT* playerBuff);
+		// TODO: move this when a separate "features" file is made.
+		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* highlightBuffer);
 
 		ofVideoGrabber grabber;
 		bool hasCamera;
