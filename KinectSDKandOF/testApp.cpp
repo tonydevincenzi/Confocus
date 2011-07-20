@@ -3,9 +3,9 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(0,0,0);	
+	ofBackground(255,255,255);	
 	
-	//blur.setup(640, 480);
+	blur.setup(640, 480);
 	//hasCamera = grabber.initGrabber(640, 480);
 	
 	
@@ -19,6 +19,7 @@ void testApp::setup(){
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 	texHighlight.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
+	texBlur.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 }
 
 //--------------------------------------------------------------
@@ -57,30 +58,32 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	//printf("drawing image\n");
-	texColorAlpha.draw(0,0,VIDEO_WIDTH,VIDEO_HEIGHT);
 	//texGray.draw(0,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 	texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 	ofCircle(headPositionX,headPositionY,20);
-	/*
+	
+
+
 	blur.setBlurParams(4, (float)mouseX / 100.0);
 	blur.beginRender();
 		
-		if( hasCamera ){
-			ofSetColor(255, 255, 255);
-			grabber.draw(0, 0);
+		//if( hasCamera ){
+			//ofSetColor(255, 255, 255);
+			//grabber.draw(0, 0);
+	texColorAlpha.draw(0,0,VIDEO_WIDTH,VIDEO_HEIGHT);
 			
 			ofSetColor(200, 10, 20);
 			ofCircle(ofGetWidth() - 100, 200, 50);
-		}else{
-			ofSetColor(200, 10, 20);
-			ofCircle(ofGetWidth()/2, ofGetHeight()/2, 100);		
-		}
+		//}else{
+		//	ofSetColor(200, 10, 20);
+		//	ofCircle(ofGetWidth()/2, ofGetHeight()/2, 100);		
+		//}
 		
 	blur.endRender();
 	blur.draw(0, 0, 640, 480, true);
 	
-	ofDrawBitmapString("move mouse to control blur", 20, 20);
-	*/
+	//ofDrawBitmapString("move mouse to control blur", 20, 20);
+	
 }
 //-------------------------------------------------------------
 void testApp::exit(){

@@ -43,6 +43,8 @@ class testApp : public ofBaseApp{
 		unsigned char	* grayPixels;
 		unsigned char	* highlightPixels;
 		int headPositionX, headPositionY;
+		
+		ofxFBOTexture texBlur;
 };
 
 #endif
