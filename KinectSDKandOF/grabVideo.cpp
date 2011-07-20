@@ -283,11 +283,11 @@ void KinectGrabber::print_bytes( ) {
 
 
 BYTE* KinectGrabber::Kinect_getAlphaPixels() {
-	if (newRGBData) {
-		newRGBData = false;
-		return m_rgbBuffer;
-	}
-	return NULL;
+	//if (newRGBData) {
+	//	newRGBData = false;
+	return m_rgbBuffer;
+	//}
+	//return NULL;
 }
 
 /*CRITICAL_SECTION* KinectGrabber::Kinect_getRGBLock() {

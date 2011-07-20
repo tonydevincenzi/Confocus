@@ -30,7 +30,7 @@ class testApp : public ofBaseApp{
 
 		// TODO: move this when a separate "features" file is made.
 		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* highlightBuffer);
-
+		
 		ofVideoGrabber grabber;
 		bool hasCamera;
 
