@@ -36,7 +36,7 @@ public:
 	USHORT*					Kinect_getDepthBuffer();
 	USHORT*					Kinect_getPlayerBuffer();
 	void                    getJointsPoints();
-	void					Kinect_getPixPos(LONG lDepthX, LONG lDepthY, USHORT usDepthValue, LONG *plColorX, LONG *plColorY);
+	void					Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY);
 	//CRITICAL_SECTION*		Kinect_getRGBLock();
     //void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);

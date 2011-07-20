@@ -14,11 +14,8 @@
 #include "MSR_NuiApi.h"
 
 
-void KinectGrabber::Kinect_getPixPos(LONG depthX, LONG depthY, USHORT depthValue, LONG *pColorX, LONG *pColorY) {
-	NuiImageGetColorPixelCoordinatesFromDepthPixel( 
-		NUI_IMAGE_RESOLUTION_640x480,//_In_ NUI_IMAGE_RESOLUTION eColorResolution,
-		NULL, //_In_opt_ CONST NUI_IMAGE_VIEW_AREA *pcViewArea,
-		LONG(depthX), LONG(depthY), depthValue , pColorX, pColorY); 
+void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
+	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
 }
 
 void KinectGrabber::Kinect_Zero()

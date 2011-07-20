@@ -38,7 +38,7 @@ void testApp::update(){
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}*/
 
-	highlightRGB(colorAlphaPixels, g_kinectGrabber.Kinect_getPlayerBuffer(), g_kinectGrabber.Kinect_getDepthBuffer(), highlightPixels);
+	highlightRGB(colorAlphaPixels, g_kinectGrabber.Kinect_getPlayerBuffer(), highlightPixels);
 	if(highlightPixels != NULL) {
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);	
 	}
@@ -124,48 +124,35 @@ void testApp::windowResized(int w, int h){
 
 
 //TODO: move this into a "features" file
-void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, USHORT* depthBuff, BYTE * highlightBuff) {
-	  //BYTE* highlightBuff = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
+void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlightBuff) {
 	  if (videoBuff && playerBuff) {
-	LONG* pcolorx = new LONG();
-	LONG* pcolory = new LONG();
+		LONG* pcolorx = new LONG();
+		LONG* pcolory = new LONG();
 
-		  for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
-				for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
-					//if that pixel does not belong to a player,  black it out
-
-
-		// erika - hack for calibration bc ms didnt provide a method for it.
-		// if it works, implement it the "right" way
-
-	int index = (y * DEPTH_WIDTH) + x;
-	g_kinectGrabber.Kinect_getPixPos(x, y, depthBuff[index], pcolorx, pcolory);
-	int color_index = (((*pcolory)*VIDEO_WIDTH) + (*pcolorx));
-	//NuiImageGetColorPixelCoordinatesFromDepthPixel(
-    //NUI_IMAGE_RESOLUTION_640x480,//_In_ NUI_IMAGE_RESOLUTION eColorResolution,
-    //NULL, //_In_opt_ CONST NUI_IMAGE_VIEW_AREA *pcViewArea,
-    //LONG(x), LONG(y), depthBuff[(y * DEPTH_WIDTH) + x] , pcolorx, pcolory);    
-	//printf("depth (%d, %d)  color (%li, %li) \n", x, y, *pcolorx, *pcolory);
-
-					if (!playerBuff[index]) {
-						highlightBuff[4*index + 0] = 0;
-						highlightBuff[4*index + 1] = 0;
-						highlightBuff[4*index + 2] = 0;
-						highlightBuff[4*index + 3] = 255;
-					
-					} else {
-						highlightBuff[4*index + 0] = videoBuff[4*color_index + 0];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 0];
-						highlightBuff[4*index + 1] = videoBuff[4*color_index + 1];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 1];
-						highlightBuff[4*index + 2] = videoBuff[4*color_index + 2];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 2];
-						highlightBuff[4*index + 3] = 255;
-					}
-
-
+		for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+	
+				g_kinectGrabber.Kinect_ColorFromDepth(x, y, pcolorx, pcolory);//depthBuff[index], pcolorx, pcolory);
+				int index = (y * DEPTH_WIDTH) + x;
+				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
+				//printf("depth (%d, %d)  color (%li, %li) \n", x, y, *pcolorx, *pcolory);
+				//printf("index: %d color index: %d \n", index, color_index);
+		
+				//if that pixel does not belong to a player,  black it out
+				if (!playerBuff[index]) {
+					highlightBuff[4*index + 0] = 0;
+					highlightBuff[4*index + 1] = 0;
+					highlightBuff[4*index + 2] = 0;
+					highlightBuff[4*index + 3] = 255;
+				} else {
+					highlightBuff[4*index + 0] = videoBuff[4*color_index + 0];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 0];
+					highlightBuff[4*index + 1] = videoBuff[4*color_index + 1];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 1];
+					highlightBuff[4*index + 2] = videoBuff[4*color_index + 2];//videoBuff[4*((2*y*VIDEO_WIDTH) + (2*x)) + 2];
+					highlightBuff[4*index + 3] = 255;
 				}
-		  }
-		  
-	free(pcolorx);
-	free(pcolory);
+			}
+		}  
+		free(pcolorx);
+		free(pcolory);
 	  }
-	  //return highlightBuff;
 }
