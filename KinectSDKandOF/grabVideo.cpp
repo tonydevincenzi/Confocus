@@ -143,7 +143,6 @@ int KinectGrabber::Kinect_Update()
         switch(nEventIdx)
         {
             case 0:
-				newRGBData = true;
                 Kinect_GotVideoAlert();
 				break;
 			
@@ -180,15 +179,10 @@ void KinectGrabber::Kinect_GotVideoAlert( )
     pTexture->LockRect( 0, &LockedRect, NULL, 0 );
     if( LockedRect.Pitch != 0 )
     {
-		//EnterCriticalSection(&rgbLock);
-		//printf("grabbing pixel data\n");	
         memcpy(m_rgbBuffer, LockedRect.pBits, sizeof(BYTE) * VIDEO_HEIGHT * VIDEO_WIDTH * 4);
 		//m_rgbBuffer = (BYTE*) LockedRect.pBits;
-		Kinect_FormatRGBForOutput();
-			
+		Kinect_FormatRGBForOutput();			
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-		//LeaveCriticalSection(&rgbLock);
-		//printf("pixel data ready\n");	
 	}
     else
     {
@@ -201,20 +195,16 @@ void KinectGrabber::Kinect_GotVideoAlert( )
 void KinectGrabber::Kinect_FormatRGBForOutput() {
 	int totalPixels = VIDEO_HEIGHT*VIDEO_WIDTH*4;
 	//printf("%d\n",totalPixels);
-	for (int i = 3; i < totalPixels; i= i + 4) {
+	for (int i = 0; i < totalPixels; i= i + 4) {
 		//set alpha to 255
-		m_rgbBuffer[i] = 255;
+		m_rgbBuffer[i+3] = 255;
 
 		//invert the rgb order
-		int blue = m_rgbBuffer[i-1];
-		//int green = m_rgbBuffer[i-2];
-		int red = m_rgbBuffer[i-3];
-		m_rgbBuffer[i-1] = red;
-		m_rgbBuffer[i-3] = blue;
+		int blue = m_rgbBuffer[i+2];
+		int red = m_rgbBuffer[i];
+		m_rgbBuffer[i+2] = red;
+		m_rgbBuffer[i] = blue;
 
-	}
-	for (int i = 3; i < totalPixels; i= i + 4) {
-		m_rgbBuffer[i] = 255;
 	}
 }
 
@@ -283,16 +273,8 @@ void KinectGrabber::print_bytes( ) {
 
 
 BYTE* KinectGrabber::Kinect_getAlphaPixels() {
-	//if (newRGBData) {
-	//	newRGBData = false;
 	return m_rgbBuffer;
-	//}
-	//return NULL;
 }
-
-/*CRITICAL_SECTION* KinectGrabber::Kinect_getRGBLock() {
-	return &rgbLock;
-}*/
 
 
 USHORT* KinectGrabber::Kinect_getPlayerBuffer() {
