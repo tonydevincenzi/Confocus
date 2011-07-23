@@ -42,7 +42,7 @@ void testApp::update(){
 	USHORT* playerBuff = g_kinectGrabber.Kinect_getPlayerBuffer();
 	highlightRGB(colorAlphaPixels, playerBuff, highlightPixels, overPixels);
 	if(highlightPixels != NULL) {
-		adjustOver(25, overPixels, highlightPixels);
+		adjustOver(25, overPixels);
 		texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
@@ -156,7 +156,7 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlight
 	  }
 }
 
-void testApp::adjustOver(int range, BYTE * overBuff, BYTE* highlightBuff) {
+void testApp::adjustOver(int range, BYTE * overBuff) {
 	// states:
 	// 0 - have not seen a player pixel
 	// 1 - scanning a player pixel

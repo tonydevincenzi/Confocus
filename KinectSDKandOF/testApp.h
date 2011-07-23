@@ -30,7 +30,7 @@ class testApp : public ofBaseApp{
 		
 		// TODO: move this when a separate "features" file is made.
 		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* highlightBuff, BYTE* overBuff);
-		void adjustOver(int range, BYTE* overBuff, BYTE* highlightPixels);
+		void adjustOver(int range, BYTE* overBuff);
 		//bool	isInPlayerBound(int index, USHORT* playerBuff, int max_index);
 
 		ofVideoGrabber grabber;
