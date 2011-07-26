@@ -14,6 +14,7 @@ void testApp::setup(){
 	g_kinectGrabber.Kinect_Init();
 	//printf("gathering data\n");
 
+	thresh = 100;
 	highlightPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 	overPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 
@@ -42,7 +43,7 @@ void testApp::update(){
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
 	highlightRGB(colorAlphaPixels, depthBuff, highlightPixels, overPixels);
 	if(highlightPixels != NULL) {
-	//	adjustOver(25, overPixels);
+		//adjustOver(15, overPixels);
 		texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
@@ -61,6 +62,7 @@ void testApp::update(){
 	g_kinectGrabber.getJointsPoints();
 	headPositionX=g_kinectGrabber.headJoints_x;
 	headPositionY=g_kinectGrabber.headJoints_y;
+	headPositionZ=g_kinectGrabber.headJoints_z;
 	//m_Points[3].z;
 	//printf("position: %d\n",headPositionX);
 	
@@ -83,6 +85,12 @@ void testApp::draw(){
 	
 	ofDisableAlphaBlending();
 
+	ofSetHexColor(0xffffff);
+	char reportStr[1024];
+	sprintf(reportStr, " threshold: %d (press: +/- to change) \n", thresh);
+	ofDrawBitmapString(reportStr, 650, 10);
+
+
 	ofCircle(headPositionX,headPositionY,20);
 	
 }
@@ -95,6 +103,17 @@ void testApp::exit(){
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	
+	switch (key){
+		case '+':
+			thresh += 20;
+			if (thresh > 1000) thresh = 1000;
+			break;
+		case '-':
+			thresh -= 20;
+			if (thresh < 10) thresh = 10;
+			break;
+	}
 }
 
 //--------------------------------------------------------------
@@ -153,12 +172,12 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * highlightB
 				overBuff[4*index + 0] = 0;
 				overBuff[4*index + 1] = 0;
 				overBuff[4*index + 2] = 0;
-				//if that pixel does not belong to a player,  black it out
-				//otherwise, leave its rgb values in tact
-				if (depthBuff[index] > 2000 ) {
-					overBuff[4*index + 3] = 0;
-				} else {
+				//if that pixel does not belong to a player,  black it out (alpha = 255)
+				//otherwise, display its rgb values
+				if (depthBuff[index] > headPositionZ + thresh  || depthBuff[index] < headPositionZ - thresh ) {
 					overBuff[4*index + 3] = 255;
+				} else {
+					overBuff[4*index + 3] = 0;
 				}
 			}
 		}  

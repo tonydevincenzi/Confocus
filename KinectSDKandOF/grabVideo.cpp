@@ -22,12 +22,15 @@ void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColor
 
 void KinectGrabber::Kinect_Zero()
 {
-    m_hNextDepthFrameEvent = NULL;
+    m_hNextDepthPlayerFrameEvent = NULL;
+	m_hNextDepthFrameEvent = NULL;
     m_hNextVideoFrameEvent = NULL;
-    m_hNextSkeletonEvent = NULL;
+    m_hNextSkeletonFrameEvent = NULL;
     m_pDepthStreamHandle = NULL;
     m_pVideoStreamHandle = NULL;
-   // m_hThVideoProcess=NULL;
+    m_pDepthPlayerStreamHandle = NULL;
+    
+	// m_hThVideoProcess=NULL;
    // m_hEvVideoProcessStop=NULL;
     //ZeroMemory(m_Pen,sizeof(m_Pen));
     //m_SkeletonDC = NULL;
@@ -51,9 +54,10 @@ HRESULT KinectGrabber::Kinect_Init() {
     m_hNextVideoFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	m_hNextDepthFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	m_hNextSkeletonFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
-	
+	m_hNextDepthPlayerFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
+
 	hr = NuiInitialize( 
-        NUI_INITIALIZE_FLAG_USES_DEPTH |  NUI_INITIALIZE_FLAG_USES_COLOR); //NUI_INITIALIZE_FLAG_USES_SKELETON |
+        NUI_INITIALIZE_FLAG_USES_DEPTH |  NUI_INITIALIZE_FLAG_USES_SKELETON | NUI_INITIALIZE_FLAG_USES_COLOR);
     if( FAILED( hr ) )
     {
 		printf("failed to inialize nui");
@@ -88,7 +92,18 @@ HRESULT KinectGrabber::Kinect_Init() {
     	printf("failed to open NuiImagesStream");
         return hr;
     }
-
+	/*hr = NuiImageStreamOpen(
+        NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX,
+        NUI_IMAGE_RESOLUTION_320x240,
+        0,
+        2,
+        m_hNextDepthPlayerFrameEvent,
+        &m_pDepthPlayerStreamHandle );
+    if( FAILED( hr ) )
+    {
+    	printf("failed to open NuiImagesStream");
+        return hr;
+    }*/
 	return hr;
 }
 
@@ -112,6 +127,11 @@ void KinectGrabber::Kinect_UnInit( )
     {
         CloseHandle( m_hNextSkeletonFrameEvent );
         m_hNextSkeletonFrameEvent = NULL;
+    }
+	if( m_hNextDepthPlayerFrameEvent && ( m_hNextDepthPlayerFrameEvent != INVALID_HANDLE_VALUE ) )
+    {
+        CloseHandle( m_hNextDepthPlayerFrameEvent );
+        m_hNextDepthPlayerFrameEvent = NULL;
     }
 }
 
@@ -309,7 +329,7 @@ RGBQUAD KinectGrabber::Kinect_DepthToRGB( USHORT s )
 	return q;
 }
 
-
+USHORT		  m_playerJointDepth[NUI_SKELETON_POSITION_COUNT];
 POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 void KinectGrabber::Kinect_GotSkeletonAlert( )
 {
@@ -329,6 +349,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 			
 			int scaleX = VIDEO_WIDTH; //scaling up to image coordinates
 			int scaleY = VIDEO_HEIGHT;
+			USHORT depthValue;
 			float fx=0,fy=0;
 			//POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 			NUI_SKELETON_DATA * pSkel;
@@ -336,9 +357,10 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 			for (int j = 0; j < NUI_SKELETON_POSITION_COUNT; j++)
 			{
 				pSkel=& SkeletonFrame.SkeletonData[i];
-				NuiTransformSkeletonToDepthImageF( pSkel->SkeletonPositions[j], &fx, &fy );
+				NuiTransformSkeletonToDepthImageF( pSkel->SkeletonPositions[j], &fx, &fy, &depthValue);
 				m_Points[j].x = (int) ( fx * scaleX + 0.5f );
 				m_Points[j].y = (int) ( fy * scaleY + 0.5f );
+				m_playerJointDepth[j] = depthValue;	
 			}
 			/*
 			if(m_Points[3].x!=0){
@@ -375,7 +397,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 void KinectGrabber::getJointsPoints() {
 	headJoints_x=m_Points[3].x;
 	headJoints_y=m_Points[3].y;
-	//=m_Points[3].
+	headJoints_z = m_playerJointDepth[3] >> 3;
 	handLeft_x=m_Points[7].x;
 	handLeft_y=m_Points[7].y;
 	handRight_x=m_Points[11].x;
@@ -384,4 +406,6 @@ void KinectGrabber::getJointsPoints() {
 	shoulderLeft_y=m_Points[4].y;
 	shoulderRight_x=m_Points[8].x;
 	shoulderRight_y=m_Points[8].y;
+
+	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );
 }

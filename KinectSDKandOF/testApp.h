@@ -49,8 +49,9 @@ class testApp : public ofBaseApp{
 		unsigned char	* grayPixels;
 		unsigned char	* highlightPixels;
 		unsigned char	* overPixels;
-		int headPositionX, headPositionY;
+		int headPositionX, headPositionY, headPositionZ;
 		
+		int thresh;
 		//ofxFBOTexture texBlur;
 
 };

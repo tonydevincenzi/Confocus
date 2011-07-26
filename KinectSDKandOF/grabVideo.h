@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <process.h>
+//#include "MSR_NuiApi.h" // move this here
 
 //#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
 
@@ -50,6 +51,7 @@ public:
     //HWND m_hWnd;
 	int           headJoints_x;
 	int           headJoints_y;
+	int           headJoints_z;
 	int           handLeft_x;
 	int           handLeft_y;
 	int           handRight_x;
@@ -76,8 +78,10 @@ private:
     HANDLE        m_hNextSkeletonFrameEvent;
     HANDLE        m_hNextDepthFrameEvent;
     HANDLE        m_hNextVideoFrameEvent;
-    HANDLE        m_hNextSkeletonEvent;
+    HANDLE        m_hNextDepthPlayerFrameEvent;
+	//HANDLE        m_hNextSkeletonEvent;
     HANDLE        m_pDepthStreamHandle;
+	HANDLE        m_pDepthPlayerStreamHandle;
     HANDLE        m_pVideoStreamHandle;
     //HFONT         m_hFontFPS;
     //HPEN          m_Pen[6];
