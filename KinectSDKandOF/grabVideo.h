@@ -16,8 +16,8 @@
 
 const int VIDEO_WIDTH = 640;
 const int VIDEO_HEIGHT= 480;
-const int DEPTH_WIDTH = 320;
-const int DEPTH_HEIGHT= 240;
+const int DEPTH_WIDTH = 640;
+const int DEPTH_HEIGHT= 480;
 
 
 class KinectGrabber
@@ -50,6 +50,15 @@ public:
     //HWND m_hWnd;
 	int           headJoints_x;
 	int           headJoints_y;
+	int           handLeft_x;
+	int           handLeft_y;
+	int           handRight_x;
+	int           handRight_y;
+	int           shoulderLeft_x;
+	int           shoulderLeft_y;
+	int           shoulderRight_x;
+	int           shoulderRight_y;
+
 
 private:
     //static DWORD WINAPI     Kinect_ProcessThread(LPVOID pParam);

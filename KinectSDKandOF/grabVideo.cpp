@@ -15,7 +15,9 @@
 
 
 void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
-	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
+	//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
+	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(320-depthX/2), LONG(depthY/2), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
+
 }
 
 void KinectGrabber::Kinect_Zero()
@@ -51,12 +53,12 @@ HRESULT KinectGrabber::Kinect_Init() {
 	m_hNextSkeletonFrameEvent = CreateEvent( NULL, TRUE, FALSE, NULL );    
 	
 	hr = NuiInitialize( 
-        NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON | NUI_INITIALIZE_FLAG_USES_COLOR);
+        NUI_INITIALIZE_FLAG_USES_DEPTH |  NUI_INITIALIZE_FLAG_USES_COLOR); //NUI_INITIALIZE_FLAG_USES_SKELETON |
     if( FAILED( hr ) )
     {
 		printf("failed to inialize nui");
 	}
-	hr = NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
+	hr = NuiSkeletonTrackingEnable( m_hNextSkeletonFrameEvent, 0 );
     if( FAILED( hr ) )
     {
 		printf("failed to open skeleton tracking.");//    MessageBoxResource(m_hWnd,IDS_ERROR_SKELETONTRACKING,MB_OK | MB_ICONHAND);
@@ -75,8 +77,8 @@ HRESULT KinectGrabber::Kinect_Init() {
         return hr;
     }
 	hr = NuiImageStreamOpen(
-        NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX,
-        NUI_IMAGE_RESOLUTION_320x240,
+        NUI_IMAGE_TYPE_DEPTH,
+        NUI_IMAGE_RESOLUTION_640x480,
         0,
         2,
         m_hNextDepthFrameEvent,
@@ -132,8 +134,7 @@ int KinectGrabber::Kinect_Update()
     
     // Wait for an event to be signalled
     nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
-    if (nEventIdx ==2) 
-	printf("index obtained %d\n",nEventIdx);
+    printf("index obtained %d out of %d\n",nEventIdx, sizeof(hEvents)/sizeof(hEvents[0]));
     // If the stop event, stop looping and exit
     //if(nEventIdx==0)
         //break;            
@@ -151,9 +152,10 @@ int KinectGrabber::Kinect_Update()
                 break;
 					
             case 2:
-          //      Kinect_GotSkeletonAlert();
+            //    Kinect_GotSkeletonAlert();
                 break;
         }
+		Kinect_GotDepthAlert();
 		Kinect_GotSkeletonAlert();
 		
 
@@ -243,7 +245,8 @@ void KinectGrabber::Kinect_GotDepthAlert( ) {
                 *rgbrun = quad;
                 rgbrun++;
 				
-				USHORT RealDepth = (*pBufferRun & 0xfff8) >> 3;
+				//USHORT RealDepth = (*pBufferRun & 0xfff8) >> 3;
+				USHORT RealDepth = (*pBufferRun & 0x0fff);			
 				*depthrun = RealDepth;
 				depthrun++;
 
@@ -291,8 +294,8 @@ RGBQUAD* KinectGrabber::Kinect_getDepthPixels() {
 }
 RGBQUAD KinectGrabber::Kinect_DepthToRGB( USHORT s )
 {
-    USHORT RealDepth = (s & 0xfff8) >> 3;
-
+    //USHORT RealDepth = (s & 0xfff8) >> 3;
+	USHORT RealDepth =  (s & 0x0fff);
     // transform 13-bit depth information into an 8-bit intensity appropriate
     // for display (we disregard information in most significant bit)
     BYTE l = 255 - (BYTE)(256*RealDepth/0x0fff);
@@ -372,4 +375,13 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 void KinectGrabber::getJointsPoints() {
 	headJoints_x=m_Points[3].x;
 	headJoints_y=m_Points[3].y;
+	//=m_Points[3].
+	handLeft_x=m_Points[7].x;
+	handLeft_y=m_Points[7].y;
+	handRight_x=m_Points[11].x;
+	handRight_y=m_Points[11].y;
+	shoulderLeft_x=m_Points[4].x;
+	shoulderLeft_y=m_Points[4].y;
+	shoulderRight_x=m_Points[8].x;
+	shoulderRight_y=m_Points[8].y;
 }

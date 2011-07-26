@@ -21,7 +21,6 @@ void testApp::setup(){
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 	texHighlight.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 	//texHighlight2.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
-	//texBlur.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	texOver.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
 }
 
@@ -39,13 +38,22 @@ void testApp::update(){
 	if (grayPixels != NULL) {
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}*/
-	USHORT* playerBuff = g_kinectGrabber.Kinect_getPlayerBuffer();
-	highlightRGB(colorAlphaPixels, playerBuff, highlightPixels, overPixels);
+	
+	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
+	highlightRGB(colorAlphaPixels, depthBuff, highlightPixels, overPixels);
 	if(highlightPixels != NULL) {
-		adjustOver(25, overPixels);
+	//	adjustOver(25, overPixels);
 		texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
+		
+	//USHORT* playerBuff = g_kinectGrabber.Kinect_getPlayerBuffer();
+	//highlightRGB(colorAlphaPixels, playerBuff, highlightPixels, overPixels);
+	//if(highlightPixels != NULL) {
+	//	adjustOver(25, overPixels);
+	//	texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+	//	texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+	//}
 
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
@@ -53,6 +61,7 @@ void testApp::update(){
 	g_kinectGrabber.getJointsPoints();
 	headPositionX=g_kinectGrabber.headJoints_x;
 	headPositionY=g_kinectGrabber.headJoints_y;
+	//m_Points[3].z;
 	//printf("position: %d\n",headPositionX);
 	
 
@@ -66,6 +75,8 @@ void testApp::draw(){
 	//big image
 	texColorAlpha.draw(0,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 	
+	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+
 	//diminished image
 	texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 	texOver.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
@@ -118,6 +129,46 @@ void testApp::windowResized(int w, int h){
 
 
 //TODO: move this into a "features" file
+void testApp::highlightRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * highlightBuff, BYTE* overBuff) {
+	  if (videoBuff && depthBuff) {
+		LONG* pcolorx = new LONG();
+		LONG* pcolory = new LONG();
+		int max_index = DEPTH_WIDTH * DEPTH_HEIGHT * 4;
+
+		for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+	
+				g_kinectGrabber.Kinect_ColorFromDepth(x, y, pcolorx, pcolory);
+				int index = (y * DEPTH_WIDTH) + x;
+				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
+				//printf("depth (%d, %d)  color (%li, %li) \n", x, y, *pcolorx, *pcolory);
+				//printf("index: %d color index: %d \n", index, color_index);
+				
+				//bool show = isInPlayerBound(index, playerBuff, max_index);
+
+				highlightBuff[4*index + 0] = videoBuff[4*color_index + 0];
+				highlightBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				highlightBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				highlightBuff[4*index + 3] = 255;
+				overBuff[4*index + 0] = 0;
+				overBuff[4*index + 1] = 0;
+				overBuff[4*index + 2] = 0;
+				//if that pixel does not belong to a player,  black it out
+				//otherwise, leave its rgb values in tact
+				if (depthBuff[index] > 2000 ) {
+					overBuff[4*index + 3] = 0;
+				} else {
+					overBuff[4*index + 3] = 255;
+				}
+			}
+		}  
+		free(pcolorx);
+		free(pcolory);
+	  }
+}
+
+
+/*
 void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlightBuff, BYTE* overBuff) {
 	  if (videoBuff && playerBuff) {
 		LONG* pcolorx = new LONG();
@@ -155,7 +206,7 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlight
 		free(pcolory);
 	  }
 }
-
+*/
 void testApp::adjustOver(int range, BYTE * overBuff) {
 	// states:
 	// 0 - have not seen a player pixel
@@ -169,14 +220,15 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 				int index = (y*DEPTH_WIDTH) + x;
 	
 				if (overBuff[4*index + 3] == 0) {
-					/*
-					for (int i = 0; i <= range; i++ ) {
-							overBuff[(index + i) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index+ i) * 4 + 3]); 
-					}
-					for (int i = 0; i <= range; i++ ) {
-							overBuff[(index - i) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index- i) * 4 + 3]);
-					}
+					
+					/*for (int i = 0; i <= range; i++ ) {
+						//if (y + i < DEPTH_HEIGHT)
+						//	overBuff[(index + (DEPTH_WIDTH*i)) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index+ (DEPTH_WIDTH*i)) * 4 + 3]); 
+
+						if (y-i > 0)
+							overBuff[(index - (DEPTH_WIDTH*i)) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index- (DEPTH_WIDTH*i)) * 4 + 3]);
 					*/
+					
 					if (state == 0) {
 						//do blending on left
 						for (int i = 0; i < range; i++ ) {
