@@ -13,15 +13,15 @@ void testApp::setup(){
 	g_kinectGrabber.Kinect_Init();
 	
 	thresh = 300;
-	highlightPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
-	overPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
+	focusPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
+	blurPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
-	texHighlight.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
-	texOver.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
+	texFocus.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
+	texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
 	blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
-	shader.load("shaders/simpleBlurHorizontal.vert", "shaders/simpleBlurHorizontal.frag");
+	//shader.load("shaders/simpleBlurHorizontal.vert", "shaders/simpleBlurHorizontal.frag");
 	
 }
 
@@ -41,13 +41,13 @@ void testApp::update(){
 	}*/
 	
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
-	highlightRGB(colorAlphaPixels, depthBuff, highlightPixels, overPixels);
-	if(highlightPixels != NULL) {
+	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels);
+	if(focusPixels != NULL) {
 		//adjustOver(15, overPixels);
-		texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
-		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+		texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+		texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-	blurImg.setFromPixels(highlightPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
+	blurImg.setFromPixels(focusPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
@@ -76,7 +76,7 @@ void testApp::draw(){
 
 	blurImg.blurGaussian(25);
 	blurImg.draw(640,0);
-	texOver.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
+	texBlur.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 	
 	
 	//texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
@@ -92,26 +92,14 @@ void testApp::draw(){
 
 	ofCircle(headPositionX,headPositionY,20);
 	
-	/*
-	//	if( doShader ){
-		shader.begin();
-			//we want to pass in some varrying values to animate our type / color 
-			shader.setUniform1f("timeValX", ofGetElapsedTimef() * 0.1 );
-			shader.setUniform1f("timeValY", -ofGetElapsedTimef() * 0.18 );
-			
-			//we also pass in the mouse position 
-			//we have to transform the coords to what the shader is expecting which is 0,0 in the center and y axis flipped. 
-			shader.setUniform2f("mouse", mouseX - ofGetWidth()/2, ofGetHeight()/2-mouseY );
 
-	//}*/
-	
 }
 //-------------------------------------------------------------
 void testApp::exit(){
 	printf("cleaning up\n");
 	g_kinectGrabber.Kinect_UnInit();
-	free(highlightPixels);
-	free(overPixels);
+	free(focusPixels);
+	free(blurPixels);
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
@@ -160,7 +148,7 @@ void testApp::windowResized(int w, int h){
 
 
 //TODO: move this into a "features" file
-void testApp::highlightRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * highlightBuff, BYTE* overBuff) {
+void testApp::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff) {
 	  if (videoBuff && depthBuff) {
 		LONG* pcolorx = new LONG();
 		LONG* pcolory = new LONG();
@@ -172,24 +160,19 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * highlightB
 				g_kinectGrabber.Kinect_ColorFromDepth(x, y, pcolorx, pcolory);
 				int index = (y * DEPTH_WIDTH) + x;
 				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
-				//printf("depth (%d, %d)  color (%li, %li) \n", x, y, *pcolorx, *pcolory);
-				//printf("index: %d color index: %d \n", index, color_index);
 				
-				//bool show = isInPlayerBound(index, playerBuff, max_index);
-
-				highlightBuff[3*index + 0] = videoBuff[4*color_index + 0];
-				highlightBuff[3*index + 1] = videoBuff[4*color_index + 1];
-				highlightBuff[3*index + 2] = videoBuff[4*color_index + 2];
-				//highlightBuff[4*index + 3] = 255;*/
-				overBuff[4*index + 0] = videoBuff[4*color_index + 0];
-				overBuff[4*index + 1] = videoBuff[4*color_index + 1];
-				overBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				focusBuff[3*index + 0] = videoBuff[4*color_index + 0];
+				focusBuff[3*index + 1] = videoBuff[4*color_index + 1];
+				focusBuff[3*index + 2] = videoBuff[4*color_index + 2];
+				blurBuff[4*index + 0] = videoBuff[4*color_index + 0];
+				blurBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				blurBuff[4*index + 2] = videoBuff[4*color_index + 2];
 				//if that pixel does not belong to a player,  black it out (alpha = 255)
 				//otherwise, display its rgb values
 				if (depthBuff[index] > headPositionZ + thresh  || depthBuff[index] < headPositionZ - thresh ) {
-					overBuff[4*index + 3] = 0;
+					blurBuff[4*index + 3] = 0;
 				} else {
-					overBuff[4*index + 3] = 255;
+					blurBuff[4*index + 3] = 255;
 				}
 			}
 		}  
@@ -331,17 +314,4 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 			}
 	}
 
-}*/
-/*
-bool testApp::isInPlayerBound(int index, USHORT* playerBuff, int max_index) {
-	if (playerBuff[index]
-		//|| (index > 1 && playerBuff[index - 1])  //to the left
-		//|| (index <  max_index - 1 && playerBuff[index + 1]) // to the right
-		//|| (index > (DEPTH_WIDTH) && playerBuff[index - (DEPTH_WIDTH)])  //to the top
-		//|| (index < max_index - (DEPTH_WIDTH) && playerBuff[index + (DEPTH_WIDTH)])	// to the bottom	
-	) {
-		return true; 
-	} else {
-		return false;
-	}
 }*/

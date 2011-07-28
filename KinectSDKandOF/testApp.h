@@ -30,8 +30,8 @@ class testApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		
 		// TODO: move this when a separate "features" file is made.
-		void highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* highlightBuff, BYTE* overBuff);
-		void adjustOver(int range, BYTE* overBuff);
+		void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff);
+		void adjustOver(int range, BYTE* blurBuff);
 		//bool	isInPlayerBound(int index, USHORT* playerBuff, int max_index);
 
 		ofVideoGrabber grabber;
@@ -41,15 +41,14 @@ class testApp : public ofBaseApp{
 		KinectGrabber g_kinectGrabber;
 		ofTexture		texColorAlpha;
 		ofTexture		texGray;
-		ofTexture		texHighlight;
-		ofTexture		texOver;
+		ofTexture		texFocus;
+		ofTexture		texBlur;
 		ofxCvColorImage	blurImg;
-		//ofxCvColorImage	texHighlight2;
 		
 		unsigned char 	* colorAlphaPixels;
 		unsigned char	* grayPixels;
-		unsigned char	* highlightPixels;
-		unsigned char	* overPixels;
+		unsigned char	* focusPixels;
+		unsigned char	* blurPixels;
 		int headPositionX, headPositionY, headPositionZ;
 		
 		int thresh;
