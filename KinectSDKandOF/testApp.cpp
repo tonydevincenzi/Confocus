@@ -4,25 +4,25 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){	
-	ofBackground(255,255,255);	
+	ofEnableAlphaBlending();
 	
-	//blur.setup(640, 480);
-	//hasCamera = grabber.initGrabber(640, 480);
+	ofBackground(255,255,255);	
 	
 	printf("initializing\n");
 	g_kinectGrabber.Kinect_Zero();
 	g_kinectGrabber.Kinect_Init();
-	//printf("gathering data\n");
-
-	thresh = 100;
+	
+	thresh = 300;
 	highlightPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 	overPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 	texHighlight.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
-	//texHighlight2.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
 	texOver.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
+	blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
+	shader.load("shaders/simpleBlurHorizontal.vert", "shaders/simpleBlurHorizontal.frag");
+	
 }
 
 //--------------------------------------------------------------
@@ -47,15 +47,7 @@ void testApp::update(){
 		texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-		
-	//USHORT* playerBuff = g_kinectGrabber.Kinect_getPlayerBuffer();
-	//highlightRGB(colorAlphaPixels, playerBuff, highlightPixels, overPixels);
-	//if(highlightPixels != NULL) {
-	//	adjustOver(25, overPixels);
-	//	texOver.loadData(overPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
-	//	texHighlight.loadData(highlightPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
-	//}
-
+	blurImg.setFromPixels(highlightPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
@@ -72,18 +64,25 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	ofEnableAlphaBlending();
 	
-	//big image
+	//video image
+	//shader.begin();
+	//shader.setUniform(
 	texColorAlpha.draw(0,0,VIDEO_WIDTH, VIDEO_HEIGHT);
-	
-	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+	//shader.end();
 
-	//diminished image
-	texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
-	texOver.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 	
-	ofDisableAlphaBlending();
+	//diminished image
+
+	blurImg.blurGaussian(25);
+	blurImg.draw(640,0);
+	texOver.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
+	
+	
+	//texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+	//ofDisableAlphaBlending();
+	//texOver.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
 	ofSetHexColor(0xffffff);
 	char reportStr[1024];
@@ -92,6 +91,19 @@ void testApp::draw(){
 
 
 	ofCircle(headPositionX,headPositionY,20);
+	
+	/*
+	//	if( doShader ){
+		shader.begin();
+			//we want to pass in some varrying values to animate our type / color 
+			shader.setUniform1f("timeValX", ofGetElapsedTimef() * 0.1 );
+			shader.setUniform1f("timeValY", -ofGetElapsedTimef() * 0.18 );
+			
+			//we also pass in the mouse position 
+			//we have to transform the coords to what the shader is expecting which is 0,0 in the center and y axis flipped. 
+			shader.setUniform2f("mouse", mouseX - ofGetWidth()/2, ofGetHeight()/2-mouseY );
+
+	//}*/
 	
 }
 //-------------------------------------------------------------
@@ -165,19 +177,19 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * highlightB
 				
 				//bool show = isInPlayerBound(index, playerBuff, max_index);
 
-				highlightBuff[4*index + 0] = videoBuff[4*color_index + 0];
-				highlightBuff[4*index + 1] = videoBuff[4*color_index + 1];
-				highlightBuff[4*index + 2] = videoBuff[4*color_index + 2];
-				highlightBuff[4*index + 3] = 255;
-				overBuff[4*index + 0] = 0;
-				overBuff[4*index + 1] = 0;
-				overBuff[4*index + 2] = 0;
+				highlightBuff[3*index + 0] = videoBuff[4*color_index + 0];
+				highlightBuff[3*index + 1] = videoBuff[4*color_index + 1];
+				highlightBuff[3*index + 2] = videoBuff[4*color_index + 2];
+				//highlightBuff[4*index + 3] = 255;*/
+				overBuff[4*index + 0] = videoBuff[4*color_index + 0];
+				overBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				overBuff[4*index + 2] = videoBuff[4*color_index + 2];
 				//if that pixel does not belong to a player,  black it out (alpha = 255)
 				//otherwise, display its rgb values
 				if (depthBuff[index] > headPositionZ + thresh  || depthBuff[index] < headPositionZ - thresh ) {
-					overBuff[4*index + 3] = 255;
-				} else {
 					overBuff[4*index + 3] = 0;
+				} else {
+					overBuff[4*index + 3] = 255;
 				}
 			}
 		}  
@@ -226,6 +238,34 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlight
 	  }
 }
 */
+/*
+void testApp::adjustOver(int range, BYTE * overBuff) {
+	// states:
+	// 0 - have not seen a player pixel
+	// 1 - scanning a player pixel
+	// 2 - have not seen a player pixel, but no longer scanning a  player pixel
+	int state = 0;
+
+	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+				
+				int index = (y*DEPTH_WIDTH) + x;
+	
+				if (overBuff[4*index + 3] == 1) {
+					
+					int sum = 0;
+					for (int i = -range; i <= range; i++ ) {
+						sum += overBuff[(index - (DEPTH_WIDTH*i)) * 4 + 3];
+					}
+					int ave = sum/(2*range);
+					overBuff[4*index + 3] =  min((int)overBuff[4*index + 3], ave);
+
+				}
+			}
+	}
+}
+
+/*
 void testApp::adjustOver(int range, BYTE * overBuff) {
 	// states:
 	// 0 - have not seen a player pixel
@@ -248,7 +288,7 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 							overBuff[(index - (DEPTH_WIDTH*i)) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index- (DEPTH_WIDTH*i)) * 4 + 3]);
 					*/
 					
-					if (state == 0) {
+/*					if (state == 0) {
 						//do blending on left
 						for (int i = 0; i < range; i++ ) {
 							if (x - i >= 0)
@@ -291,7 +331,7 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 			}
 	}
 
-}
+}*/
 /*
 bool testApp::isInPlayerBound(int index, USHORT* playerBuff, int max_index) {
 	if (playerBuff[index]

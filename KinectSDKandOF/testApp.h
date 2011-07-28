@@ -8,6 +8,7 @@
 //#include "ofxShader.h"
 //#include "shaderBlur.h"
 #include "ofxOpenCv.h"
+#include "ofShader.h"
 
 #include "grabVideo.h"
 
@@ -42,7 +43,7 @@ class testApp : public ofBaseApp{
 		ofTexture		texGray;
 		ofTexture		texHighlight;
 		ofTexture		texOver;
-		//ofxCvColorImage	texHighlight;
+		ofxCvColorImage	blurImg;
 		//ofxCvColorImage	texHighlight2;
 		
 		unsigned char 	* colorAlphaPixels;
@@ -53,7 +54,7 @@ class testApp : public ofBaseApp{
 		
 		int thresh;
 		//ofxFBOTexture texBlur;
-
+		ofShader shader;
 };
 
 #endif

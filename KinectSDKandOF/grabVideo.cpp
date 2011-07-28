@@ -16,7 +16,7 @@
 
 void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
 	//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
-	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(320-depthX/2), LONG(depthY/2), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
+	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX/2), LONG(depthY/2), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
 
 }
 
@@ -154,7 +154,7 @@ int KinectGrabber::Kinect_Update()
     
     // Wait for an event to be signalled
     nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
-    printf("index obtained %d out of %d\n",nEventIdx, sizeof(hEvents)/sizeof(hEvents[0]));
+    //printf("index obtained %d out of %d\n",nEventIdx, sizeof(hEvents)/sizeof(hEvents[0]));
     // If the stop event, stop looping and exit
     //if(nEventIdx==0)
         //break;            
@@ -203,7 +203,8 @@ void KinectGrabber::Kinect_GotVideoAlert( )
     {
         memcpy(m_rgbBuffer, LockedRect.pBits, sizeof(BYTE) * VIDEO_HEIGHT * VIDEO_WIDTH * 4);
 		//m_rgbBuffer = (BYTE*) LockedRect.pBits;
-		Kinect_FormatRGBForOutput();			
+		Kinect_FormatRGBForOutput();	
+		Kinect_makeRGBFromRGBA();
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
 	}
     else
@@ -229,6 +230,18 @@ void KinectGrabber::Kinect_FormatRGBForOutput() {
 
 	}
 }
+
+
+void KinectGrabber::Kinect_makeRGBFromRGBA() {
+	int totalPixels = VIDEO_HEIGHT*VIDEO_WIDTH;
+	for (int i = 0; i < totalPixels; i++) {
+		m_rgb_noalpa_Buffer[3*i] = m_rgbBuffer[4*i];
+		m_rgb_noalpa_Buffer[3*i+1] = m_rgbBuffer[4*i+1];
+		m_rgb_noalpa_Buffer[3*i+2] = m_rgbBuffer[4*i+2];
+
+	}
+}
+
 
 void KinectGrabber::Kinect_GotDepthAlert( ) {
 	const NUI_IMAGE_FRAME * pImageFrame = NULL;
@@ -267,8 +280,10 @@ void KinectGrabber::Kinect_GotDepthAlert( ) {
 				
 				//USHORT RealDepth = (*pBufferRun & 0xfff8) >> 3;
 				USHORT RealDepth = (*pBufferRun & 0x0fff);			
-				*depthrun = RealDepth;
-				depthrun++;
+				//*depthrun = RealDepth;
+				//depthrun++;
+				//flip the depth image to match the video image
+				m_depthBuffer[((y+1)*DEPTH_WIDTH) - x] = RealDepth;
 
 				USHORT Player = *pBufferRun  & 7;
 				*playerrun = Player;
@@ -299,6 +314,9 @@ BYTE* KinectGrabber::Kinect_getAlphaPixels() {
 	return m_rgbBuffer;
 }
 
+BYTE* KinectGrabber::Kinect_getRGBBuffer() {
+	return m_rgb_noalpa_Buffer;
+}
 
 USHORT* KinectGrabber::Kinect_getPlayerBuffer() {
 	return m_playerBuffer;
