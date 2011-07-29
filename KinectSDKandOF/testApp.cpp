@@ -43,11 +43,11 @@ void testApp::update(){
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
 	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels);
 	if(focusPixels != NULL) {
-		//adjustOver(15, overPixels);
-		texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+		adjustOver(2, focusPixels);
+		//texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-	blurImg.setFromPixels(focusPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
+	blurImg.setFromPixels(blurPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
@@ -76,7 +76,7 @@ void testApp::draw(){
 
 	blurImg.blurGaussian(25);
 	blurImg.draw(640,0);
-	texBlur.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
+	texFocus.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 	
 	
 	//texHighlight.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
@@ -161,18 +161,19 @@ void testApp::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYT
 				int index = (y * DEPTH_WIDTH) + x;
 				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
 				
-				focusBuff[3*index + 0] = videoBuff[4*color_index + 0];
-				focusBuff[3*index + 1] = videoBuff[4*color_index + 1];
-				focusBuff[3*index + 2] = videoBuff[4*color_index + 2];
-				blurBuff[4*index + 0] = videoBuff[4*color_index + 0];
-				blurBuff[4*index + 1] = videoBuff[4*color_index + 1];
-				blurBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				focusBuff[4*index + 0] = videoBuff[4*color_index + 0];
+				focusBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				focusBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				blurBuff[3*index + 0] = videoBuff[4*color_index + 0] /2;
+				blurBuff[3*index + 1] = videoBuff[4*color_index + 1]/2;
+				blurBuff[3*index + 2] = videoBuff[4*color_index + 2]/2;
+				//blurBuff[4*index + 3] = 255;
 				//if that pixel does not belong to a player,  black it out (alpha = 255)
 				//otherwise, display its rgb values
 				if (depthBuff[index] > headPositionZ + thresh  || depthBuff[index] < headPositionZ - thresh ) {
-					blurBuff[4*index + 3] = 0;
+					focusBuff[4*index + 3] = 0;
 				} else {
-					blurBuff[4*index + 3] = 255;
+					focusBuff[4*index + 3] = 255;
 				}
 			}
 		}  
@@ -221,31 +222,84 @@ void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlight
 	  }
 }
 */
-/*
+
 void testApp::adjustOver(int range, BYTE * overBuff) {
-	// states:
-	// 0 - have not seen a player pixel
-	// 1 - scanning a player pixel
-	// 2 - have not seen a player pixel, but no longer scanning a  player pixel
-	int state = 0;
+	
+	//unsigned char new_alpha_buff[DEPTH_WIDTH*DEPTH_HEIGHT];
+	BYTE * new_alpha_buff;
+	new_alpha_buff = (BYTE*) malloc (DEPTH_WIDTH*DEPTH_HEIGHT*sizeof(BYTE));
 
 	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
 			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
 				
 				int index = (y*DEPTH_WIDTH) + x;
 	
-				if (overBuff[4*index + 3] == 1) {
-					
-					int sum = 0;
-					for (int i = -range; i <= range; i++ ) {
-						sum += overBuff[(index - (DEPTH_WIDTH*i)) * 4 + 3];
-					}
-					int ave = sum/(2*range);
-					overBuff[4*index + 3] =  min((int)overBuff[4*index + 3], ave);
+				int sum = 0;//overBuff[4*index + 3];
+				int divisors = 0;//1;
+				
+				for (int m = 0; m < range; m ++) {
+					int w_offset = m * DEPTH_WIDTH;
+					for (int n = 0; n < range; n ++) {
+						int new_index = index - w_offset - n;
+						if (new_index > 0) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+						
+						new_index = index + w_offset + n;
+						if (new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
 
+						new_index = index - w_offset + n;
+						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+				
+						new_index = index + w_offset - n;
+						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+
+					}
 				}
+				/*
+				int new_index = index - DEPTH_WIDTH;
+				if (new_index > 0) {
+					sum += overBuff[4*(new_index) +3];
+					divisors ++;
+				}
+				new_index = index + DEPTH_WIDTH;
+				if (new_index < DEPTH_WIDTH * DEPTH_HEIGHT) {
+					sum += overBuff[4*(new_index) +3];
+					divisors ++;
+				}
+				new_index = index - 1;
+				if (new_index > 0) {
+					sum += overBuff[4*(new_index) +3];
+					divisors ++;
+				}
+				new_index = index +1;
+				if (new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+					sum += overBuff[4*(new_index) +3];
+					divisors ++;
+				}
+				*/
+				new_alpha_buff[index] = (unsigned char)(sum / divisors);
 			}
 	}
+	
+	
+	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+				overBuff[4 * ((y*DEPTH_WIDTH) + x) + 3] = new_alpha_buff[(y*DEPTH_WIDTH) + x];
+			}
+	}
+
+	free (new_alpha_buff);
 }
 
 /*
@@ -261,7 +315,7 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 				
 				int index = (y*DEPTH_WIDTH) + x;
 	
-				if (overBuff[4*index + 3] == 0) {
+				if (overBuff[4*index + 3] == 255) {
 					
 					/*for (int i = 0; i <= range; i++ ) {
 						//if (y + i < DEPTH_HEIGHT)
@@ -270,12 +324,12 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 						if (y-i > 0)
 							overBuff[(index - (DEPTH_WIDTH*i)) * 4 + 3] =  min(i * (255 / range), (int)overBuff[(index- (DEPTH_WIDTH*i)) * 4 + 3]);
 					*/
-					
-/*					if (state == 0) {
+					/*
+					if (state == 0) {
 						//do blending on left
 						for (int i = 0; i < range; i++ ) {
 							if (x - i >= 0)
-								overBuff[(index - i) * 4 + 3] = min(i * (255 / range), (int)overBuff[(index- i) * 4 + 3]); 
+								overBuff[(index - i) * 4 + 3] = max(255 - i * (255 / range), (int)overBuff[(index- i) * 4 + 3]); 
 						}
 						state = 1;
 					} else if (state == 1) {
@@ -297,7 +351,7 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 						// blend on right
 						for (int i = 0; i <= range; i++ ) {
 							if (x + i <= DEPTH_WIDTH)
-								overBuff[(index + i) * 4 + 3] = min(i * (255 / range), (int)overBuff[(index + i) * 4 + 3]); 
+								overBuff[(index + i) * 4 + 3] = max(255 - i * (255 / range), (int)overBuff[(index + i) * 4 + 3]); 
 						}
 						state = 2;
 

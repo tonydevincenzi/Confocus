@@ -54,6 +54,7 @@ class testApp : public ofBaseApp{
 		int thresh;
 		//ofxFBOTexture texBlur;
 		ofShader shader;
+
 };
 
 #endif
