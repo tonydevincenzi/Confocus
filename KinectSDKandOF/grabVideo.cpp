@@ -39,12 +39,12 @@ void KinectGrabber::Kinect_Zero()
     //m_PensTotal = 6;
     //ZeroMemory(m_Points,sizeof(m_Points));
     //m_LastSkeletonFoundTime = -1;
-    m_bScreenBlanked = false;
-    m_FramesTotal = 0;
+    //m_bScreenBlanked = false;
+    //m_FramesTotal = 0;
     //m_LastFPStime = -1;
-    m_LastFramesTotal = 0;
+    //m_LastFramesTotal = 0;
 	//m_rgbBuffer = NULL;
-	newRGBData = false;
+	//newRGBData = false;
 }
 
 HRESULT KinectGrabber::Kinect_Init() {

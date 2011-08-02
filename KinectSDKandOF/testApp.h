@@ -10,8 +10,11 @@
 #include "ofxOpenCv.h"
 #include "ofShader.h"
 
-#include "grabVideo.h"
+//#include "grabVideo.h"
+#include "conference.h"
 
+
+//const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
 	
 	public:
@@ -29,31 +32,33 @@ class testApp : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 		
-		// TODO: move this when a separate "features" file is made.
-		void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff);
-		void adjustOver(int range, BYTE* blurBuff);
-		//bool	isInPlayerBound(int index, USHORT* playerBuff, int max_index);
+		//TODO: move this
+		//void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff);
+		//void adjustOver(int range, BYTE* blurBuff);
 
+	private:
+	
+		//conferenceManager conference;
 		ofVideoGrabber grabber;
 		bool hasCamera;
 
-		//shaderBlur blur;
 		KinectGrabber g_kinectGrabber;
+		
 		ofTexture		texColorAlpha;
 		ofTexture		texGray;
 		ofTexture		texFocus;
 		ofTexture		texBlur;
-		ofxCvColorImage	blurImg;
-		
+		ofxCvColorImage	blurImg;		
 		unsigned char 	* colorAlphaPixels;
 		unsigned char	* grayPixels;
 		unsigned char	* focusPixels;
 		unsigned char	* blurPixels;
+
 		int headPositionX, headPositionY, headPositionZ;
 		
-		int thresh;
+		
 		//ofxFBOTexture texBlur;
-		ofShader shader;
+		//ofShader shader;
 
 };
 

@@ -13,8 +13,6 @@
 #include <process.h>
 //#include "MSR_NuiApi.h" // move this here
 
-//#define SZ_APPDLG_WINDOW_CLASS        _T("SkeletalViewerAppDlgWndClass")
-
 const int VIDEO_WIDTH = 640;
 const int VIDEO_HEIGHT= 480;
 const int DEPTH_WIDTH = 640;
@@ -24,7 +22,7 @@ const int DEPTH_HEIGHT= 480;
 class KinectGrabber
 {
 public:
-    HRESULT Kinect_Init();
+    HRESULT					Kinect_Init();
     void                    Kinect_UnInit( );
     void                    Kinect_GotVideoAlert( );
 	void                    Kinect_GotDepthAlert( );
@@ -32,14 +30,14 @@ public:
     void                    Kinect_Zero();
 	int						Kinect_Update();
 	void					print_bytes();
-	RGBQUAD*				Kinect_getDepthPixels();
-	BYTE*					Kinect_getAlphaPixels();
-	BYTE*					Kinect_getRGBBuffer();
-	USHORT*					Kinect_getDepthBuffer();
-	USHORT*					Kinect_getPlayerBuffer();
-	void                    getJointsPoints();
-	void					Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY);
-	void					Kinect_makeRGBFromRGBA();
+	RGBQUAD*		Kinect_getDepthPixels();
+	BYTE*			Kinect_getAlphaPixels();
+	BYTE*			Kinect_getRGBBuffer();
+	USHORT*			Kinect_getDepthBuffer();
+	USHORT*			Kinect_getPlayerBuffer();
+	void            getJointsPoints();
+	void			Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY);
+	void			Kinect_makeRGBFromRGBA();
 	//void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel);
@@ -52,7 +50,7 @@ public:
     //HWND m_hWnd;
 	int           headJoints_x;
 	int           headJoints_y;
-	int           headJoints_z;
+	int    headJoints_z;
 	int           handLeft_x;
 	int           handLeft_y;
 	int           handRight_x;
@@ -93,8 +91,8 @@ private:
     //POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
     //RGBQUAD       m_rgbWk[640*480];
     //int           m_LastSkeletonFoundTime;
-    bool          m_bScreenBlanked;
-    int           m_FramesTotal;
+    //bool          m_bScreenBlanked;
+    //int           m_FramesTotal;
     //int           m_LastFPStime;
     int           m_LastFramesTotal;
 	BYTE 		  m_rgbBuffer[4*VIDEO_HEIGHT*VIDEO_WIDTH];
@@ -103,6 +101,5 @@ private:
 	USHORT		  m_depthBuffer[DEPTH_HEIGHT*DEPTH_WIDTH];
 	USHORT		  m_playerBuffer[DEPTH_HEIGHT*DEPTH_WIDTH];
 
-	//CRITICAL_SECTION rgbLock;
-	bool			newRGBData;
+	//bool			newRGBData;
 };
