@@ -1,17 +1,27 @@
 #include "conference.h"
 
-// TODO: move this when a separate "features" file is made.
-//void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuffer);
-
-//TODO: move this into a "features" file
-//void testApp::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff) {
-
 
 struct conferenceManager {
 		applicationState appState;
 } conference;
 
+void conference_init() {
+	conference.appState = IDLE;
+}
+/*
+void conference_update() {
+printf(audio_direction);
+}*/
 
+/*
+void conference_update() {
+	if (conference.appState == IDLE) {
+		// do nothing; everything should be blurry
+	} else if (conference.appState == SPEAKING) {
+		//focus in on the speaker
+	}
+}
+*/
 
 //void conferenceManager::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber kinectGrabber) {
 //void testApp::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff) {

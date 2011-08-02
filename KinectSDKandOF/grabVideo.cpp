@@ -9,9 +9,77 @@
 //#include <strsafe.h>
 //#include <conio.h>
 
+// For configuring DMO properties
+#include <wmcodecdsp.h>
+// For discovering microphone array device
+#include <MMDeviceApi.h>
+#include <devicetopology.h>
+
 #include "stdafx.h"
 #include "grabVideo.h"
 #include "MSR_NuiApi.h"
+
+// For CLSID_CMSRKinectAudio GUID
+#include "MSRKinectAudio.h"
+
+
+#define SAFE_ARRAYDELETE(p) {if (p) delete[] (p); (p) = NULL;}
+#define SAFE_RELEASE(p) {if (NULL != p) {(p)->Release(); (p) = NULL;}}
+
+#define CHECK_RET(hr, message) if (FAILED(hr)) { printf("%s: %08X\n", message, hr); goto exit;}
+#define CHECKHR(x) hr = x; if (FAILED(hr)) {printf("%d: %08X\n", __LINE__, hr); goto exit;}
+#define CHECK_ALLOC(pb, message) if (NULL == pb) { puts(message); goto exit;}
+#define CHECK_BOOL(b, message) if (!b) { hr = E_FAIL; puts(message); goto exit;}
+
+
+class CStaticMediaBuffer : public IMediaBuffer {
+public:
+   CStaticMediaBuffer() {}
+   CStaticMediaBuffer(BYTE *pData, ULONG ulSize, ULONG ulData) :
+      m_pData(pData), m_ulSize(ulSize), m_ulData(ulData), m_cRef(1) {}
+   STDMETHODIMP_(ULONG) AddRef() { return 2; }
+   STDMETHODIMP_(ULONG) Release() { return 1; }
+   STDMETHODIMP QueryInterface(REFIID riid, void **ppv) {
+      if (riid == IID_IUnknown) {
+         AddRef();
+         *ppv = (IUnknown*)this;
+         return NOERROR;
+      }
+      else if (riid == IID_IMediaBuffer) {
+         AddRef();
+         *ppv = (IMediaBuffer*)this;
+         return NOERROR;
+      }
+      else
+         return E_NOINTERFACE;
+   }
+   STDMETHODIMP SetLength(DWORD ulLength) {m_ulData = ulLength; return NOERROR;}
+   STDMETHODIMP GetMaxLength(DWORD *pcbMaxLength) {*pcbMaxLength = m_ulSize; return NOERROR;}
+   STDMETHODIMP GetBufferAndLength(BYTE **ppBuffer, DWORD *pcbLength) {
+      if (ppBuffer) *ppBuffer = m_pData;
+      if (pcbLength) *pcbLength = m_ulData;
+      return NOERROR;
+   }
+   void Init(BYTE *pData, ULONG ulSize, ULONG ulData) {
+        m_pData = pData;
+        m_ulSize = ulSize;
+        m_ulData = ulData;
+    }
+protected:
+   BYTE *m_pData;
+   ULONG m_ulSize;
+   ULONG m_ulData;
+   ULONG m_cRef;
+};
+
+
+
+// Helper functions used to discover microphone array device
+HRESULT GetMicArrayDeviceIndex(int *piDeviceIndex);
+HRESULT GetJackSubtypeForEndpoint(IMMDevice* pEndpoint, GUID* pgSubtype);
+
+// Helper functions used to generate output file
+HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS);//, const TCHAR* outFile, int  iDuration);
 
 
 void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
@@ -45,6 +113,12 @@ void KinectGrabber::Kinect_Zero()
     //m_LastFramesTotal = 0;
 	//m_rgbBuffer = NULL;
 	//newRGBData = false;
+	
+	// audio
+	mmHandle = NULL;
+	pDMO = NULL;  
+    pPS = NULL;
+    
 }
 
 HRESULT KinectGrabber::Kinect_Init() {
@@ -92,19 +166,56 @@ HRESULT KinectGrabber::Kinect_Init() {
     	printf("failed to open NuiImagesStream");
         return hr;
     }
-	/*hr = NuiImageStreamOpen(
-        NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX,
-        NUI_IMAGE_RESOLUTION_320x240,
-        0,
-        2,
-        m_hNextDepthPlayerFrameEvent,
-        &m_pDepthPlayerStreamHandle );
-    if( FAILED( hr ) )
-    {
-    	printf("failed to open NuiImagesStream");
-        return hr;
-    }*/
-	return hr;
+	//return hr;
+
+	// audio initialization
+	hr = S_OK;
+    CoInitialize(NULL);
+    int  iMicDevIdx = -1; 
+	int  iSpkDevIdx = 0;  //Asume default speakers
+    DWORD mmTaskIndex = 0;
+
+    // Set high priority to avoid getting preempted while capturing sound
+    mmHandle = AvSetMmThreadCharacteristics(L"Audio", &mmTaskIndex);
+    CHECK_BOOL(mmHandle != NULL, "failed to set thread priority\n");
+
+    // DMO initialization
+    CHECKHR(CoCreateInstance(CLSID_CMSRKinectAudio, NULL, CLSCTX_INPROC_SERVER, IID_IMediaObject, (void**)&pDMO));
+    CHECKHR(pDMO->QueryInterface(IID_IPropertyStore, (void**)&pPS));
+
+	// Set AEC-MicArray DMO system mode.
+    // This must be set for the DMO to work properly
+    PROPVARIANT pvSysMode;
+    PropVariantInit(&pvSysMode);
+    pvSysMode.vt = VT_I4;
+    //   SINGLE_CHANNEL_AEC = 0
+    //   OPTIBEAM_ARRAY_ONLY = 2
+    //   OPTIBEAM_ARRAY_AND_AEC = 4
+    //   SINGLE_CHANNEL_NSAGC = 5
+    pvSysMode.lVal = (LONG)(2);
+    CHECKHR(pPS->SetValue(MFPKEY_WMAAECMA_SYSTEM_MODE, pvSysMode));
+    PropVariantClear(&pvSysMode);
+
+	// Tell DMO which capture device to use (we're using whichever device is a microphone array).
+    // Default rendering device (speaker) will be used.
+    hr = GetMicArrayDeviceIndex(&iMicDevIdx);
+    CHECK_RET(hr, "Failed to find microphone array device. Make sure microphone array is properly installed.");
+    
+    PROPVARIANT pvDeviceId;
+    PropVariantInit(&pvDeviceId);
+    pvDeviceId.vt = VT_I4;
+	//Speaker index is the two high order bytes and the mic index the two low order ones
+    pvDeviceId.lVal = (unsigned long)(iSpkDevIdx<<16) | (unsigned long)(0x0000ffff & iMicDevIdx);
+    CHECKHR(pPS->SetValue(MFPKEY_WMAAECMA_DEVICE_INDEXES, pvDeviceId));
+    PropVariantClear(&pvDeviceId);
+
+    puts("press any key to start viewing data localization.");
+    _getch();
+
+
+	exit:
+    puts("Press any key to continue");
+    
 }
 
 
@@ -133,6 +244,15 @@ void KinectGrabber::Kinect_UnInit( )
         CloseHandle( m_hNextDepthPlayerFrameEvent );
         m_hNextDepthPlayerFrameEvent = NULL;
     }
+
+
+	// Shutdown of audio stuff
+	SAFE_RELEASE(pDMO);
+    SAFE_RELEASE(pPS);
+
+    AvRevertMmThreadCharacteristics(mmHandle);
+    CoUninitialize();
+
 }
 
 
@@ -142,6 +262,10 @@ void KinectGrabber::Kinect_UnInit( )
 int KinectGrabber::Kinect_Update()
 
 {
+
+	// Capture sound in microphone array while performing beam angle detection and echo cancellation
+	DShowRecord(pDMO, pPS);
+
     //KinectGrabber *pthis=(KinectGrabber *) pParam;
     HANDLE                hEvents[3];
     int                    nEventIdx;
@@ -426,4 +550,188 @@ void KinectGrabber::getJointsPoints() {
 	shoulderRight_y=m_Points[8].y;
 
 	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );
+}
+
+
+HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* outFile, int  iDuration)
+{
+	ISoundSourceLocalizer* pSC = NULL;
+	HRESULT hr;
+	int  cTtlToGo = 0;
+	
+    DWORD cOutputBufLen = 0;
+    BYTE *pbOutputBuffer = NULL;
+	
+    WAVEFORMATEX wfxOut = {WAVE_FORMAT_PCM, 1, 16000, 32000, 2, 16, 0};
+	CStaticMediaBuffer outputBuffer;
+    DMO_OUTPUT_DATA_BUFFER OutputBufferStruct = {0};
+    OutputBufferStruct.pBuffer = &outputBuffer;
+    DMO_MEDIA_TYPE mt = {0};
+	
+    ULONG cbProduced = 0;
+    DWORD dwStatus;
+	
+    // Set DMO output format
+    hr = MoInitMediaType(&mt, sizeof(WAVEFORMATEX));
+    CHECK_RET(hr, "MoInitMediaType failed");
+    
+    mt.majortype = MEDIATYPE_Audio;
+    mt.subtype = MEDIASUBTYPE_PCM;
+    mt.lSampleSize = 0;
+    mt.bFixedSizeSamples = TRUE;
+    mt.bTemporalCompression = FALSE;
+    mt.formattype = FORMAT_WaveFormatEx;	
+    memcpy(mt.pbFormat, &wfxOut, sizeof(WAVEFORMATEX));
+  
+    hr = pDMO->SetOutputType(0, &mt, 0); 
+    CHECK_RET(hr, "SetOutputType failed");
+    MoFreeMediaType(&mt);
+
+    // Allocate streaming resources. This step is optional. If it is not called here, it
+    // will be called when first time ProcessInput() is called. However, if you want to 
+    // get the actual frame size being used, it should be called explicitly here.
+    hr = pDMO->AllocateStreamingResources();
+    CHECK_RET(hr, "AllocateStreamingResources failed");
+    
+    // Get actually frame size being used in the DMO. (optional, do as you need)
+    int iFrameSize;
+    PROPVARIANT pvFrameSize;
+    PropVariantInit(&pvFrameSize);
+    CHECKHR(pPS->GetValue(MFPKEY_WMAAECMA_FEATR_FRAME_SIZE, &pvFrameSize));
+    iFrameSize = pvFrameSize.lVal;
+    PropVariantClear(&pvFrameSize);
+
+    // allocate output buffer
+    cOutputBufLen = wfxOut.nSamplesPerSec * wfxOut.nBlockAlign;
+    pbOutputBuffer = new BYTE[cOutputBufLen];
+    CHECK_ALLOC (pbOutputBuffer, "out of memory.\n");
+	
+   // number of frames to record
+    //cTtlToGo = iDuration * 100;
+
+	DWORD written = 0;
+	int totalBytes = 0;
+	
+	hr = pDMO->QueryInterface(IID_ISoundSourceLocalizer, (void**)&pSC);
+	CHECK_RET (hr, "QueryInterface for IID_ISoundSourceLocalizer failed");
+	
+	double dBeamAngle, dAngle;	
+	
+    // main loop to get mic output from the DMO
+    //while (1)
+    //{
+        //Sleep(10); //sleep 10ms
+
+        //if (cTtlToGo--<=0)
+        //    break;
+
+        do{
+            outputBuffer.Init((byte*)pbOutputBuffer, cOutputBufLen, 0);
+            OutputBufferStruct.dwStatus = 0;
+            hr = pDMO->ProcessOutput(0, 1, &OutputBufferStruct, &dwStatus);
+            CHECK_RET (hr, "ProcessOutput failed. You must be rendering sound through the speakers before you start recording in order to perform echo cancellation.");
+
+            // Obtain beam angle from ISoundSourceLocalizer afforded by microphone array
+			hr = pSC->GetBeam(&dBeamAngle);
+			double dConf;
+			hr = pSC->GetPosition(&dAngle, &dConf);
+			
+			if(SUCCEEDED(hr))
+			{								
+				
+				//Use a moving average to smooth this out
+				//if(dConf>0.9)
+				//{					
+					_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);					
+				//}
+			}
+
+        } while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
+
+        
+		// check keyboard input to stop
+		/*if (_kbhit())
+		{
+           int ch = _getch();
+           if (ch == 's' || ch == 'S')
+              break;
+		}*/
+    //}
+
+
+exit:
+    SAFE_ARRAYDELETE(pbOutputBuffer);    
+	SAFE_RELEASE(pSC);
+
+    return hr;
+}
+HRESULT GetMicArrayDeviceIndex(int *piDevice)
+{
+    HRESULT hr = S_OK;
+    UINT index, dwCount;
+    IMMDeviceEnumerator* spEnumerator;
+    IMMDeviceCollection* spEndpoints;
+
+    *piDevice = -1;
+
+    CHECKHR(CoCreateInstance(__uuidof(MMDeviceEnumerator),  NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&spEnumerator));
+
+    CHECKHR(spEnumerator->EnumAudioEndpoints(eCapture, DEVICE_STATE_ACTIVE, &spEndpoints));
+
+    CHECKHR(spEndpoints->GetCount(&dwCount));
+
+    // Iterate over all capture devices until finding one that is a microphone array
+    for (index = 0; index < dwCount; index++)
+    {
+        IMMDevice* spDevice;
+
+        CHECKHR(spEndpoints->Item(index, &spDevice));
+        
+        GUID subType = {0};
+        CHECKHR(GetJackSubtypeForEndpoint(spDevice, &subType));
+        if (subType == KSNODETYPE_MICROPHONE_ARRAY)
+        {
+            *piDevice = index;
+            break;
+        }
+    }
+
+    hr = (*piDevice >=0) ? S_OK : E_FAIL;
+
+exit:
+	SAFE_RELEASE(spEnumerator);
+    SAFE_RELEASE(spEndpoints);    
+    return hr;
+}
+
+
+HRESULT GetJackSubtypeForEndpoint(IMMDevice* pEndpoint, GUID* pgSubtype)
+{
+    HRESULT hr = S_OK;
+    IDeviceTopology*    spEndpointTopology = NULL;
+    IConnector*         spPlug = NULL;
+    IConnector*         spJack = NULL;
+    IPart*            spJackAsPart = NULL;
+    
+    if (pEndpoint == NULL)
+        return E_POINTER;
+   
+    // Get the Device Topology interface
+    CHECKHR(pEndpoint->Activate(__uuidof(IDeviceTopology), CLSCTX_INPROC_SERVER, 
+                            NULL, (void**)&spEndpointTopology));
+
+    CHECKHR(spEndpointTopology->GetConnector(0, &spPlug));
+
+    CHECKHR(spPlug->GetConnectedTo(&spJack));
+
+	CHECKHR(spJack->QueryInterface(__uuidof(IPart), (void**)&spJackAsPart));
+
+    hr = spJackAsPart->GetSubType(pgSubtype);
+
+exit:
+   SAFE_RELEASE(spEndpointTopology);
+   SAFE_RELEASE(spPlug);    
+   SAFE_RELEASE(spJack);    
+   SAFE_RELEASE(spJackAsPart);
+   return hr;
 }

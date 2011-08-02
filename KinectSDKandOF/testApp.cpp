@@ -1,6 +1,5 @@
 #include "testApp.h"
 #include <algorithm>
-//#include "MSR_NuiApi.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){	
@@ -11,6 +10,7 @@ void testApp::setup(){
 	
 	g_kinectGrabber.Kinect_Zero();
 	g_kinectGrabber.Kinect_Init();
+	conference_init();
 	
 	focusPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
 	blurPixels = new unsigned char [DEPTH_WIDTH*DEPTH_HEIGHT*4];
@@ -18,6 +18,7 @@ void testApp::setup(){
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	texFocus.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 	blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
+
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
 	//texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
 	//shader.load("shaders/simpleBlurHorizontal.vert", "shaders/simpleBlurHorizontal.frag");
@@ -28,7 +29,8 @@ void testApp::setup(){
 void testApp::update(){
 	
 	g_kinectGrabber.Kinect_Update();
-	
+	//conference_update();
+
 	colorAlphaPixels = g_kinectGrabber.Kinect_getAlphaPixels();
 	if(colorAlphaPixels != NULL) {
 		texColorAlpha.loadData(colorAlphaPixels, VIDEO_WIDTH,VIDEO_HEIGHT, GL_RGBA);
@@ -44,10 +46,11 @@ void testApp::update(){
 	if(focusPixels != NULL) {
 		
 		adjustOver(2, focusPixels);
-		//texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 		texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
 	blurImg.setFromPixels(blurPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
+	
+	
 	//int n= g_kinectGrabber.getJointsPixels();
 	//printf("%d\n",n);
 	
@@ -55,7 +58,6 @@ void testApp::update(){
 	headPositionX=g_kinectGrabber.headJoints_x;
 	headPositionY=g_kinectGrabber.headJoints_y;
 	headPositionZ=g_kinectGrabber.headJoints_z;
-	//m_Points[3].z;
 	//printf("position: %d\n",headPositionX);
 	
 
@@ -70,7 +72,7 @@ void testApp::draw(){
 
 	
 	//diminished image
-	blurImg.blurGaussian(25);
+	blurImg.blurGaussian(15);
 	blurImg.draw(640,0);
 	texFocus.draw(640,0,DEPTH_WIDTH, DEPTH_HEIGHT);
 	

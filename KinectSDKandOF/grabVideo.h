@@ -2,16 +2,24 @@
 //#ifndef GRAB_VIDEO_H
 //#define GRAB_VIDEO_H
 
+
+
+
+#include <iostream>
+#include <vector>
+//#include <process.h>
+
 #include <tchar.h>
 #include <strsafe.h>
 #include <conio.h>
 
+// For functions and definitions used to create output file
+#include <dmo.h> // Mo*MediaType
+#include <uuids.h> // FORMAT_WaveFormatEx and such
+#include <mfapi.h> // FCC
+
 #include "resource.h"
 
-#include <iostream>
-#include <vector>
-#include <process.h>
-//#include "MSR_NuiApi.h" // move this here
 
 const int VIDEO_WIDTH = 640;
 const int VIDEO_HEIGHT= 480;
@@ -62,24 +70,20 @@ public:
 
 
 private:
-    //static DWORD WINAPI     Kinect_ProcessThread(LPVOID pParam);
-
-
-    // NUI and draw stuff
-    //DrawDevice    m_DrawDepth;
-    //DrawDevice    m_DrawVideo;
-
+    
+	// Audio stuff
+	HANDLE			 mmHandle;
+	IMediaObject*	pDMO;  
+    IPropertyStore*	pPS;
+    
+	// Nui stuff
 	void		  Kinect_FormatRGBForOutput();
 	RGBQUAD       Kinect_DepthToRGB( USHORT s );
-    // thread handling
-    //HANDLE        m_hThVideoProcess;
-    //HANDLE        m_hEvVideoProcessStop;
     HANDLE        m_hNextSkeletonFrameEvent;
     HANDLE        m_hNextDepthFrameEvent;
     HANDLE        m_hNextVideoFrameEvent;
     HANDLE        m_hNextDepthPlayerFrameEvent;
-	//HANDLE        m_hNextSkeletonEvent;
-    HANDLE        m_pDepthStreamHandle;
+	HANDLE        m_pDepthStreamHandle;
 	HANDLE        m_pDepthPlayerStreamHandle;
     HANDLE        m_pVideoStreamHandle;
     //HFONT         m_hFontFPS;

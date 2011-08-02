@@ -8,7 +8,7 @@
 //#include "ofxShader.h"
 //#include "shaderBlur.h"
 #include "ofxOpenCv.h"
-#include "ofShader.h"
+//#include "ofShader.h"
 
 //#include "grabVideo.h"
 #include "conference.h"
