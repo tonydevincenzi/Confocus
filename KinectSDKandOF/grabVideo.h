@@ -75,7 +75,9 @@ private:
 	HANDLE			 mmHandle;
 	IMediaObject*	pDMO;  
     IPropertyStore*	pPS;
-    
+    double dConf;
+	double dBeamAngle, dAngle;	
+	
 	// Nui stuff
 	void		  Kinect_FormatRGBForOutput();
 	RGBQUAD       Kinect_DepthToRGB( USHORT s );
@@ -98,6 +100,10 @@ private:
     //bool          m_bScreenBlanked;
     //int           m_FramesTotal;
     //int           m_LastFPStime;
+	int				headXValues[8];
+
+
+	// Video stuff
     int           m_LastFramesTotal;
 	BYTE 		  m_rgbBuffer[4*VIDEO_HEIGHT*VIDEO_WIDTH];
 	BYTE 		  m_rgb_noalpa_Buffer[3*VIDEO_HEIGHT*VIDEO_WIDTH];	

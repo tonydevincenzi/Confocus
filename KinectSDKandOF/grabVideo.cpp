@@ -118,7 +118,10 @@ void KinectGrabber::Kinect_Zero()
 	mmHandle = NULL;
 	pDMO = NULL;  
     pPS = NULL;
-    
+    dBeamAngle = 0;
+	dAngle = 0;
+	dConf = 0;
+
 }
 
 HRESULT KinectGrabber::Kinect_Init() {
@@ -504,6 +507,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 				m_Points[j].y = (int) ( fy * scaleY + 0.5f );
 				m_playerJointDepth[j] = depthValue;	
 			}
+			headXValues[i] = m_Points[3].x;
 			/*
 			if(m_Points[3].x!=0){
 				//printf("headPosition");
@@ -550,6 +554,12 @@ void KinectGrabber::getJointsPoints() {
 	shoulderRight_y=m_Points[8].y;
 
 	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );
+	printf("-------------------------------------------\n"); 
+	printf(" Head Positions \n"); 
+	printf("-------------------------------------------\n"); 
+	for (int i = 0; i < 8; i ++) {
+		printf("head %d x value: %d \n", i, headXValues[i]);
+	}
 }
 
 
@@ -637,20 +647,22 @@ HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* out
 			hr = pSC->GetPosition(&dAngle, &dConf);
 			
 			if(SUCCEEDED(hr))
-			{								
+			{
 				
-				//Use a moving average to smooth this out
-				//if(dConf>0.9)
-				//{					
-					_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);					
-				//}
+					_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);
+					double pixel = min(dAngle * 50, 28.5) * VIDEO_WIDTH / 28.5; 
+					printf("------------------------------------------\n");
+					printf(" sound \n");
+					printf("------------------------------------------\n");
+					printf("the pixel number corresponding to sound %f \n", pixel);
+					printf("the pixel number corresponding to sound %f \n", (dAngle + 1) * 320);
 			}
 
         } while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
 
         
 		// check keyboard input to stop
-		/*if (_kbhit())
+		/*sif (_kbhit())
 		{
            int ch = _getch();
            if (ch == 's' || ch == 'S')
