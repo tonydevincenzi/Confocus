@@ -78,9 +78,6 @@ protected:
 HRESULT GetMicArrayDeviceIndex(int *piDeviceIndex);
 HRESULT GetJackSubtypeForEndpoint(IMMDevice* pEndpoint, GUID* pgSubtype);
 
-// Helper functions used to generate output file
-HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS);//, const TCHAR* outFile, int  iDuration);
-
 
 void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
 	//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
@@ -554,16 +551,29 @@ void KinectGrabber::getJointsPoints() {
 	shoulderRight_y=m_Points[8].y;
 
 	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );
+
+	
+	double minSoundDiscrepancy = VIDEO_WIDTH;
+	//minDiscrepancyIdx = 0;
 	printf("-------------------------------------------\n"); 
 	printf(" Head Positions \n"); 
 	printf("-------------------------------------------\n"); 
 	for (int i = 0; i < 8; i ++) {
 		printf("head %d x value: %d \n", i, headXValues[i]);
+
+		double discrepancy = abs(headXValues[i] - soundPixel);
+		if (discrepancy < minSoundDiscrepancy) {
+			minSoundDiscrepancy = discrepancy;
+			minDiscrepancyIdx = i;
+		}
 	}
+	printf(" Best: %i \n", minDiscrepancyIdx); 
+	printf("-------------------------------------------\n"); 
+	
 }
 
 
-HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* outFile, int  iDuration)
+HRESULT KinectGrabber::DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* outFile, int  iDuration)
 {
 	ISoundSourceLocalizer* pSC = NULL;
 	HRESULT hr;
@@ -649,12 +659,18 @@ HRESULT DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* out
 			if(SUCCEEDED(hr))
 			{
 				
-					_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);
-					double pixel = min(dAngle * 50, 28.5) * VIDEO_WIDTH / 28.5; 
+					soundAngle = dAngle;
+					//_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);
+					//double pixel;
+						if (dAngle > 0) 
+							soundPixel = min(dAngle * 50, 28.5) * 320 / 28.5 + 320 ; 
+						else
+							soundPixel = max(dAngle * 50, -28.5) * 320 / 28.5 + 320; 
 					printf("------------------------------------------\n");
 					printf(" sound \n");
 					printf("------------------------------------------\n");
-					printf("the pixel number corresponding to sound %f \n", pixel);
+					printf("angle %f \n", dAngle);
+					printf("the pixel number corresponding to sound %f \n", soundPixel);
 					printf("the pixel number corresponding to sound %f \n", (dAngle + 1) * 320);
 			}
 

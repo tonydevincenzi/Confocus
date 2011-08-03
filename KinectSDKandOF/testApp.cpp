@@ -66,7 +66,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	
 	//video image
 	texColorAlpha.draw(0,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 
@@ -80,14 +79,15 @@ void testApp::draw(){
 	//ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
-	//ofSetHexColor(0xffffff);
-	//char reportStr[1024];
-	//sprintf(reportStr, " threshold: %d (press: +/- to change) \n", thresh);
-	//ofDrawBitmapString(reportStr, 650, 10);
-
 
 	ofCircle(headPositionX,headPositionY,20);
-	
+
+
+	ofSetHexColor(0x00000);
+	//char reportStr[1024];
+	//sprintf(reportStr, " threshold: %d (press: +/- to change) \n", thresh);
+	ofDrawBitmapString(eventString, 650, 500);
+	ofSetHexColor(0xffffff);
 
 }
 //-------------------------------------------------------------
@@ -119,8 +119,10 @@ void testApp::keyReleased(int key){
 
 //------------- -------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-	
+	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
+		
 }
+
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){

@@ -46,6 +46,8 @@ public:
 	void            getJointsPoints();
 	void			Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY);
 	void			Kinect_makeRGBFromRGBA();
+	HRESULT			DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS);
+
 	//void                    Nui_BlankSkeletonScreen( HWND hWnd );
     //void                    Nui_DoDoubleBuffer(HWND hWnd,HDC hDC);
     //void                    Nui_DrawSkeleton( bool bBlank, NUI_SKELETON_DATA * pSkel);
@@ -56,6 +58,9 @@ public:
     //static LONG CALLBACK    WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     //HWND m_hWnd;
+	int minDiscrepancyIdx;
+	double soundPixel;
+
 	int           headJoints_x;
 	int           headJoints_y;
 	int    headJoints_z;
@@ -77,7 +82,8 @@ private:
     IPropertyStore*	pPS;
     double dConf;
 	double dBeamAngle, dAngle;	
-	
+	double			soundAngle;
+
 	// Nui stuff
 	void		  Kinect_FormatRGBForOutput();
 	RGBQUAD       Kinect_DepthToRGB( USHORT s );

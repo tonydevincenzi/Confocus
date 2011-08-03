@@ -19,6 +19,10 @@ class testApp : public ofBaseApp{
 	
 	public:
 		
+
+		char eventString[255];
+
+
 		void setup();
 		void update();
 		void draw();
