@@ -4,9 +4,9 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-//#include "ofxFBOTexture.h"
-//#include "ofxShader.h"
-//#include "shaderBlur.h"
+#include "ofxFBOTexture.h"
+#include "ofxShader.h"
+#include "shaderBlur.h"
 #include "ofxOpenCv.h"
 //#include "ofShader.h"
 
@@ -52,7 +52,7 @@ class testApp : public ofBaseApp{
 		ofTexture		texGray;
 		ofTexture		texFocus;
 		ofTexture		texBlur;
-		ofxCvColorImage	blurImg;		
+		//ofxCvColorImage	blurImg;		
 		unsigned char 	* colorAlphaPixels;
 		unsigned char	* grayPixels;
 		unsigned char	* focusPixels;
@@ -60,7 +60,8 @@ class testApp : public ofBaseApp{
 
 		int headPositionX, headPositionY, headPositionZ;
 		
-		
+		shaderBlur      blur;
+		int             thresh;
 		//ofxFBOTexture texBlur;
 		//ofShader shader;
 

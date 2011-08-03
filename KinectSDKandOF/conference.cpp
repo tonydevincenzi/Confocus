@@ -41,21 +41,25 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 				int index = (y * DEPTH_WIDTH) + x;
 				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
 				
-				focusBuff[4*index + 0] = videoBuff[4*color_index + 0];
+				
+				focusBuff[4*index + 0] = videoBuff[4*color_index + 0]; //focusBuff points to the r,g,b video stream
 				focusBuff[4*index + 1] = videoBuff[4*color_index + 1];
 				focusBuff[4*index + 2] = videoBuff[4*color_index + 2];
-				blurBuff[3*index + 0] = videoBuff[4*color_index + 0] / 2;
-				blurBuff[3*index + 1] = videoBuff[4*color_index + 1] / 2;
-				blurBuff[3*index + 2] = videoBuff[4*color_index + 2] / 2;
-				//blurBuff[4*index + 3] = 255;
+				focusBuff[4*index + 3] = 255;
+
+				
+				blurBuff[4*index + 0] = 0; //blurBuff points to the top layer with blur effect
+				blurBuff[4*index + 1] = 0;
+				blurBuff[4*index + 2] = 0;
+				
 				//if that pixel is not in the correct depth, make the focused image invisible (alpha = 0)
 				//otherwise, set it so that it is visible (alpha = 255)
 				int headPositionZ = kinectGrabber->headJoints_z;
 				if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
 				//if (depthBuff[index] >  DEPTH_THRESHOLD  || depthBuff[index] < DEPTH_THRESHOLD ) {
-					focusBuff[4*index + 3] = 0;
+					blurBuff[4*index + 3] = 255;
 				} else {
-					focusBuff[4*index + 3] = 255;
+					blurBuff[4*index + 3] = 0;
 				}
 			}
 		}  

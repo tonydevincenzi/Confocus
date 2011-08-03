@@ -47,6 +47,9 @@
     <ClCompile Include="testApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="conference.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addons\ofxFBOTexture.h">
@@ -58,20 +61,26 @@
     <ClInclude Include="src\examples\shaderBlur.h">
       <Filter>src\examples</Filter>
     </ClInclude>
+    <ClInclude Include="conference.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eventsObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\targetver.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stdafx.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="grabVideo.h">
-      <Filter>src</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="testApp.h">
-      <Filter>src</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grabVideo.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,9 @@ void testApp::setup(){
 	
 	ofBackground(255,255,255);	
 	
+	blur.setup(DEPTH_WIDTH, DEPTH_HEIGHT);
+	thresh=300;
+
 	g_kinectGrabber.Kinect_Zero();
 	g_kinectGrabber.Kinect_Init();
 	conference_init();
@@ -17,12 +20,10 @@ void testApp::setup(){
 
 	texColorAlpha.allocate(VIDEO_WIDTH,VIDEO_HEIGHT,GL_RGBA);
 	texFocus.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
-	blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
+	texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
+	//blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
 
-	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
-	//texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA);
-	//shader.load("shaders/simpleBlurHorizontal.vert", "shaders/simpleBlurHorizontal.frag");
-	
+	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture	
 }
 
 //--------------------------------------------------------------
@@ -43,12 +44,18 @@ void testApp::update(){
 	
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
 	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber);
+	
+	/*
 	if(focusPixels != NULL) {
 		
-		adjustOver(2, focusPixels);
-		texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+		adjustOver(2, blurPixels);
+		texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
-	blurImg.setFromPixels(blurPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
+	*/
+
+	texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+	texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
+	//blurImg.setFromPixels(blurPixels,DEPTH_WIDTH, DEPTH_HEIGHT);
 	
 	
 	//int n= g_kinectGrabber.getJointsPixels();
@@ -69,26 +76,26 @@ void testApp::draw(){
 	//video image
 	texColorAlpha.draw(0,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 
-	
+	ofEnableAlphaBlending();
 	//diminished image
-	blurImg.blurGaussian(15);
-	blurImg.draw(640,0);
-	texFocus.draw(640,0,DEPTH_WIDTH, DEPTH_HEIGHT);
-	
-	
-	//ofDisableAlphaBlending();
+	//blurImg.blurGaussian(15);
+	//blurImg.draw(640,0);
+	texFocus.draw(640,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
+	blur.setBlurParams(4, (float)mouseX / 100.0); //Gaussian blur starts
+	blur.beginRender();
+	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT);
+	blur.endRender();
+	blur.draw(640, 0, 640, 480, true);
+	ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
-
 
 	ofCircle(headPositionX,headPositionY,20);
 
-
-	ofSetHexColor(0x00000);
+	ofSetColor(0x00000);
 	//char reportStr[1024];
 	//sprintf(reportStr, " threshold: %d (press: +/- to change) \n", thresh);
 	ofDrawBitmapString(eventString, 650, 500);
-	ofSetHexColor(0xffffff);
-
+	ofSetColor(0xffffff);
 }
 //-------------------------------------------------------------
 void testApp::exit(){
