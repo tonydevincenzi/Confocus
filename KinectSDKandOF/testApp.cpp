@@ -24,6 +24,8 @@ void testApp::setup(){
 	//blurImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
 
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture	
+
+	activeFocus=true;
 }
 
 //--------------------------------------------------------------
@@ -43,7 +45,7 @@ void testApp::update(){
 	}*/
 	
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
-	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber);
+	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,mouseX,mouseY, activeFocus);
 	
 	/*
 	if(focusPixels != NULL) {
@@ -81,7 +83,8 @@ void testApp::draw(){
 	//blurImg.blurGaussian(15);
 	//blurImg.draw(640,0);
 	texFocus.draw(640,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
-	blur.setBlurParams(4, (float)mouseX / 100.0); //Gaussian blur starts
+	//blur.setBlurParams(4, (float)mouseX / 100.0); //Gaussian blur starts
+	blur.setBlurParams(4,(float)100/100);
 	blur.beginRender();
 	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT);
 	blur.endRender();
@@ -138,7 +141,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-
+	activeFocus=!activeFocus;
 }
 
 //--------------------------------------------------------------

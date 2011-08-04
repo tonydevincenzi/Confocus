@@ -25,6 +25,8 @@ void conference_update() {
 
 //void conferenceManager::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber kinectGrabber) {
 //void testApp::focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff) {
+
+/*//former focusRGB
 void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber) {
 
 	if (videoBuff && depthBuff) {
@@ -68,6 +70,7 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 	  }
 }
 
+*/
 
 /*
 void testApp::highlightRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE * highlightBuff, BYTE* overBuff) {
@@ -256,3 +259,54 @@ void testApp::adjustOver(int range, BYTE * overBuff) {
 	}
 
 }*/
+
+void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, int pointX, int pointY, bool activeFocus){
+	
+	if (videoBuff && depthBuff) {
+		LONG* pcolorx = new LONG();
+		LONG* pcolory = new LONG();
+		int max_index = DEPTH_WIDTH * DEPTH_HEIGHT * 4;
+
+		for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+
+				kinectGrabber->Kinect_ColorFromDepth(x, y, pcolorx, pcolory);
+				//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, 
+				//	LONG(x/2), LONG(y/2), m_depthBuffer[y*DEPTH_WIDTH + x] << 3, pcolorx, pcolory); 		
+				int index = (y * DEPTH_WIDTH) + x;
+				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
+				
+				
+				focusBuff[4*index + 0] = videoBuff[4*color_index + 0]; //focusBuff points to the r,g,b video stream
+				focusBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				focusBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				focusBuff[4*index + 3] = 255;
+
+				
+				blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/1.5; //blurBuff points to the top layer with blur effect
+				blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/1.5;
+				blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/1.5;
+				
+				//if that pixel is not in the correct depth, make the focused image invisible (alpha = 0)
+				//otherwise, set it so that it is visible (alpha = 255)
+				int headPositionZ = kinectGrabber->headJoints_z;
+				int pointingPositionZ=depthBuff[pointY*DEPTH_WIDTH+pointX];
+				if(activeFocus){
+				    if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
+						blurBuff[4*index + 3] = 255;
+				    } else {
+					  blurBuff[4*index + 3] = 0;
+				    }
+				}else{
+					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
+					    blurBuff[4*index + 3] = 255;
+				    } else {
+					    blurBuff[4*index + 3] = 0;
+				    }
+				}
+			}
+		}  
+		free(pcolorx);
+		free(pcolory);
+	  }
+}

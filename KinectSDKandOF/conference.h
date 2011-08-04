@@ -12,8 +12,9 @@ const int DEPTH_THRESHOLD = 350;
 enum applicationState {IDLE, SPEAKING}; 
 
 void conference_init();
-void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber);
+//void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber);
 void adjustOver(int range, BYTE* blurBuff);
+void focusRGB(BYTE* videoBuff, USHORT* depthBuff,BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, int pointX, int pointY, bool activeFocus);
 //applicationState conference_get_state();
 
 

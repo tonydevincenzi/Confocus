@@ -65,6 +65,8 @@ class testApp : public ofBaseApp{
 		//ofxFBOTexture texBlur;
 		//ofShader shader;
 
+		bool            activeFocus; //to deside the active or inActive focus
+
 };
 
 #endif
