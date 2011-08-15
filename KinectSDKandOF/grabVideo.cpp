@@ -1,14 +1,3 @@
-//#include <fstream>
-//using namespace std;
-
-//#include "resource.h"
-//#include <mmsystem.h>
-//#include "stdafx.h"
-
-//#include <tchar.h>
-//#include <strsafe.h>
-//#include <conio.h>
-
 // For configuring DMO properties
 #include <wmcodecdsp.h>
 // For discovering microphone array device
@@ -31,7 +20,7 @@
 #define CHECK_ALLOC(pb, message) if (NULL == pb) { puts(message); goto exit;}
 #define CHECK_BOOL(b, message) if (!b) { hr = E_FAIL; puts(message); goto exit;}
 
-
+// store audio data in CStaticMediaBuffer
 class CStaticMediaBuffer : public IMediaBuffer {
 public:
    CStaticMediaBuffer() {}
@@ -78,13 +67,12 @@ protected:
 HRESULT GetMicArrayDeviceIndex(int *piDeviceIndex);
 HRESULT GetJackSubtypeForEndpoint(IMMDevice* pEndpoint, GUID* pgSubtype);
 
-
+// Takes in an x and y depth value, returns corresponding x and y  values of the color image
 void KinectGrabber::Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY) {
-	//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX), LONG(depthY), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
 	NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, LONG(depthX/2), LONG(depthY/2), m_depthBuffer[depthY*DEPTH_WIDTH + depthX] << 3, pColorX, pColorY); 
-
 }
 
+// initialize properties to default values
 void KinectGrabber::Kinect_Zero()
 {
     m_hNextDepthPlayerFrameEvent = NULL;
@@ -94,23 +82,7 @@ void KinectGrabber::Kinect_Zero()
     m_pDepthStreamHandle = NULL;
     m_pVideoStreamHandle = NULL;
     m_pDepthPlayerStreamHandle = NULL;
-    
-	// m_hThVideoProcess=NULL;
-   // m_hEvVideoProcessStop=NULL;
-    //ZeroMemory(m_Pen,sizeof(m_Pen));
-    //m_SkeletonDC = NULL;
-    //m_SkeletonBMP = NULL;
-    //m_SkeletonOldObj = NULL;
-    //m_PensTotal = 6;
-    //ZeroMemory(m_Points,sizeof(m_Points));
-    //m_LastSkeletonFoundTime = -1;
-    //m_bScreenBlanked = false;
-    //m_FramesTotal = 0;
-    //m_LastFPStime = -1;
-    //m_LastFramesTotal = 0;
-	//m_rgbBuffer = NULL;
-	//newRGBData = false;
-	
+    	
 	// audio
 	mmHandle = NULL;
 	pDMO = NULL;  
@@ -121,6 +93,7 @@ void KinectGrabber::Kinect_Zero()
 
 }
 
+// Initialize reading data from kinect
 HRESULT KinectGrabber::Kinect_Init() {
 	
 	HRESULT hr;
@@ -209,19 +182,18 @@ HRESULT KinectGrabber::Kinect_Init() {
     CHECKHR(pPS->SetValue(MFPKEY_WMAAECMA_DEVICE_INDEXES, pvDeviceId));
     PropVariantClear(&pvDeviceId);
 
-    puts("press any key to start viewing data localization.");
-    _getch();
+    puts("done with initializing kinect sensor");
+    //_getch();
 
 
 	exit:
-    puts("Press any key to continue");
-    
+    puts("Press any key to continue");   
 }
 
 
 void KinectGrabber::Kinect_UnInit( )
 {
-
+    // Shut down Nui and clean up data stream objects
     NuiShutdown( );
 
     if( m_hNextVideoFrameEvent && ( m_hNextVideoFrameEvent != INVALID_HANDLE_VALUE ) )
@@ -252,26 +224,18 @@ void KinectGrabber::Kinect_UnInit( )
 
     AvRevertMmThreadCharacteristics(mmHandle);
     CoUninitialize();
-
 }
 
 
-
-
-//DWORD WINAPI KinectGrabber::Video_ProcessThread(LPVOID pParam)
 int KinectGrabber::Kinect_Update()
-
 {
-
 	// Capture sound in microphone array while performing beam angle detection and echo cancellation
 	DShowRecord(pDMO, pPS);
 
-    //KinectGrabber *pthis=(KinectGrabber *) pParam;
     HANDLE                hEvents[3];
     int                    nEventIdx;
 
     // Configure events to be listened on
-    //hEvents[0]=m_hEvVideoProcessStop;
     hEvents[0]=m_hNextVideoFrameEvent;
 	hEvents[1]=m_hNextDepthFrameEvent;
 	hEvents[2]=m_hNextSkeletonFrameEvent;
@@ -279,7 +243,12 @@ int KinectGrabber::Kinect_Update()
     // Wait for an event to be signalled
     nEventIdx=WaitForMultipleObjects(sizeof(hEvents)/sizeof(hEvents[0]),hEvents,FALSE,INFINITE);
     //printf("index obtained %d out of %d\n",nEventIdx, sizeof(hEvents)/sizeof(hEvents[0]));
-    // If the stop event, stop looping and exit
+	
+	// TODO: Fix the structure so that the case statement is actually working. 
+	// Right now, the Depth and Skeleton alerts are being called on every event, which is wrong.
+	// Not sure why only video events are being registered.
+    
+	// If the stop event, stop looping and exit
     //if(nEventIdx==0)
         //break;            
 	//	return 1;
@@ -330,9 +299,7 @@ void KinectGrabber::Kinect_GotVideoAlert( )
 		Kinect_FormatRGBForOutput();	
 		Kinect_makeRGBFromRGBA();
 		//2560 bytes per line = 640 * 4 (4 bytes per pixel)
-	}
-    else
-    {
+	} else {
         printf("buffer length of recieved texture is bogus\n");
     }
 	NuiImageStreamReleaseFrame( m_pVideoStreamHandle, pImageFrame );
@@ -428,10 +395,12 @@ void KinectGrabber::Kinect_GotDepthAlert( ) {
 
 }
 
+/*
 void KinectGrabber::print_bytes( ) {
 	//2560 bytes per line = 640 * 4 (4 bytes per pixel)
 	//printf("byte data written: r:%d, g:%d, b:%d, other:%d\n", pBuffer[0], pBuffer[1], pBuffer[2], pBuffer[3]);
 }
+*/
 
 
 BYTE* KinectGrabber::Kinect_getAlphaPixels() {
@@ -502,9 +471,14 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 				NuiTransformSkeletonToDepthImageF( pSkel->SkeletonPositions[j], &fx, &fy, &depthValue);
 				m_Points[j].x = (int) ( fx * scaleX + 0.5f );
 				m_Points[j].y = (int) ( fy * scaleY + 0.5f );
-				m_playerJointDepth[j] = depthValue;	
+				// make sure to shift depth by 3 bits
+				m_playerJointDepth[j] = depthValue >> 3;
+				//m_playerJointDepth[j] = depthValue;	
 			}
+
+			// Store the values of the head position of each skeleton
 			headXValues[i] = m_Points[3].x;
+			headZValues[i] = m_playerJointDepth[3];
 			/*
 			if(m_Points[3].x!=0){
 				//printf("headPosition");
@@ -523,7 +497,10 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
             NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
             }
 			*/	
-        }
+        } else {
+			// if that skeleton is no longer tracked, set the X values to some default value so that it isn't accidentally chosen while the person is off screen
+			headXValues[i] = -1000;
+		}
     }
 
     // no skeletons!
@@ -534,7 +511,6 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 
     // smooth out the skeleton data
     NuiTransformSmooth(&SkeletonFrame,NULL);
-
 }
 
 void KinectGrabber::getJointsPoints() {
@@ -549,31 +525,11 @@ void KinectGrabber::getJointsPoints() {
 	shoulderLeft_y=m_Points[4].y;
 	shoulderRight_x=m_Points[8].x;
 	shoulderRight_y=m_Points[8].y;
-
-	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );
-
-	
-	double minSoundDiscrepancy = VIDEO_WIDTH;
-	//minDiscrepancyIdx = 0;
-	printf("-------------------------------------------\n"); 
-	printf(" Head Positions \n"); 
-	printf("-------------------------------------------\n"); 
-	for (int i = 0; i < 8; i ++) {
-		printf("head %d x value: %d \n", i, headXValues[i]);
-
-		double discrepancy = abs(headXValues[i] - soundPixel);
-		if (discrepancy < minSoundDiscrepancy) {
-			minSoundDiscrepancy = discrepancy;
-			minDiscrepancyIdx = i;
-		}
-	}
-	printf(" Best: %i \n", minDiscrepancyIdx); 
-	printf("-------------------------------------------\n"); 
-	
+	//printf("unmodified: %d shifted: %d\n", m_playerJointDepth[3], m_playerJointDepth[3] >> 3 );	
 }
 
-
-HRESULT KinectGrabber::DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, const TCHAR* outFile, int  iDuration)
+//now has sound to pixel mapping
+HRESULT KinectGrabber::DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)
 {
 	ISoundSourceLocalizer* pSC = NULL;
 	HRESULT hr;
@@ -626,9 +582,6 @@ HRESULT KinectGrabber::DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, c
     pbOutputBuffer = new BYTE[cOutputBufLen];
     CHECK_ALLOC (pbOutputBuffer, "out of memory.\n");
 	
-   // number of frames to record
-    //cTtlToGo = iDuration * 100;
-
 	DWORD written = 0;
 	int totalBytes = 0;
 	
@@ -638,53 +591,29 @@ HRESULT KinectGrabber::DShowRecord(IMediaObject* pDMO, IPropertyStore* pPS)//, c
 	double dBeamAngle, dAngle;	
 	
     // main loop to get mic output from the DMO
-    //while (1)
-    //{
-        //Sleep(10); //sleep 10ms
+    do{
+		outputBuffer.Init((byte*)pbOutputBuffer, cOutputBufLen, 0);
+        OutputBufferStruct.dwStatus = 0;
+        hr = pDMO->ProcessOutput(0, 1, &OutputBufferStruct, &dwStatus);
+        CHECK_RET (hr, "ProcessOutput failed. You must be rendering sound through the speakers before you start recording in order to perform echo cancellation.");
 
-        //if (cTtlToGo--<=0)
-        //    break;
-
-        do{
-            outputBuffer.Init((byte*)pbOutputBuffer, cOutputBufLen, 0);
-            OutputBufferStruct.dwStatus = 0;
-            hr = pDMO->ProcessOutput(0, 1, &OutputBufferStruct, &dwStatus);
-            CHECK_RET (hr, "ProcessOutput failed. You must be rendering sound through the speakers before you start recording in order to perform echo cancellation.");
-
-            // Obtain beam angle from ISoundSourceLocalizer afforded by microphone array
-			hr = pSC->GetBeam(&dBeamAngle);
-			double dConf;
-			hr = pSC->GetPosition(&dAngle, &dConf);
-			
-			if(SUCCEEDED(hr))
-			{
-				
-					soundAngle = dAngle;
-					//_tprintf(_T("Position: %f\t\tConfidence: %f\t\tBeam Angle = %f\r"), dAngle, dConf, dBeamAngle);
-					//double pixel;
-						if (dAngle > 0) 
-							soundPixel = min(dAngle * 50, 28.5) * 320 / 28.5 + 320 ; 
-						else
-							soundPixel = max(dAngle * 50, -28.5) * 320 / 28.5 + 320; 
-					printf("------------------------------------------\n");
-					printf(" sound \n");
-					printf("------------------------------------------\n");
-					printf("angle %f \n", dAngle);
-					printf("the pixel number corresponding to sound %f \n", soundPixel);
-					printf("the pixel number corresponding to sound %f \n", (dAngle + 1) * 320);
+        // Obtain beam angle from ISoundSourceLocalizer afforded by microphone array
+		hr = pSC->GetBeam(&dBeamAngle);
+		double dConf;
+		hr = pSC->GetPosition(&dAngle, &dConf);
+		
+		if(SUCCEEDED(hr))
+		{
+			// Map the width sound angle to a pixel
+			soundPixel = max( min(640, (dAngle + 0.33) * VIDEO_WIDTH), 0);
+			printf("------------------------------------------\n");
+			printf(" sound \n");
+			printf("------------------------------------------\n");
+				printf("angle %f \n", dAngle);
+				printf("the pixel number corresponding to sound %f \n", soundPixel);
 			}
 
         } while (OutputBufferStruct.dwStatus & DMO_OUTPUT_DATA_BUFFERF_INCOMPLETE);
-
-        
-		// check keyboard input to stop
-		/*sif (_kbhit())
-		{
-           int ch = _getch();
-           if (ch == 's' || ch == 'S')
-              break;
-		}*/
-    //}
 
 
 exit:
@@ -693,6 +622,7 @@ exit:
 
     return hr;
 }
+
 HRESULT GetMicArrayDeviceIndex(int *piDevice)
 {
     HRESULT hr = S_OK;
@@ -731,7 +661,6 @@ exit:
     SAFE_RELEASE(spEndpoints);    
     return hr;
 }
-
 
 HRESULT GetJackSubtypeForEndpoint(IMMDevice* pEndpoint, GUID* pgSubtype)
 {

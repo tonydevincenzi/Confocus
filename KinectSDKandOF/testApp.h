@@ -7,8 +7,7 @@
 #include "ofxFBOTexture.h"
 #include "ofxShader.h"
 #include "shaderBlur.h"
-#include "ofxOpenCv.h"
-//#include "ofShader.h"
+//#include "ofxOpenCv.h"
 
 //#include "grabVideo.h"
 #include "conference.h"
@@ -18,10 +17,7 @@
 class testApp : public ofBaseApp{
 	
 	public:
-		
-
-		char eventString[255];
-
+		char eventString[255]; // for printing the location of the mouse (for debugging)
 
 		void setup();
 		void update();
@@ -35,19 +31,10 @@ class testApp : public ofBaseApp{
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
-		
-		//TODO: move this
-		//void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff);
-		//void adjustOver(int range, BYTE* blurBuff);
 
 	private:
-	
-		//conferenceManager conference;
-		ofVideoGrabber grabber;
-		bool hasCamera;
-
 		KinectGrabber g_kinectGrabber;
-		
+	
 		ofTexture		texColorAlpha;
 		ofTexture		texGray;
 		ofTexture		texFocus;
@@ -61,10 +48,9 @@ class testApp : public ofBaseApp{
 		int headPositionX, headPositionY, headPositionZ;
 		
 		shaderBlur      blur;
+		
+		//GUI
 		int             thresh;
-		//ofxFBOTexture texBlur;
-		//ofShader shader;
-
 		bool            activeFocus; //to deside the active or inActive focus
 
 };
