@@ -13,8 +13,9 @@ const int DEPTH_THRESHOLD = 350;
 enum applicationState {IDLE, SPEAKING}; 
 void conference_init();
 
-// sets the color pixels for display.
-void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber);
+// sets the color pixels for display_activeMode
+void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, bool focusMode, bool blackMode, bool zoomMode);
+void focusRGB_manual(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, bool focusMode, bool blackMode, bool zoomMode, int mouseX, int mouseY);
 //void focusRGB(BYTE* videoBuff, USHORT* depthBuff,BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, int pointX, int pointY, bool activeFocus);
 
 //no longer used

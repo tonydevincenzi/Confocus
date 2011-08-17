@@ -34,7 +34,7 @@ void conference_update() {
 		blurBuff - RGBA values of the blurred/blacked out image to paint over the focusBuff values
 */
 
-void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber) {
+void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber,  bool focusMode, bool blackMode, bool zoomMode) {
 
 	if (videoBuff && depthBuff) {
 		LONG* pcolorx = new LONG();
@@ -57,11 +57,21 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 				focusBuff[4*index + 3] = 255;
 
 				// use the commented portion of these lines to see a faded blurred background instead of a black background
-				blurBuff[4*index + 0] = 0; //videoBuff[4*color_index + 0] / 2;
-				blurBuff[4*index + 1] = 0; //videoBuff[4*color_index + 1] / 2;
-				blurBuff[4*index + 2] = 0; //videoBuff[4*color_index + 2] / 2;
-
-				
+				if(focusMode){
+					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]; //videoBuff[4*color_index + 2] / 2;
+				}
+				if(blackMode){
+					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/3; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/3; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/3; //videoBuff[4*color_index + 2] / 2;
+				}
+				if(zoomMode){
+					blurBuff[4*index + 0] = 0; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = 0; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = 0; //videoBuff[4*color_index + 2] / 2;
+				}
 				// Determine which pixels on the blur layer should be visible.
 				// If there are any detected skeletons, we want to focus in on one of them
 				if (kinectGrabber->minDiscrepancyIdx > 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
@@ -89,6 +99,72 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 	  }
 }
 
+
+void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber,  bool focusMode, bool blackMode, bool zoomMode, int mouseX, int mouseY) {
+
+	if (videoBuff && depthBuff) {
+		LONG* pcolorx = new LONG();
+		LONG* pcolory = new LONG();
+
+		// Go through the buffer to prepare it for drawing
+		int max_index = DEPTH_WIDTH * DEPTH_HEIGHT * 4;
+		for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+
+				// Use the Kinect SDK to find the color pixel from the depth pixel
+				kinectGrabber->Kinect_ColorFromDepth(x, y, pcolorx, pcolory);
+				int index = (y * DEPTH_WIDTH) + x;
+				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
+				
+				// focusBuff points to the r,g,b video stream
+				focusBuff[4*index + 0] = videoBuff[4*color_index + 0]; 
+				focusBuff[4*index + 1] = videoBuff[4*color_index + 1];
+				focusBuff[4*index + 2] = videoBuff[4*color_index + 2];
+				focusBuff[4*index + 3] = 255;
+
+				// use the commented portion of these lines to see a faded blurred background instead of a black background
+				if(focusMode){
+					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]; //videoBuff[4*color_index + 2] / 2;
+				}
+				if(blackMode){
+					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/3; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/3; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/3; //videoBuff[4*color_index + 2] / 2;
+				}
+				if(zoomMode){
+					blurBuff[4*index + 0] = 0; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = 0; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = 0; //videoBuff[4*color_index + 2] / 2;
+				}
+				// Determine which pixels on the blur layer should be visible.
+				// If there are any detected skeletons, we want to focus in on one of them
+				if (kinectGrabber->minDiscrepancyIdx > 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
+				//TODO: change the 6 to some constant indicating that total number of skeletons, like NUI_SKELETON_COUNT
+				{
+					
+					// Get the head's depth of the person's X value that is closest to the audio
+					//if that pixel's depth is near the speaker, make the blurred image invisible (alpha = 255)
+					//otherwise, set the blur visible (alpha = 0)
+					///int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
+					int pointingPositionZ=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
+					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
+						blurBuff[4*index + 3] = 255; //fully opaque
+					} else {
+						blurBuff[4*index + 3] = 0;   //fully transparent
+					}
+
+				// If there are no detected skeletons, just fade out everything
+				} else {
+					blurBuff[4*index + 3] = 255;
+				}
+			}
+		}  
+		free(pcolorx);
+		free(pcolory);
+	  }
+}
 
 /*
 //creat transition between 0 to 255, not used anymore

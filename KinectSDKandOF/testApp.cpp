@@ -5,7 +5,7 @@
 void testApp::setup(){	
 
 	//ofEnableAlphaBlending();	
-	ofBackground(255,255,255);	            // Set the background color (right now, white)
+	ofBackground(0,0,0);	            // Set the background color (right now, white)
 	
 	blur.setup(DEPTH_WIDTH, DEPTH_HEIGHT);  // set up the blur shader
 	thresh=300;
@@ -25,7 +25,7 @@ void testApp::setup(){
 	texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture	
-
+	  
 	//gui interface
 	nButtons=6;
 	buttons=new button*[nButtons];
@@ -50,7 +50,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	
+	ofBackground(0,0,0);
 	g_kinectGrabber.Kinect_Update();
 	//conference_update();
     
@@ -68,7 +68,8 @@ void testApp::update(){
 	
 	// load the RGBA values into the blur and focus textures for the diminshed reality image
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
-	focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber);	
+	if(buttonPressed[1]) focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5]);	
+	if(buttonPressed[2]) focusRGB_manual(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],mouseX,mouseY);	
 	/*
 	if(focusPixels != NULL) {
 		
@@ -113,13 +114,20 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	ofEnableSmoothing();
+
 	//video image
-	texColorAlpha.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
+	texColorAlpha.draw(640+20,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 	ofEnableAlphaBlending();
 	
 	//diminished image
 	texFocus.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
-	blur.setBlurParams(4,(float)100/100);
+	int blurParam; //different mode has different blurParameter control
+	for(int i=0;i<3;i++){
+		if(buttonPressed[i+3]) blurParam=sliders[i]->value;
+	}
+
+	blur.setBlurParams(4,(float)blurParam/100);
 	blur.beginRender();
 	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
 	blur.endRender();
@@ -151,7 +159,7 @@ void testApp::draw(){
 			buttons[i]->trigger=true;
 			buttons[i]->drawFont(buttonPressed[i]);
 		}
-		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(0,100);
+		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(50,400);
 	} else if(!buttonPressed[0]){
 		for(int i=3;i<nButtons;i++) buttons[i]->trigger=false;
 	}
