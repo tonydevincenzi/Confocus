@@ -182,8 +182,8 @@ HRESULT KinectGrabber::Kinect_Init() {
     CHECKHR(pPS->SetValue(MFPKEY_WMAAECMA_DEVICE_INDEXES, pvDeviceId));
     PropVariantClear(&pvDeviceId);
 
-    puts("done with initializing kinect sensor");
-    //_getch();
+    puts("done with initializing kinect sensor, press any key to continue...");
+    _getch();
 
 
 	exit:

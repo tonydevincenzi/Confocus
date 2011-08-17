@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){	
 
-	ofEnableAlphaBlending();	
+	//ofEnableAlphaBlending();	
 	ofBackground(255,255,255);	            // Set the background color (right now, white)
 	
 	blur.setup(DEPTH_WIDTH, DEPTH_HEIGHT);  // set up the blur shader
@@ -26,7 +26,26 @@ void testApp::setup(){
 
 	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture	
 
-	activeFocus=true;
+	//gui interface
+	nButtons=6;
+	buttons=new button*[nButtons];
+	buttons[0]=new button("setup",40,ofGetHeight()-40,100,30,true);
+	buttons[1]=new button("active",40+150,ofGetHeight()-40,100,30,true);
+	buttons[2]=new button("manual",40+150+150,ofGetHeight()-40,100,30,true);
+	buttons[3]=new button("focus",40,60+ofGetHeight()-270,100,30,false);
+	buttons[4]=new button("black",40,100+ofGetHeight()-270,100,30,false);
+	buttons[5]=new button("zoom", 40,140+ofGetHeight()-270,100,30,false);
+	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
+	buttonPressed[1]=true;
+	buttonPressed[0]=true;
+	buttonPressed[3]=true;
+
+	nSliders=3;
+	sliders=new slider*[nSliders];
+	sliders[0]=new slider(200,60-20+ofGetHeight()-270,200);
+	sliders[1]=new slider(200,100-20+ofGetHeight()-270,200);	
+	sliders[2]=new slider(200,140-20+ofGetHeight()-270,200);
+	
 }
 
 //--------------------------------------------------------------
@@ -65,6 +84,7 @@ void testApp::update(){
 	headPositionX=g_kinectGrabber.headJoints_x;
 	headPositionY=g_kinectGrabber.headJoints_y;
 	headPositionZ=g_kinectGrabber.headJoints_z;
+
 	
 	// TODO: move this somewhere else. Probably goes in the conference.cpp file?
 	// Find the skeleton index of the individuals head position is closest to that of the audio position.
@@ -93,29 +113,51 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
 	//video image
-	texColorAlpha.draw(0,0,VIDEO_WIDTH, VIDEO_HEIGHT);
-
+	texColorAlpha.draw(640,0,VIDEO_WIDTH, VIDEO_HEIGHT);
 	ofEnableAlphaBlending();
 	
 	//diminished image
-	texFocus.draw(640,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
+	texFocus.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
 	blur.setBlurParams(4,(float)100/100);
 	blur.beginRender();
-	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT);
+	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
 	blur.endRender();
-	blur.draw(640, 0, 640, 480, true);
+	blur.draw(0, 0, 640, 480, true);
 	ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
 	//circle drawn on head of tracked individual
-	ofCircle(headPositionX,headPositionY,20);
+	ofCircle(headPositionX+640,headPositionY,10);
+	ofCircle(g_kinectGrabber.shoulderLeft_x+640, g_kinectGrabber.shoulderLeft_y,10);
+	ofCircle(g_kinectGrabber.shoulderRight_x+640,g_kinectGrabber.shoulderRight_y,10); 
+	ofCircle(g_kinectGrabber.handLeft_x+640,g_kinectGrabber.handLeft_y,10); 
+	ofCircle(g_kinectGrabber.handRight_x+640,g_kinectGrabber.handRight_y,10);
+	ofLine(headPositionX+640,headPositionY,g_kinectGrabber.shoulderLeft_x+640, g_kinectGrabber.shoulderLeft_y);
+	ofLine(g_kinectGrabber.shoulderLeft_x+640, g_kinectGrabber.shoulderLeft_y,g_kinectGrabber.handLeft_x+640,g_kinectGrabber.handLeft_y);
+	ofLine(headPositionX+640,headPositionY,g_kinectGrabber.shoulderRight_x+640,g_kinectGrabber.shoulderRight_y);
+	ofLine(g_kinectGrabber.shoulderRight_x+640,g_kinectGrabber.shoulderRight_y,g_kinectGrabber.handRight_x+640,g_kinectGrabber.handRight_y);
 
 	// for debugging, draws the current mouse position
-	ofSetColor(0x00000);
-	ofDrawBitmapString(eventString, 650, 500);
+	//ofSetColor(0x00000);
+	//ofDrawBitmapString(eventString, 650, 500);
+	//ofSetColor(0xffffff);
+
+	//ofPushMatrix();
+	// gui interface
+	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom
+	if(buttonPressed[0]){  //draw 3 buttons triggered by pressing the setUp button; boolean trigger is used to disable the button pressing if it's not shown on the screen
+		for(int i=3;i<nButtons;i++){
+			buttons[i]->trigger=true;
+			buttons[i]->drawFont(buttonPressed[i]);
+		}
+		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(0,100);
+	} else if(!buttonPressed[0]){
+		for(int i=3;i<nButtons;i++) buttons[i]->trigger=false;
+	}
+	//ofPopMatrix();
 	ofSetColor(0xffffff);
+	
 }
 //-------------------------------------------------------------
 void testApp::exit(){
@@ -153,12 +195,36 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-	
+	for(int i=0;i<nSliders;i++) sliders[i]->getSliderPosX(x,y);
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-	activeFocus=!activeFocus;
+	if(buttons[0]->buttonPressed(x,y)) buttonPressed[0]=!buttonPressed[0]; //setUpbutton
+	if(buttons[1]->buttonPressed(x,y)){
+		buttonPressed[1]=true;
+		buttonPressed[2]=false;
+	}
+	if(buttons[2]->buttonPressed(x,y)){
+		buttonPressed[2]=true;
+		buttonPressed[1]=false;
+	}
+	if(buttons[3]->buttonPressed(x,y)){
+		buttonPressed[3]=true;
+		buttonPressed[4]=false;
+		buttonPressed[5]=false;
+	}
+	if(buttons[4]->buttonPressed(x,y)){
+		buttonPressed[4]=true;
+		buttonPressed[3]=false;
+		buttonPressed[5]=false;
+	}	
+	if(buttons[5]->buttonPressed(x,y)){
+		buttonPressed[5]=true;
+		buttonPressed[3]=false;
+		buttonPressed[4]=false;
+		printf("buttonPressed \n");
+	}
 }
 
 //--------------------------------------------------------------

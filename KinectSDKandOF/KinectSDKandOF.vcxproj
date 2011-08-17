@@ -83,9 +83,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="button.cpp" />
     <ClCompile Include="conference.cpp" />
     <ClCompile Include="grabVideo.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="slider.cpp" />
     <ClCompile Include="src\addons\ofxFBOTexture.cpp" />
     <ClCompile Include="src\addons\ofxShader.cpp" />
     <ClCompile Include="src\examples\shaderBlur.cpp" />
@@ -93,10 +95,13 @@
     <ClCompile Include="testApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="button.h" />
     <ClInclude Include="conference.h" />
     <ClInclude Include="eventsObject.h" />
     <ClInclude Include="grabVideo.h" />
+    <ClInclude Include="menuSelection.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="slider.h" />
     <ClInclude Include="src\addons\ofxFBOTexture.h" />
     <ClInclude Include="src\addons\ofxShader.h" />
     <ClInclude Include="src\examples\shaderBlur.h" />
@@ -109,6 +114,8 @@
     <None Include="bin\data\shaders\simpleBlurHorizontal.vert" />
     <None Include="bin\data\shaders\simpleBlurVertical.frag" />
     <None Include="bin\data\shaders\simpleBlurVertical.vert" />
+    <None Include="data\castaway.ttf" />
+    <None Include="data\Sudbury_Basin_3D.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

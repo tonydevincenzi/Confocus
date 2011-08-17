@@ -50,6 +50,12 @@
     <ClCompile Include="conference.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="button.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="slider.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addons\ofxFBOTexture.h">
@@ -82,6 +88,15 @@
     <ClInclude Include="grabVideo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="menuSelection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\data\shaders\simpleBlurVertical.vert">
@@ -95,6 +110,12 @@
     </None>
     <None Include="bin\data\shaders\simpleBlurVertical.frag">
       <Filter>bin\data\shaders</Filter>
+    </None>
+    <None Include="data\castaway.ttf">
+      <Filter>bin\data</Filter>
+    </None>
+    <None Include="data\Sudbury_Basin_3D.ttf">
+      <Filter>bin\data</Filter>
     </None>
   </ItemGroup>
 </Project>

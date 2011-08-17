@@ -1,7 +1,7 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(299,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   testApp.cpp
-c:\users\liningy\kinectedconference\kinectsdkandof\testapp.cpp(149): warning C4995: 'sprintf': name was marked as #pragma deprecated
-conference.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+c:\users\liningy\kinectedconference\kinectsdkandof\testapp.cpp(191): warning C4995: 'sprintf': name was marked as #pragma deprecated
+button.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
 openframeworksLibDebug.lib(ofAppGlutWindow.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'openframeworksLibDebug.lib(ofAppGlutWindow.obj)' or at 'C:\Users\liningy\KinectedConference\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info
 openframeworksLibDebug.lib(ofAppRunner.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'openframeworksLibDebug.lib(ofAppRunner.obj)' or at 'C:\Users\liningy\KinectedConference\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info
 openframeworksLibDebug.lib(ofBitmapFont.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'openframeworksLibDebug.lib(ofBitmapFont.obj)' or at 'C:\Users\liningy\KinectedConference\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info
