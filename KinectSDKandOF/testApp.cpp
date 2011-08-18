@@ -29,12 +29,12 @@ void testApp::setup(){
 	//gui interface
 	nButtons=6;
 	buttons=new button*[nButtons];
-	buttons[0]=new button("setup",40,ofGetHeight()-40,100,30,true);
-	buttons[1]=new button("active",40+150,ofGetHeight()-40,100,30,true);
-	buttons[2]=new button("manual",40+150+150,ofGetHeight()-40,100,30,true);
-	buttons[3]=new button("focus",40,60+ofGetHeight()-270,100,30,false);
-	buttons[4]=new button("black",40,100+ofGetHeight()-270,100,30,false);
-	buttons[5]=new button("zoom", 40,140+ofGetHeight()-270,100,30,false);
+	buttons[0]=new button("setup",55,759,100,30,true,"images/set_a.png","images/set_b.png");
+	buttons[1]=new button("active",234,759,100,30,true,"images/auto_a.png","images/auto_b.png");
+	buttons[2]=new button("manual",326,759,100,30,true,"images/manual_a.png","images/manual_b.png");
+	buttons[3]=new button("focus",29,529,100,30,false,"images/focus_a.png","images/focus_b.png");
+	buttons[4]=new button("black",29,599,100,30,false,"images/mask_a.png","images/mask_b.png");
+	buttons[5]=new button("zoom", 29,667,100,30,false,"images/zoom_a.png","images/zoom_b.png");
 	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
 	buttonPressed[1]=true;
 	buttonPressed[0]=true;
@@ -42,9 +42,13 @@ void testApp::setup(){
 
 	nSliders=3;
 	sliders=new slider*[nSliders];
-	sliders[0]=new slider(200,60-20+ofGetHeight()-270,200);
-	sliders[1]=new slider(200,100-20+ofGetHeight()-270,200);	
-	sliders[2]=new slider(200,140-20+ofGetHeight()-270,200);
+	sliders[0]=new slider(137,540,442);
+	sliders[1]=new slider(137,609,442);	
+	sliders[2]=new slider(137,678,442);
+
+	header.loadImage("images/head.png");
+	header2.loadImage("images/raw.png");
+	bg.loadImage("images/bg.png");
 	
 }
 
@@ -117,11 +121,11 @@ void testApp::draw(){
 	ofEnableSmoothing();
 
 	//video image
-	texColorAlpha.draw(640+20,0,VIDEO_WIDTH, VIDEO_HEIGHT);
+	texColorAlpha.draw(640+20,0+25,VIDEO_WIDTH, VIDEO_HEIGHT);
 	ofEnableAlphaBlending();
 	
 	//diminished image
-	texFocus.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
+	texFocus.draw(0,0+25,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
 	int blurParam; //different mode has different blurParameter control
 	for(int i=0;i<3;i++){
 		if(buttonPressed[i+3]) blurParam=sliders[i]->value;
@@ -131,7 +135,7 @@ void testApp::draw(){
 	blur.beginRender();
 	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
 	blur.endRender();
-	blur.draw(0, 0, 640, 480, true);
+	blur.draw(0, 0+25, 640, 480, true);
 	ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
@@ -151,20 +155,25 @@ void testApp::draw(){
 	//ofDrawBitmapString(eventString, 650, 500);
 	//ofSetColor(0xffffff);
 
-	//ofPushMatrix();
 	// gui interface
+	header.draw(0,0);
+	header2.draw(640+20,0);
+	bg.draw(1,500);
+
+	ofEnableAlphaBlending();
 	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom
 	if(buttonPressed[0]){  //draw 3 buttons triggered by pressing the setUp button; boolean trigger is used to disable the button pressing if it's not shown on the screen
 		for(int i=3;i<nButtons;i++){
 			buttons[i]->trigger=true;
 			buttons[i]->drawFont(buttonPressed[i]);
 		}
-		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(50,400);
+		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(80,400);
 	} else if(!buttonPressed[0]){
 		for(int i=3;i<nButtons;i++) buttons[i]->trigger=false;
 	}
-	//ofPopMatrix();
-	ofSetColor(0xffffff);
+	ofDisableAlphaBlending();
+	//ofSetColor(0xffffff);
+
 	
 }
 //-------------------------------------------------------------
@@ -212,7 +221,7 @@ void testApp::mousePressed(int x, int y, int button){
 	if(buttons[1]->buttonPressed(x,y)){
 		buttonPressed[1]=true;
 		buttonPressed[2]=false;
-	}
+	} 
 	if(buttons[2]->buttonPressed(x,y)){
 		buttonPressed[2]=true;
 		buttonPressed[1]=false;

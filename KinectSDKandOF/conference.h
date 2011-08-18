@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include "grabVideo.h"
+#include "ofMain.h"
 
 // number of millimeters threshold between a skeleton's depth reading and visible image
 const int DEPTH_THRESHOLD = 350;

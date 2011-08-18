@@ -1,6 +1,8 @@
 #ifndef _OF_SLIDER
 #define _OF_SLIDER
 
+#include <string>
+
 class slider{
 
 public:
@@ -10,6 +12,7 @@ public:
 	int value;
 	int sliderPosX,sliderPosY;
 	ofTrueTypeFont font;
+	ofImage img;
 
 	slider(int x, int y, int sWidth);
 

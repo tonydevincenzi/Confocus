@@ -14,9 +14,10 @@ public:
 	ofColor selectedC, defaultC;
 	int fontSize;
 	bool trigger;
+	ofImage img_a,img_b;
 	
 	//constructor
-	button(string _buttonName, int _originX, int _originY, int _bWidth, int _bHeight, bool _trigger);
+	button(string _buttonName, int _originX, int _originY, int _bWidth, int _bHeight, bool _trigger,string _imgName_a, string _imgName_b);
 	
 	//functionality
 	void drawFont(bool _buttonPressed);

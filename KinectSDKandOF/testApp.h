@@ -63,6 +63,9 @@ class testApp : public ofBaseApp{
 		bool            buttonPressed[6]; //the number of the boolean should equal to nButtons
 		slider**        sliders;
 		int             nSliders;
+		ofImage         header;
+		ofImage         header2;
+		ofImage         bg;
 
 };
 

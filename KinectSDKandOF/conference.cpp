@@ -147,14 +147,14 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 					// Get the head's depth of the person's X value that is closest to the audio
 					//if that pixel's depth is near the speaker, make the blurred image invisible (alpha = 255)
 					//otherwise, set the blur visible (alpha = 0)
-					///int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
+					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
 					int pointingPositionZ=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
 					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque
 					} else {
 						blurBuff[4*index + 3] = 0;   //fully transparent
 					}
-
+					
 				// If there are no detected skeletons, just fade out everything
 				} else {
 					blurBuff[4*index + 3] = 255;
