@@ -480,6 +480,12 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 			headXValues[i] = m_Points[3].x;
 			headYValues[i] = m_Points[3].y;
 			headZValues[i] = m_playerJointDepth[3];
+
+			leftShoulderXValues[i]=m_Points[4].x;
+			rightShoulderXValues[i]=m_Points[8].x;
+
+			leftHandXValues[i]=m_Points[7].x;
+			rightHandXValues[i]=m_Points[11].x;
 			/*
 			if(m_Points[3].x!=0){
 				//printf("headPosition");
@@ -501,6 +507,10 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
         } else {
 			// if that skeleton is no longer tracked, set the X values to some default value so that it isn't accidentally chosen while the person is off screen
 			headXValues[i] = -1000;
+			leftShoulderXValues[i]=-2000;
+			rightShoulderXValues[i]=2000;
+			leftHandXValues[i]=-2000;
+			rightHandXValues[i]=2000;
 		}
     }
 

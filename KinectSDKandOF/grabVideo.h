@@ -81,6 +81,11 @@ public:
 	int             headYValues[NUI_SKELETON_COUNT];
 	int				headZValues[NUI_SKELETON_COUNT];
 
+	int             leftShoulderXValues[NUI_SKELETON_COUNT];
+	int             rightShoulderXValues[NUI_SKELETON_COUNT];
+	int             leftHandXValues[NUI_SKELETON_COUNT];
+	int             rightHandXValues[NUI_SKELETON_COUNT];
+
 
 private:
 

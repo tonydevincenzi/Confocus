@@ -82,11 +82,20 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 					//if that pixel's depth is near the speaker, make the blurred image invisible (alpha = 255)
 					//otherwise, set the blur visible (alpha = 0)
 					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
+					int headPositionX = kinectGrabber->headXValues[kinectGrabber->minDiscrepancyIdx];
+					int LeftShoulderX = kinectGrabber->leftShoulderXValues[kinectGrabber->minDiscrepancyIdx];
+					int rightShoulderX= kinectGrabber->rightShoulderXValues[kinectGrabber->minDiscrepancyIdx];
+					int LeftHandX = kinectGrabber->leftHandXValues[kinectGrabber->minDiscrepancyIdx];
+					int rightHandX= kinectGrabber->rightHandXValues[kinectGrabber->minDiscrepancyIdx];
+
 					if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque
 					} else {
 						blurBuff[4*index + 3] = 0;   //fully transparent
 					}
+
+					//if((x<LeftShoulderX-40)|| (x>rightShoulderX +40) || (x<LeftHandX-20) || (x>rightHandX+30)) blurBuff[4*index + 3] = 255; 
+					if ((x<headPositionX-150) || (x>headPositionX+150)) blurBuff[4*index + 3] = 255;
 
 				// If there are no detected skeletons, just fade out everything
 				} else {
@@ -148,6 +157,8 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 					//if that pixel's depth is near the speaker, make the blurred image invisible (alpha = 255)
 					//otherwise, set the blur visible (alpha = 0)
 					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
+
+
 					int pointingPositionZ=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
 					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque
@@ -165,6 +176,67 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 		free(pcolory);
 	  }
 }
+
+
+
+
+//creat transition between 0 to 255, not used anymore
+void adjustOver(int range, BYTE * overBuff) {
+	BYTE * new_alpha_buff;
+	new_alpha_buff = (BYTE*) malloc (DEPTH_WIDTH*DEPTH_HEIGHT*sizeof(BYTE));
+
+	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+				
+				int index = (y*DEPTH_WIDTH) + x;
+	
+				int sum = 0;
+				int divisors = 0;
+				
+				for (int m = 0; m < range; m ++) {
+					int w_offset = m * DEPTH_WIDTH;
+					for (int n = 0; n < range; n ++) {
+						int new_index = index - w_offset - n;
+						if (new_index > 0) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+						
+						new_index = index + w_offset + n;
+						if (new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+
+						new_index = index - w_offset + n;
+						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+				
+						new_index = index + w_offset - n;
+						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
+							sum += overBuff[4*(new_index) +3];
+							divisors ++;
+						}
+
+					}
+				}
+				new_alpha_buff[index] = (unsigned char)(sum / divisors);
+			}
+	}
+	
+	
+	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
+			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
+				overBuff[4 * ((y*DEPTH_WIDTH) + x) + 3] = new_alpha_buff[(y*DEPTH_WIDTH) + x];
+			}
+	}
+
+	free (new_alpha_buff);
+}
+
+
 
 /*
 //creat transition between 0 to 255, not used anymore
@@ -221,61 +293,5 @@ void adjustOver(int range, BYTE * overBuff) {
 	}
 
 	free (new_alpha_buff);
-}
-*/
-
-
-
-/*
-//focusRGB function with mouse activation built in
-void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, int pointX, int pointY, bool activeFocus){
-	
-	if (videoBuff && depthBuff) {
-		LONG* pcolorx = new LONG();
-		LONG* pcolory = new LONG();
-		int max_index = DEPTH_WIDTH * DEPTH_HEIGHT * 4;
-
-		for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
-			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
-
-				kinectGrabber->Kinect_ColorFromDepth(x, y, pcolorx, pcolory);
-				//NuiImageGetColorPixelCoordinatesFromDepthPixel(NUI_IMAGE_RESOLUTION_640x480, NULL, 
-				//	LONG(x/2), LONG(y/2), m_depthBuffer[y*DEPTH_WIDTH + x] << 3, pcolorx, pcolory); 		
-				int index = (y * DEPTH_WIDTH) + x;
-				int	color_index = ((*pcolory*VIDEO_WIDTH) + *pcolorx);
-				
-				
-				focusBuff[4*index + 0] = videoBuff[4*color_index + 0]; //focusBuff points to the r,g,b video stream
-				focusBuff[4*index + 1] = videoBuff[4*color_index + 1];
-				focusBuff[4*index + 2] = videoBuff[4*color_index + 2];
-				focusBuff[4*index + 3] = 255;
-
-				
-				blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/1.5; //blurBuff points to the top layer with blur effect
-				blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/1.5;
-				blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/1.5;
-				
-				//if that pixel is not in the correct depth, make the focused image invisible (alpha = 0)
-				//otherwise, set it so that it is visible (alpha = 255)
-				int headPositionZ = kinectGrabber->headJoints_z;
-				int pointingPositionZ=depthBuff[pointY*DEPTH_WIDTH+pointX];
-				if(activeFocus){
-				    if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
-						blurBuff[4*index + 3] = 255;
-				    } else {
-					  blurBuff[4*index + 3] = 0;
-				    }
-				}else{
-					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
-					    blurBuff[4*index + 3] = 255;
-				    } else {
-					    blurBuff[4*index + 3] = 0;
-				    }
-				}
-			}
-		}  
-		free(pcolorx);
-		free(pcolory);
-	  }
 }
 */
