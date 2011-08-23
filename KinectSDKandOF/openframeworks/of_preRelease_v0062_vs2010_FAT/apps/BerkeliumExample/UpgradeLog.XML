@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="emptyExample">
+</Property><Property Name="Solution File" Value="C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.sln">
+</Property><Property Name="User Options File" Value="C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.suo">
+</Property><Property Name="Date" Value="Wednesday, August 17, 2011">
+</Property><Property Name="Time" Value="1:31 AM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="emptyExample.sln" Description="File successfully backed up as C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.sln.old">
+</Event><Event ErrorLevel="0" Project="" Source="emptyExample.suo" Description="File successfully backed up as C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.suo.old">
+</Event><Event ErrorLevel="0" Project="emptyExample" Source="emptyExample.vcproj" Description="Converting project file 'C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.vcproj'.">
+</Event><Event ErrorLevel="1" Project="emptyExample" Source="emptyExample.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="emptyExample" Source="emptyExample.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="emptyExample" Source="emptyExample.vcproj" Description="Attribute 'Detect64BitPortabilityProblems' of 'VCCLCompilerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="emptyExample" Source="emptyExample.vcproj" Description="MSB8012: $(TargetName) ('emptyExample') does not match the Linker's OutputFile property value 'bin\emptyExample_debug.exe' ('emptyExample_debug') in project configuration 'Debug|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetName) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="1" Project="emptyExample" Source="emptyExample.vcproj" Description="MSB8012: $(TargetPath) ('C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\bin\emptyExample.exe') does not match the Linker's OutputFile property value 'bin\emptyExample_debug.exe' ('C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\bin\emptyExample_debug.exe') in project configuration 'Debug|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="0" Project="emptyExample" Source="emptyExample.vcproj" Description="Done converting to new project file 'C:\Users\liningy\Desktop\openframeworks\of_preRelease_v0062_vs2010_FAT\apps\BerkeliumExample\emptyExample.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="emptyExample" Source="emptyExample.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="openframeworksLib" Source="..\..\..\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj" Description="Converting project file 'C:\Users\liningy\Desktop\openframeworks\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj'.">
+</Event><Event ErrorLevel="2" Project="openframeworksLib" Source="..\..\..\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj" Description="File 'C:\Users\liningy\Desktop\openframeworks\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj' was not found.">
+</Event><Event ErrorLevel="2" Project="openframeworksLib" Source="..\..\..\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj" Description="Project upgrade failed.">
+</Event><Event ErrorLevel="3" Project="openframeworksLib" Source="..\..\..\libs\openFrameworksCompiled\project\vs2008\openframeworksLib.vcproj" Description="Not Converted">
+</Event><Event ErrorLevel="0" Project="" Source="emptyExample.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="emptyExample.sln" Description="Converted">
+</Event></UpgradeLog>

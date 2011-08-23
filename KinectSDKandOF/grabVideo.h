@@ -78,6 +78,7 @@ public:
 
 	// X and Depth values for the head of all players
 	int				headXValues[NUI_SKELETON_COUNT];
+	int             headYValues[NUI_SKELETON_COUNT];
 	int				headZValues[NUI_SKELETON_COUNT];
 
 

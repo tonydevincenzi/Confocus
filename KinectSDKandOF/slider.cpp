@@ -17,7 +17,7 @@ void slider::getSliderPosX(int _mouseX, int _mouseY){
 		sliderPosX=_mouseX;
 }
 
-void slider::drawSlider(int startFrom, int endTo){
+void slider::drawSlider(float startFrom, float endTo){
 	//ofFill();
     //ofSetColor(0xCCCCCC);
 	//ofRect(originX,originY,sWidth,5);

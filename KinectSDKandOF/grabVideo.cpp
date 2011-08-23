@@ -478,6 +478,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 
 			// Store the values of the head position of each skeleton
 			headXValues[i] = m_Points[3].x;
+			headYValues[i] = m_Points[3].y;
 			headZValues[i] = m_playerJointDepth[3];
 			/*
 			if(m_Points[3].x!=0){

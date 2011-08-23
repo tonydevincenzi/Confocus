@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\ofxBerkelium">
+      <UniqueIdentifier>{4888b87a-b9f7-43c9-af75-83363904e663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxBerkelium\include">
+      <UniqueIdentifier>{97e571a2-3aed-43db-a2cb-d2efbda34c44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ofxBerkelium\include\berkelium">
+      <UniqueIdentifier>{1692761f-0500-4e74-8a1d-404fc68c7909}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\testApp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofxBerkelium\ofxBerkelium.cpp">
+      <Filter>src\ofxBerkelium</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\testApp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\ofxBerkelium.h">
+      <Filter>src\ofxBerkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\ofxBerkeliumListener.h">
+      <Filter>src\ofxBerkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\ofxBerkeliumUtil.h">
+      <Filter>src\ofxBerkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Berkelium.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Context.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Cursor.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Platform.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Rect.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\ScriptUtil.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\ScriptVariant.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Singleton.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\StringUtil.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\WeakString.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Widget.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\Window.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofxBerkelium\include\berkelium\WindowDelegate.hpp">
+      <Filter>src\ofxBerkelium\include\berkelium</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

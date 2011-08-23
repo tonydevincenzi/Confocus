@@ -34,7 +34,7 @@ void conference_update() {
 		blurBuff - RGBA values of the blurred/blacked out image to paint over the focusBuff values
 */
 
-void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber,  bool focusMode, bool blackMode, bool zoomMode) {
+void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber,  bool focusMode, bool blackMode, bool zoomMode, float maskValue) {
 
 	if (videoBuff && depthBuff) {
 		LONG* pcolorx = new LONG();
@@ -63,9 +63,9 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]; //videoBuff[4*color_index + 2] / 2;
 				}
 				if(blackMode){
-					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/3; //videoBuff[4*color_index + 0] / 2;
-					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/3; //videoBuff[4*color_index + 1] / 2;
-					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/3; //videoBuff[4*color_index + 2] / 2;
+					blurBuff[4*index + 0] = videoBuff[4*color_index + 0]/maskValue; //videoBuff[4*color_index + 0] / 2;
+					blurBuff[4*index + 1] = videoBuff[4*color_index + 1]/maskValue; //videoBuff[4*color_index + 1] / 2;
+					blurBuff[4*index + 2] = videoBuff[4*color_index + 2]/maskValue; //videoBuff[4*color_index + 2] / 2;
 				}
 				if(zoomMode){
 					blurBuff[4*index + 0] = 0; //videoBuff[4*color_index + 0] / 2;

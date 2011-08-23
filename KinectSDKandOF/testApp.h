@@ -13,6 +13,7 @@
 #include "conference.h"
 #include "button.h"
 #include "slider.h"
+#include "talkBubble.h"
 
 
 //const int DEPTH_THRESHOLD = 350;
@@ -52,6 +53,7 @@ class testApp : public ofBaseApp{
 		int neckPositionX, neckPositionY, leftShoulderX, leftShoulderY, rightShoulderX, rightShoulderY,leftHandPX, leftHandPY, rightHandPX, rightHandPY;
 		
 		shaderBlur      blur;
+		float           maskValue;
 		
 		//GUI
 		int             thresh;
@@ -66,7 +68,9 @@ class testApp : public ofBaseApp{
 		ofImage         header;
 		ofImage         header2;
 		ofImage         bg;
-
+		//talk bubbles
+		talkBubble** talkBubbles;  
+		int nBubbles;   
 };
 
 #endif

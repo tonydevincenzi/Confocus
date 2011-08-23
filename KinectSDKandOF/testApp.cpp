@@ -24,7 +24,10 @@ void testApp::setup(){
 	texFocus.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 	texBlur.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); 
 
-	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture	
+	//texGray.allocate(DEPTH_WIDTH, DEPTH_HEIGHT,GL_RGBA); // gray depth texture
+
+	//other parameters
+	maskValue=3;
 	  
 	//gui interface
 	nButtons=6;
@@ -49,7 +52,16 @@ void testApp::setup(){
 	header.loadImage("images/head.png");
 	header2.loadImage("images/raw.png");
 	bg.loadImage("images/bg.png");
-	
+
+	//talk bubbles
+	nBubbles = 5; 
+	talkBubbles = new talkBubble*[nBubbles];   
+	talkBubbles[0] = new talkBubble(0,0,0,0, "name 1", 1);
+	talkBubbles[1] = new talkBubble(0,0,0,0, "name 2", 1);
+	talkBubbles[2] = new talkBubble(0,0,0,0, "name 3", 1);
+	talkBubbles[3] = new talkBubble(0,0,0,0, "name 4", 1);	
+	talkBubbles[4] = new talkBubble(0,0,0,0, "name 5", 1);	
+	talkBubbles[5] = new talkBubble(0,0,0,0, "name 6", 1);
 }
 
 //--------------------------------------------------------------
@@ -72,7 +84,7 @@ void testApp::update(){
 	
 	// load the RGBA values into the blur and focus textures for the diminshed reality image
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
-	if(buttonPressed[1]) focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5]);	
+	if(buttonPressed[1]) focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],maskValue);	
 	if(buttonPressed[2]) focusRGB_manual(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],mouseX,mouseY);	
 	/*
 	if(focusPixels != NULL) {
@@ -114,30 +126,79 @@ void testApp::update(){
 	// print the closest match
 	printf(" closest person : %i \n", g_kinectGrabber.minDiscrepancyIdx); 
 	printf("-------------------------------------------\n"); 
+
+	//talk bubbles
+	/*
+	//talkBubble.updatePosition(g_kinectGrabber.headXValues[g_kinectGrabber.minDiscrepancyIdx],g_kinectGrabber.headYValues[g_kinectGrabber.minDiscrepancyIdx],g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+	//TALK BUBBLES
+	switch (g_kinectGrabber.minDiscrepancyIdx) {
+		case 0:
+			talkBubbles[0]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+		break;
+		case 1:
+			talkBubbles[1]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+		break;
+		case 2:
+			talkBubbles[2]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+		break;
+		case 3:
+			talkBubbles[3]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+		break;
+		case 4:
+			talkBubbles[4]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
+		break;
+		case 5:
+			talkBubbles[5]->updatePosition(mouseX,mouseY,ofMap(kinect.getDistanceAt(mouseX, mouseY), farDistance,nearDistance, -500, 0));
+		break;
+		default:
+		break;
+	}
+	*/
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
 	ofEnableSmoothing();
 
-	//video image
-	texColorAlpha.draw(640+20,0+25,VIDEO_WIDTH, VIDEO_HEIGHT);
-	ofEnableAlphaBlending();
-	
-	//diminished image
-	texFocus.draw(0,0+25,DEPTH_WIDTH, DEPTH_HEIGHT); //draw the focus texture	
 	int blurParam; //different mode has different blurParameter control
-	for(int i=0;i<3;i++){
-		if(buttonPressed[i+3]) blurParam=sliders[i]->value;
+	float scaleParam;	
+	//for(int i=0;i<3;i++){
+	//	if(buttonPressed[i+3]) blurParam=sliders[i]->value;
+	//}
+
+	if(buttonPressed[3]) {
+		blurParam=sliders[0]->value;
+		scaleParam=1;
+	}
+	if(buttonPressed[4]) {
+		blurParam=60;
+		scaleParam=1;
+		maskValue=sliders[1]->value;
+	}
+	if(buttonPressed[5]) {
+		blurParam=60;
+		scaleParam=sliders[2]->value;
 	}
 
+	//diminished image
+	ofEnableAlphaBlending();
+	texFocus.draw(0,0+25,DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam); //draw the focus texture	
+	
 	blur.setBlurParams(4,(float)blurParam/100);
 	blur.beginRender();
 	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
 	blur.endRender();
-	blur.draw(0, 0+25, 640, 480, true);
+	blur.draw(0, 0+25, DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam, true);
 	ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
+
+	ofSetColor(0x000000);
+	ofRect(640,0+25,VIDEO_WIDTH,ofGetHeight());
+	ofSetColor(0xffffff);
+
+	//video image
+	texColorAlpha.draw(640+20,0+25,VIDEO_WIDTH, VIDEO_HEIGHT);
 
 	//circle drawn on head of tracked individual
 	ofCircle(headPositionX+640,headPositionY,10);
@@ -167,12 +228,22 @@ void testApp::draw(){
 			buttons[i]->trigger=true;
 			buttons[i]->drawFont(buttonPressed[i]);
 		}
-		for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(80,400);
+		//for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(80,400);
+		sliders[0]->drawSlider(80,400);
+		sliders[1]->drawSlider(4,0.01);
+		sliders[2]->drawSlider(0.8,1.5);
 	} else if(!buttonPressed[0]){
 		for(int i=3;i<nButtons;i++) buttons[i]->trigger=false;
 	}
 	ofDisableAlphaBlending();
 	//ofSetColor(0xffffff);
+
+	//talk bubble
+	/*
+	for (int i = 0; i < TCP.getNumClients()-1; i++){
+		talkBubbles[i]->draw();
+	}
+	*/
 
 	
 }
