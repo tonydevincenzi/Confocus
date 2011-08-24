@@ -9,10 +9,10 @@ class talkBubble {
 	
 public:   
 	
-	void update();
+	void updateTimer();
 	void draw();
 	void updatePosition(int _x, int _y);
-	void updateAttributes(string name, int talkTime);
+	void updateAttributes(string name);
 	void setPosition();
 	void timer();
 	
@@ -38,6 +38,7 @@ public:
 	string name;
 	int talkTime;
 	string message;
+	string nameTx;
 
 	int totalTime, startTime, deltaTime;
 	//string name;

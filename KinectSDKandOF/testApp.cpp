@@ -132,8 +132,7 @@ void testApp::update(){
 		int headPositionX = g_kinectGrabber.headXValues[i];
 		int headPositionY = g_kinectGrabber.headYValues[i];
 		talkBubbles[i]->updatePosition(headPositionX,headPositionY);
-		talkBubbles[i]->update();
-		//talkBubbles[i]->updateAttributes("default",);
+		talkBubbles[i]->updateTimer();
 	}
 	// print the closest match
 	printf(" closest person : %i \n", g_kinectGrabber.minDiscrepancyIdx); 
@@ -240,6 +239,13 @@ void testApp::exit(){
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	
+	for (int i=0;i<nBubbles;i++){
+		if (talkBubbles[i]->active) {
+			if(key == '-') talkBubbles[i]->name.erase();
+			else                  talkBubbles[i]->name.append(1,(char)key);
+		}
+	}
 	
 	/*switch (key){
 		case '+':

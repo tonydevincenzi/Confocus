@@ -1,11 +1,11 @@
 #include "ofMain.h"
 #include "talkBubble.h"
 
-talkBubble::talkBubble(float _x, float _y, string _message, int _talkTime)
+talkBubble::talkBubble(float _x, float _y, string _name, int _talkTime)
 {
 	x = _x;
 	y = _y;
-	message = _message;
+	name = _name;
 	talkTime = _talkTime;
 	
 	//Show bubble pointing left
@@ -21,16 +21,16 @@ talkBubble::talkBubble(float _x, float _y, string _message, int _talkTime)
 	
 	totalTime=0;
 	//clickCount = 0;
-	name="default";
+	//name="default";
 	active=false;
 	
 	bubbleState = 0; // Default 0, no pos parameters set
 	min = 0;
 	sec = 0;
-
+	nameTx="";
 }
 
-void talkBubble::update(){	
+void talkBubble::updateTimer(){	
 	if(active)
 	{
 		timer();
@@ -59,7 +59,7 @@ void talkBubble::draw(){
 	
 		
 		ofSetColor(0,0,0,255);
-		font.drawString(message,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)-13);
+		font.drawString(name,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)-13);
 		ofSetColor(255,255,255,255);
 		
 		//FORMAT TALK TIME	
@@ -84,11 +84,10 @@ void talkBubble::draw(){
 }
 
 
-void talkBubble::updateAttributes(string _name, int _talkTime)
+void talkBubble::updateAttributes(string _name)
 {
 	//active = _active;
-	message = _name;
-	talkTime = _talkTime;
+	name = _name;
 	
 }
 
