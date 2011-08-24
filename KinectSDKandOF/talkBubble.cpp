@@ -1,68 +1,73 @@
 #include "ofMain.h"
 #include "talkBubble.h"
 
-talkBubble::talkBubble(float _x, float _y, int _z, int _orientation, string _message, int _talkTime)
+talkBubble::talkBubble(float _x, float _y, string _message, int _talkTime)
 {
 	x = _x;
 	y = _y;
-	z = _z;
 	message = _message;
-	orientation = _orientation;
 	talkTime = _talkTime;
 	
 	//Show bubble pointing left
-	backgroundImage.loadImage("bubble.png");
+	backgroundImage.loadImage("images/bubble.png");
 	
 	//Show bubble point right
-	backgroundImage_r.loadImage("bubble_2.png");
+	backgroundImage_r.loadImage("images/bubble_2.png");
 	
 	font.loadFont("DIN.otf",12); //40 = Font size
 	
 	//Adjust this value to change the relative size of the bubble
 	scale = .5;
 	
+	totalTime=0;
+	//clickCount = 0;
+	name="default";
+	active=false;
+	
 	bubbleState = 0; // Default 0, no pos parameters set
 	min = 0;
 	sec = 0;
+
 }
 
 void talkBubble::update(){	
+	if(active)
+	{
+		timer();
+	}
+	else {
+		startTime = 0;
+	}
 	
 }
 
 void talkBubble::draw(){
 	
-	ofPushMatrix();
-	ofTranslate(0, 0, z);
-		ofEnableAlphaBlending();
+	//ofPushMatrix();
+	//ofTranslate(0, 0, z);
+	//	ofEnableAlphaBlending();
 	
-		if (active == 1) {
-			ofSetColor(255,255,255,255);
-		} else {
-			ofSetColor(255,255,255,100);
-		}
-		
-		if(orientation == 0)
-		{
-			backgroundImage.draw(x, y);
-		} else if (orientation == 1) 
-		{
-			backgroundImage_r.draw(x, y);
-		}
+	//	if (active == 1) {
+	//		ofSetColor(255,255,255,255);
+	//	} else {
+	//		ofSetColor(255,255,255,100);
+	//	}
+
+	    
+		ofEnableAlphaBlending();
+		backgroundImage.draw(x, y);
 	
 		
 		ofSetColor(0,0,0,255);
 		font.drawString(message,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)-13);
-	
 		ofSetColor(255,255,255,255);
-	
-		//FORMAT TALK TIME
-	
-		if (talkTime > 59) {
-			min = talkTime/60;
+		
+		//FORMAT TALK TIME	
+		if (totalTime > 59) {
+			min = totalTime/60;
 		}
 		secsInMins = 60 * min;
-		sec = talkTime - secsInMins;
+		sec = totalTime - secsInMins;
 		
 		if(sec < 10)
 		{
@@ -71,28 +76,34 @@ void talkBubble::draw(){
 			cleanSeconds = ofToString(sec);
 		}
 
-	font.drawString(ofToString(min) + ":" + cleanSeconds,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)+20);
-	ofDisableAlphaBlending();
+		font.drawString(ofToString(min) + ":" + cleanSeconds,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)+20);
+		ofDisableAlphaBlending();
 
-	ofPopMatrix();
-	ofSetColor(255,255,255,255);
+		//ofPopMatrix();
+		//ofSetColor(255,255,255,255);		
 }
 
 
-void talkBubble::updateAttributes(int _active, string _name, int _talkTime)
+void talkBubble::updateAttributes(string _name, int _talkTime)
 {
-	active = _active;
+	//active = _active;
 	message = _name;
 	talkTime = _talkTime;
 	
 }
 
-void talkBubble::updatePosition(float _x, float _y, int _z)
+void talkBubble::updatePosition(int _x, int _y)
 {
 	x=_x;
 	y=_y;
+
+
+
+    /*
+	x=_x;
+	y=_y;
 	z=_z;
-	/*
+	
 	switch (bubbleState)
 	{
 		case 0:
@@ -137,5 +148,18 @@ void talkBubble::setPosition()
 		default:
 		//
 		break;
+	}
+}
+
+void talkBubble::timer(){
+	if(startTime == 0)
+		startTime=ofGetElapsedTimeMillis(); 
+	
+	deltaTime = ofGetElapsedTimeMillis() - startTime;
+	
+	if(deltaTime > 1000){
+		totalTime++;
+		deltaTime = 0;
+		startTime = ofGetElapsedTimeMillis();
 	}
 }

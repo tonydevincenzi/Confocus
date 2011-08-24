@@ -15,7 +15,6 @@
 #include "slider.h"
 #include "talkBubble.h"
 
-
 //const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
 	
@@ -68,6 +67,7 @@ class testApp : public ofBaseApp{
 		ofImage         header;
 		ofImage         header2;
 		ofImage         bg;
+		
 		//talk bubbles
 		talkBubble** talkBubbles;  
 		int nBubbles;   

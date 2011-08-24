@@ -53,15 +53,16 @@ void testApp::setup(){
 	header2.loadImage("images/raw.png");
 	bg.loadImage("images/bg.png");
 
+	
 	//talk bubbles
-	nBubbles = 5; 
+	nBubbles = 6; 
 	talkBubbles = new talkBubble*[nBubbles];   
-	talkBubbles[0] = new talkBubble(0,0,0,0, "name 1", 1);
-	talkBubbles[1] = new talkBubble(0,0,0,0, "name 2", 1);
-	talkBubbles[2] = new talkBubble(0,0,0,0, "name 3", 1);
-	talkBubbles[3] = new talkBubble(0,0,0,0, "name 4", 1);	
-	talkBubbles[4] = new talkBubble(0,0,0,0, "name 5", 1);	
-	talkBubbles[5] = new talkBubble(0,0,0,0, "name 6", 1);
+	talkBubbles[0] = new talkBubble(0,0,"name 0", 100);
+	talkBubbles[1] = new talkBubble(0,0,"name 1", 100);
+	talkBubbles[2] = new talkBubble(0,0,"name 2", 100);
+	talkBubbles[3] = new talkBubble(0,0,"name 3", 100);	
+	talkBubbles[4] = new talkBubble(0,0,"name 4", 100);	
+	talkBubbles[5] = new talkBubble(0,0,"name 5", 100);
 }
 
 //--------------------------------------------------------------
@@ -121,40 +122,26 @@ void testApp::update(){
 		if (discrepancy < minSoundDiscrepancy) {
 			minSoundDiscrepancy = discrepancy;
 			g_kinectGrabber.minDiscrepancyIdx = i;
+
+			talkBubbles[i]->active=true;
 		}
+		else talkBubbles[i]->active=false;
+
+		//talk bubbles update
+		int headPositionX = g_kinectGrabber.headXValues[i];
+		int headPositionY = g_kinectGrabber.headYValues[i];
+		talkBubbles[i]->updatePosition(headPositionX,headPositionY);
+		talkBubbles[i]->update();
+		//talkBubbles[i]->updateAttributes("default",);
 	}
 	// print the closest match
 	printf(" closest person : %i \n", g_kinectGrabber.minDiscrepancyIdx); 
 	printf("-------------------------------------------\n"); 
 
 	//talk bubbles
-	/*
-	//talkBubble.updatePosition(g_kinectGrabber.headXValues[g_kinectGrabber.minDiscrepancyIdx],g_kinectGrabber.headYValues[g_kinectGrabber.minDiscrepancyIdx],g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-	//TALK BUBBLES
-	switch (g_kinectGrabber.minDiscrepancyIdx) {
-		case 0:
-			talkBubbles[0]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-		break;
-		case 1:
-			talkBubbles[1]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-		break;
-		case 2:
-			talkBubbles[2]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-		break;
-		case 3:
-			talkBubbles[3]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-		break;
-		case 4:
-			talkBubbles[4]->updatePosition(mouseX,mouseY,g_kinectGrabber.headZValues[g_kinectGrabber.minDiscrepancyIdx]);
-		break;
-		case 5:
-			talkBubbles[5]->updatePosition(mouseX,mouseY,ofMap(kinect.getDistanceAt(mouseX, mouseY), farDistance,nearDistance, -500, 0));
-		break;
-		default:
-		break;
-	}
-	*/
-
+	//int headPositionX = g_kinectGrabber.headXValues[g_kinectGrabber.minDiscrepancyIdx];
+	//int headPositionY = g_kinectGrabber.headYValues[g_kinectGrabber.minDiscrepancyIdx];
+	//talkBubbles[0]->updatePosition(headPositionX, headPositionY);
 }
 
 //--------------------------------------------------------------
@@ -239,11 +226,7 @@ void testApp::draw(){
 	//ofSetColor(0xffffff);
 
 	//talk bubble
-	/*
-	for (int i = 0; i < TCP.getNumClients()-1; i++){
-		talkBubbles[i]->draw();
-	}
-	*/
+	for(int i=0;i<nBubbles;i++) talkBubbles[i]->draw();
 
 	
 }

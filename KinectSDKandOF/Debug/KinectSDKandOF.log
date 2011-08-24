@@ -1,8 +1,23 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(299,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  conference.cpp
+  testApp.cpp
+c:\users\liningy\kinectedconference\kinectsdkandof\testapp.cpp(262): warning C4995: 'sprintf': name was marked as #pragma deprecated
+  talkBubble.cpp
+  main.cpp
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cstdio(48): warning C4995: 'gets': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cstdio(52): warning C4995: 'sprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cstdio(55): warning C4995: 'vsprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cstring(21): warning C4995: 'strcat': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cstring(22): warning C4995: 'strcpy': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cwchar(30): warning C4995: 'swprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cwchar(31): warning C4995: 'vswprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cwchar(33): warning C4995: 'wcscat': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\cwchar(35): warning C4995: 'wcscpy': name was marked as #pragma deprecated
 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(757): warning C4995: 'swprintf': name was marked as #pragma deprecated
 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(766): warning C4995: 'swprintf': name was marked as #pragma deprecated
 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(775): warning C4995: 'swprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\intrin.h(1087): warning C4995: 'wcscat': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\intrin.h(1089): warning C4995: 'wcscpy': name was marked as #pragma deprecated
+  Generating Code...
 button.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
 PocoFoundationmtd.lib(AtomicCounter.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'PocoFoundationmtd.lib(AtomicCounter.obj)' or at 'C:\Users\liningy\KinectedConference\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info
 PocoFoundationmtd.lib(Bugcheck.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'PocoFoundationmtd.lib(Bugcheck.obj)' or at 'C:\Users\liningy\KinectedConference\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info

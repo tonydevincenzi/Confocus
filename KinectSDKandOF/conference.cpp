@@ -179,65 +179,6 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 
 
 
-
-//creat transition between 0 to 255, not used anymore
-void adjustOver(int range, BYTE * overBuff) {
-	BYTE * new_alpha_buff;
-	new_alpha_buff = (BYTE*) malloc (DEPTH_WIDTH*DEPTH_HEIGHT*sizeof(BYTE));
-
-	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
-			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
-				
-				int index = (y*DEPTH_WIDTH) + x;
-	
-				int sum = 0;
-				int divisors = 0;
-				
-				for (int m = 0; m < range; m ++) {
-					int w_offset = m * DEPTH_WIDTH;
-					for (int n = 0; n < range; n ++) {
-						int new_index = index - w_offset - n;
-						if (new_index > 0) {
-							sum += overBuff[4*(new_index) +3];
-							divisors ++;
-						}
-						
-						new_index = index + w_offset + n;
-						if (new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
-							sum += overBuff[4*(new_index) +3];
-							divisors ++;
-						}
-
-						new_index = index - w_offset + n;
-						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
-							sum += overBuff[4*(new_index) +3];
-							divisors ++;
-						}
-				
-						new_index = index + w_offset - n;
-						if (new_index > 0 && new_index <  DEPTH_WIDTH* DEPTH_HEIGHT) {
-							sum += overBuff[4*(new_index) +3];
-							divisors ++;
-						}
-
-					}
-				}
-				new_alpha_buff[index] = (unsigned char)(sum / divisors);
-			}
-	}
-	
-	
-	for( int y = 0 ; y < DEPTH_HEIGHT ; y++ ){
-			for( int x = 0 ; x < DEPTH_WIDTH ; x++ ) {
-				overBuff[4 * ((y*DEPTH_WIDTH) + x) + 3] = new_alpha_buff[(y*DEPTH_WIDTH) + x];
-			}
-	}
-
-	free (new_alpha_buff);
-}
-
-
-
 /*
 //creat transition between 0 to 255, not used anymore
 void adjustOver(int range, BYTE * overBuff) {

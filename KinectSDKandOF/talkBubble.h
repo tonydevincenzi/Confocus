@@ -1,6 +1,8 @@
 #ifndef _OF_BUBBLE		// by using this if statement you prevent the class to be called more than once - in other words what we're saying here is 
 #define _OF_BUBBLE		//if the class has NOT been defined then define it
 
+#include "grabVideo.h"
+
 class talkBubble {
 	
 	
@@ -9,11 +11,12 @@ public:
 	
 	void update();
 	void draw();
-	void updatePosition(float x, float y, int z);
-	void updateAttributes(int active, string name, int talkTime);
+	void updatePosition(int _x, int _y);
+	void updateAttributes(string name, int talkTime);
 	void setPosition();
+	void timer();
 	
-	talkBubble(float x, float y, int z,int orientation, string message, int talkTime);
+	talkBubble(float x, float y,string message, int talkTime);
 	
 	ofImage	backgroundImage;
 	ofImage	backgroundImage_r;
@@ -35,6 +38,9 @@ public:
 	string name;
 	int talkTime;
 	string message;
+
+	int totalTime, startTime, deltaTime;
+	//string name;
 	
 	
 
