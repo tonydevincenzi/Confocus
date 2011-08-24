@@ -83,10 +83,10 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 					//otherwise, set the blur visible (alpha = 0)
 					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
 					int headPositionX = kinectGrabber->headXValues[kinectGrabber->minDiscrepancyIdx];
-					int LeftShoulderX = kinectGrabber->leftShoulderXValues[kinectGrabber->minDiscrepancyIdx];
-					int rightShoulderX= kinectGrabber->rightShoulderXValues[kinectGrabber->minDiscrepancyIdx];
-					int LeftHandX = kinectGrabber->leftHandXValues[kinectGrabber->minDiscrepancyIdx];
-					int rightHandX= kinectGrabber->rightHandXValues[kinectGrabber->minDiscrepancyIdx];
+					//int LeftShoulderX = kinectGrabber->leftShoulderXValues[kinectGrabber->minDiscrepancyIdx];
+					//int rightShoulderX= kinectGrabber->rightShoulderXValues[kinectGrabber->minDiscrepancyIdx];
+					//int LeftHandX = kinectGrabber->leftHandXValues[kinectGrabber->minDiscrepancyIdx];
+					//int rightHandX= kinectGrabber->rightHandXValues[kinectGrabber->minDiscrepancyIdx];
 
 					if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque

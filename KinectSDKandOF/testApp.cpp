@@ -124,8 +124,9 @@ void testApp::update(){
 			g_kinectGrabber.minDiscrepancyIdx = i;
 
 			talkBubbles[i]->active=true;
+			for(int j=i+1;j<6;j++) talkBubbles[j]->active=false;
+			for(int j=i-1;j>=0;j--) talkBubbles[j]->active=false;
 		}
-		else talkBubbles[i]->active=false;
 
 		//talk bubbles update
 		int headPositionX = g_kinectGrabber.headXValues[i];

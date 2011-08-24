@@ -47,11 +47,11 @@ void talkBubble::draw(){
 	//ofTranslate(0, 0, z);
 	//	ofEnableAlphaBlending();
 	
-	//	if (active == 1) {
-	//		ofSetColor(255,255,255,255);
-	//	} else {
-	//		ofSetColor(255,255,255,100);
-	//	}
+		if (active == 1) {
+			ofSetColor(255,255,255,255);
+		} else {
+			ofSetColor(255,255,255,100);
+		}
 
 	    
 		ofEnableAlphaBlending();
