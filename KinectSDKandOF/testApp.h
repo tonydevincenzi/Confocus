@@ -14,6 +14,7 @@
 #include "button.h"
 #include "slider.h"
 #include "talkBubble.h"
+#include "SketchShareView.h"
 
 //const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
@@ -61,7 +62,7 @@ class testApp : public ofBaseApp{
 		//gui buttons
 		button**        buttons;
 		int             nButtons;
-		bool            buttonPressed[6]; //the number of the boolean should equal to nButtons
+		bool            buttonPressed[7]; //the number of the boolean should equal to nButtons
 		slider**        sliders;
 		int             nSliders;
 		ofImage         header;
@@ -70,7 +71,10 @@ class testApp : public ofBaseApp{
 		
 		//talk bubbles
 		talkBubble** talkBubbles;  
-		int nBubbles;   
+		int nBubbles; 
+
+		//sketch viewer
+		SketchShareView sketchShareView;
 };
 
 #endif

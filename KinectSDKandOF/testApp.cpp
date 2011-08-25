@@ -30,7 +30,7 @@ void testApp::setup(){
 	maskValue=3;
 	  
 	//gui interface
-	nButtons=6;
+	nButtons=7;
 	buttons=new button*[nButtons];
 	buttons[0]=new button("setup",55,759,100,30,true,"images/set_a.png","images/set_b.png");
 	buttons[1]=new button("active",234,759,100,30,true,"images/auto_a.png","images/auto_b.png");
@@ -38,6 +38,7 @@ void testApp::setup(){
 	buttons[3]=new button("focus",29,529,100,30,false,"images/focus_a.png","images/focus_b.png");
 	buttons[4]=new button("black",29,599,100,30,false,"images/mask_a.png","images/mask_b.png");
 	buttons[5]=new button("zoom", 29,667,100,30,false,"images/zoom_a.png","images/zoom_b.png");
+	buttons[6]=new button("sketchViewer", 500,759,100,30,false,"images/set_a.png","images/set_b.png");
 	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
 	buttonPressed[1]=true;
 	buttonPressed[0]=true;
@@ -63,6 +64,9 @@ void testApp::setup(){
 	talkBubbles[3] = new talkBubble(0,0,"name 3", 100);	
 	talkBubbles[4] = new talkBubble(0,0,"name 4", 100);	
 	talkBubbles[5] = new talkBubble(0,0,"name 5", 100);
+
+	//sketch viewer
+	sketchShareView.initViewer();	
 }
 
 //--------------------------------------------------------------
@@ -123,8 +127,8 @@ void testApp::update(){
 			minSoundDiscrepancy = discrepancy;
 			g_kinectGrabber.minDiscrepancyIdx = i;
 
-			talkBubbles[i]->active=true;
-			for(int j=i+1;j<6;j++) talkBubbles[j]->active=false;
+			talkBubbles[i]->active=true; //the active talk bubbles
+			for(int j=i+1;j<6;j++) talkBubbles[j]->active=false; //de-active other bubbles
 			for(int j=i-1;j>=0;j--) talkBubbles[j]->active=false;
 		}
 
@@ -138,10 +142,10 @@ void testApp::update(){
 	printf(" closest person : %i \n", g_kinectGrabber.minDiscrepancyIdx); 
 	printf("-------------------------------------------\n"); 
 
-	//talk bubbles
-	//int headPositionX = g_kinectGrabber.headXValues[g_kinectGrabber.minDiscrepancyIdx];
-	//int headPositionY = g_kinectGrabber.headYValues[g_kinectGrabber.minDiscrepancyIdx];
-	//talkBubbles[0]->updatePosition(headPositionX, headPositionY);
+	//sketch viewer
+	sketchShareView.update();
+	if(buttonPressed[6]) sketchShareView.close=false;
+
 }
 
 //--------------------------------------------------------------
@@ -211,7 +215,7 @@ void testApp::draw(){
 	ofEnableAlphaBlending();
 	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom
 	if(buttonPressed[0]){  //draw 3 buttons triggered by pressing the setUp button; boolean trigger is used to disable the button pressing if it's not shown on the screen
-		for(int i=3;i<nButtons;i++){
+		for(int i=3;i<6;i++){
 			buttons[i]->trigger=true;
 			buttons[i]->drawFont(buttonPressed[i]);
 		}
@@ -228,6 +232,12 @@ void testApp::draw(){
 	//talk bubble
 	for(int i=0;i<nBubbles;i++) talkBubbles[i]->draw();
 
+	//sketch viewer
+	if(!sketchShareView.close){
+		sketchShareView.drawBg();
+		sketchShareView.drawVideo();
+	}
+
 	
 }
 //-------------------------------------------------------------
@@ -243,7 +253,7 @@ void testApp::keyPressed(int key){
 	for (int i=0;i<nBubbles;i++){
 		if (talkBubbles[i]->active) {
 			if(key == '-') talkBubbles[i]->name.erase();
-			else                  talkBubbles[i]->name.append(1,(char)key);
+			else  talkBubbles[i]->name.append(1,(char)key);
 		}
 	}
 	
@@ -278,6 +288,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
+	//button pressing
 	if(buttons[0]->buttonPressed(x,y)) buttonPressed[0]=!buttonPressed[0]; //setUpbutton
 	if(buttons[1]->buttonPressed(x,y)){
 		buttonPressed[1]=true;
@@ -303,6 +314,11 @@ void testApp::mousePressed(int x, int y, int button){
 		buttonPressed[4]=false;
 		printf("buttonPressed \n");
 	}
+	if(buttons[6]->buttonPressed(x,y)) buttonPressed[6]=!buttonPressed[6];
+
+	//sketchViewer
+	sketchShareView.closeDetect(x,y);
+	sketchShareView.zoomDetect(x,y);
 }
 
 //--------------------------------------------------------------

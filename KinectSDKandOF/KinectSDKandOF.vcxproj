@@ -87,6 +87,7 @@
     <ClCompile Include="conference.cpp" />
     <ClCompile Include="grabVideo.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SketchShareView.cpp" />
     <ClCompile Include="slider.cpp" />
     <ClCompile Include="src\addons\ofxFBOTexture.cpp" />
     <ClCompile Include="src\addons\ofxShader.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="grabVideo.h" />
     <ClInclude Include="menuSelection.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SketchShareView.h" />
     <ClInclude Include="slider.h" />
     <ClInclude Include="src\addons\ofxFBOTexture.h" />
     <ClInclude Include="src\addons\ofxShader.h" />
