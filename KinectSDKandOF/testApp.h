@@ -62,7 +62,7 @@ class testApp : public ofBaseApp{
 		//gui buttons
 		button**        buttons;
 		int             nButtons;
-		bool            buttonPressed[7]; //the number of the boolean should equal to nButtons
+		bool            buttonPressed[9]; //the number of the boolean should equal to nButtons
 		slider**        sliders;
 		int             nSliders;
 		ofImage         header;

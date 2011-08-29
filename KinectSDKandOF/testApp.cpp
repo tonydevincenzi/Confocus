@@ -30,19 +30,25 @@ void testApp::setup(){
 	maskValue=3;
 	  
 	//gui interface
-	nButtons=7;
+	nButtons=9;
 	buttons=new button*[nButtons];
 	buttons[0]=new button("setup",55,759,100,30,true,"images/set_a.png","images/set_b.png");
 	buttons[1]=new button("active",234,759,100,30,true,"images/auto_a.png","images/auto_b.png");
 	buttons[2]=new button("manual",326,759,100,30,true,"images/manual_a.png","images/manual_b.png");
+	
 	buttons[3]=new button("focus",29,529,100,30,false,"images/focus_a.png","images/focus_b.png");
 	buttons[4]=new button("black",29,599,100,30,false,"images/mask_a.png","images/mask_b.png");
 	buttons[5]=new button("zoom", 29,667,100,30,false,"images/zoom_a.png","images/zoom_b.png");
-	buttons[6]=new button("sketchViewer", 500,759,100,30,false,"images/set_a.png","images/set_b.png");
+	
+	buttons[6]=new button("sketchViewer", 522,759,100,30,true,"images/sketch_a.png","images/sketch_b.png");
+	buttons[7]=new button("bubble", 107,759,100,30,true,"images/bubble_a.png","images/bubble_b.png");
+	buttons[8]=new button("ipad", 570,759,100,30,true,"images/ipad_a.png","images/ipad_b.png");
+
 	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
 	buttonPressed[1]=true;
 	buttonPressed[0]=true;
 	buttonPressed[3]=true;
+	//buttonPressed[6]=true;
 
 	nSliders=3;
 	sliders=new slider*[nSliders];
@@ -145,6 +151,7 @@ void testApp::update(){
 	//sketch viewer
 	sketchShareView.update();
 	if(buttonPressed[6]) sketchShareView.close=false;
+	else if(!buttonPressed[6]) sketchShareView.close=true;
 
 }
 
@@ -214,6 +221,9 @@ void testApp::draw(){
 
 	ofEnableAlphaBlending();
 	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom
+	buttons[6]->drawFont(buttonPressed[6]); //draw 7th button always existing
+	buttons[7]->drawFont(buttonPressed[7]);
+	buttons[8]->drawFont(buttonPressed[8]);
 	if(buttonPressed[0]){  //draw 3 buttons triggered by pressing the setUp button; boolean trigger is used to disable the button pressing if it's not shown on the screen
 		for(int i=3;i<6;i++){
 			buttons[i]->trigger=true;
@@ -224,7 +234,7 @@ void testApp::draw(){
 		sliders[1]->drawSlider(4,0.01);
 		sliders[2]->drawSlider(0.8,1.5);
 	} else if(!buttonPressed[0]){
-		for(int i=3;i<nButtons;i++) buttons[i]->trigger=false;
+		for(int i=3;i<6;i++) buttons[i]->trigger=false;
 	}
 	ofDisableAlphaBlending();
 	//ofSetColor(0xffffff);
@@ -233,10 +243,12 @@ void testApp::draw(){
 	for(int i=0;i<nBubbles;i++) talkBubbles[i]->draw();
 
 	//sketch viewer
+	ofEnableAlphaBlending();
 	if(!sketchShareView.close){
 		sketchShareView.drawBg();
 		sketchShareView.drawVideo();
 	}
+	ofDisableAlphaBlending();
 
 	
 }
@@ -290,6 +302,8 @@ void testApp::mouseDragged(int x, int y, int button){
 void testApp::mousePressed(int x, int y, int button){
 	//button pressing
 	if(buttons[0]->buttonPressed(x,y)) buttonPressed[0]=!buttonPressed[0]; //setUpbutton
+	if(buttons[6]->buttonPressed(x,y)) buttonPressed[6]=!buttonPressed[6]; //turn on/off the sketchviewer
+	
 	if(buttons[1]->buttonPressed(x,y)){
 		buttonPressed[1]=true;
 		buttonPressed[2]=false;
@@ -314,10 +328,10 @@ void testApp::mousePressed(int x, int y, int button){
 		buttonPressed[4]=false;
 		printf("buttonPressed \n");
 	}
-	if(buttons[6]->buttonPressed(x,y)) buttonPressed[6]=!buttonPressed[6];
+	//if(buttons[6]->buttonPressed(x,y)) buttonPressed[6]=!buttonPressed[6];  //turn on and off the sketchviewer
 
 	//sketchViewer
-	sketchShareView.closeDetect(x,y);
+	//sketchShareView.closeDetect(x,y);
 	sketchShareView.zoomDetect(x,y);
 }
 
