@@ -1,6 +1,8 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(299,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  testApp.cpp
-c:\users\liningy\confocus\kinectsdkandof\testapp.cpp(296): warning C4995: 'sprintf': name was marked as #pragma deprecated
+  conference.cpp
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(757): warning C4995: 'swprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(766): warning C4995: 'swprintf': name was marked as #pragma deprecated
+c:\program files (x86)\microsoft visual studio 10.0\vc\include\string(775): warning C4995: 'swprintf': name was marked as #pragma deprecated
 button.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
 openframeworksLibDebug.lib(ofAppGlutWindow.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'openframeworksLibDebug.lib(ofAppGlutWindow.obj)' or at 'C:\Users\liningy\Confocus\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info
 openframeworksLibDebug.lib(ofAppRunner.obj) : warning LNK4099: PDB 'vc100.pdb' was not found with 'openframeworksLibDebug.lib(ofAppRunner.obj)' or at 'C:\Users\liningy\Confocus\KinectSDKandOF\bin\vc100.pdb'; linking object as if no debug info

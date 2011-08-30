@@ -19,24 +19,26 @@ void SketchShareView::initViewer()
 	close=false;
 	//isClosed=1;
 
-	bgX=0;
-	bgY=0;
+	bgX_small=0;
+	bgY_small=0;
+	bgX_large=0;
+	bgY_large=0;
 }
 
-void SketchShareView::update(){
+void SketchShareView::update(int _xSmall, int _ySmall, int _xLarge, int _yLarge){
 	vidGrabber.grabFrame();
+	bgX_small=_xSmall;
+	bgY_small=_ySmall;
+	bgX_large=_xLarge;
+	bgY_large=_yLarge;
 }
 
 void SketchShareView::drawBg(){
 	
 		if(!zoomIn){
-			bgX=100;
-			bgY=100;
-			bgSmall.draw(bgX,bgY);
+			bgSmall.draw(bgX_small,bgY_small);
 		} else {
-			bgX=20;
-			bgY=20;
-			bgBig.draw(bgX,bgY);
+			bgBig.draw(bgX_large,bgY_large);
 		}
 	
 }
@@ -45,11 +47,13 @@ void SketchShareView::drawVideo(){
 	
 		ofPushMatrix();
 	
-		ofTranslate(bgX,bgY);
+		//ofTranslate(bgX,bgY);
 		ofSetColor(0xffffff);
 		if(!zoomIn){
+			ofTranslate(bgX_small, bgY_small);
 			vidGrabber.draw(3,36,camWidth_s,camHeight_s);
 		} else {
+			ofTranslate(bgX_large, bgY_large);
 			vidGrabber.draw(35-25,32+22,camWidth_l,camHeight_l);
 		}
 
@@ -61,15 +65,16 @@ void SketchShareView::zoomDetect(int mouseX, int mouseY){
 
 	
 	if(!zoomIn){
-		if((mouseX>bgX+176 && mouseX<bgX+176+28)&&(mouseY>bgY+4 && mouseY<bgY+4+28)) zoomIn=true;
+		if((mouseX>bgX_small+176 && mouseX<bgX_small+176+28)&&(mouseY>bgY_small+4 && mouseY<bgY_small+4+28)) zoomIn=true;
 		
 	} else {
-		if((mouseX>bgX+568)&&(mouseX<bgX+568+28)&&(mouseY>bgY+6)&&(mouseY<bgY+6+28)) zoomIn=false;
+		if((mouseX>bgX_large+568)&&(mouseX<bgX_large+568+28)&&(mouseY>bgY_large+6)&&(mouseY<bgY_large+6+28)) zoomIn=false;
 	}
 	
 
 }
 
+/*
 void SketchShareView::closeDetect(int mouseX, int mouseY){	
 	if(!zoomIn){
 		if((mouseX>bgX+176 && mouseX<bgX+176+28)&&(mouseY>bgY+4 && mouseY<bgY+4+28)) close=true;
@@ -77,5 +82,6 @@ void SketchShareView::closeDetect(int mouseX, int mouseY){
 		if((mouseX>bgX+568)&&(mouseX<bgX+568+28)&&(mouseY>bgY+6)&&(mouseY<bgY+6+28)) close=true;
 	}
 }
+*/
 
 

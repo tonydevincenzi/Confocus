@@ -14,7 +14,8 @@ public:
 	int                 camHeight_l;
 
 	ofImage             bgSmall, bgBig;
-	int                 bgX, bgY;
+	int                 bgX_small, bgY_small;
+	int                 bgX_large, bgY_large;
 	
 	bool                zoomIn;
 	bool                close;
@@ -22,7 +23,7 @@ public:
 	//SketchShareView();
 	
 	void initViewer();
-	void update();
+	void update(int _xSmall, int _ySmall, int _xLarge, int _yLarge);
 	void drawBg();
 	void drawVideo();
 	void zoomDetect(int mouseX, int mouseY);

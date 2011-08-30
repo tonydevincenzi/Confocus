@@ -153,7 +153,7 @@ void testApp::update(){
 	printf("-------------------------------------------\n"); 
 
 	//sketch viewer
-	sketchShareView.update();
+	sketchShareView.update(g_kinectGrabber.handRight_x,g_kinectGrabber.handRight_y,640+20,0+25);
 	if(buttonPressed[6]) sketchShareView.close=false;
 	else if(!buttonPressed[6]) sketchShareView.close=true;
 

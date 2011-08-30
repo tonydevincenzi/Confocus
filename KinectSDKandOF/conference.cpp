@@ -83,10 +83,6 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 					//otherwise, set the blur visible (alpha = 0)
 					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
 					int headPositionX = kinectGrabber->headXValues[kinectGrabber->minDiscrepancyIdx];
-					//int LeftShoulderX = kinectGrabber->leftShoulderXValues[kinectGrabber->minDiscrepancyIdx];
-					//int rightShoulderX= kinectGrabber->rightShoulderXValues[kinectGrabber->minDiscrepancyIdx];
-					//int LeftHandX = kinectGrabber->leftHandXValues[kinectGrabber->minDiscrepancyIdx];
-					//int rightHandX= kinectGrabber->rightHandXValues[kinectGrabber->minDiscrepancyIdx];
 
 					if (depthBuff[index] > headPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < headPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque
@@ -94,8 +90,8 @@ void focusRGB(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE* blurBu
 						blurBuff[4*index + 3] = 0;   //fully transparent
 					}
 
-					//if((x<LeftShoulderX-40)|| (x>rightShoulderX +40) || (x<LeftHandX-20) || (x>rightHandX+30)) blurBuff[4*index + 3] = 255; 
-					if ((x<headPositionX-150) || (x>headPositionX+150)) blurBuff[4*index + 3] = 255;
+					//focus within a certain range around the active player
+					if ((x<headPositionX-180) || (x>headPositionX+180)) blurBuff[4*index + 3] = 255;
 
 				// If there are no detected skeletons, just fade out everything
 				} else {
