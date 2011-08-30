@@ -4,8 +4,11 @@
 //--------------------------------------------------------------
 void testApp::setup(){	
 
-	//ofEnableAlphaBlending();	
-	ofBackground(0,0,0);	            // Set the background color (right now, white)
+	//ofEnableAlphaBlending();
+	bgColor.r=20;
+	bgColor.g=20;
+	bgColor.b=24;
+	ofBackground(bgColor.r,bgColor.g,bgColor.b);	            // Set the background color (right now, white)
 	
 	blur.setup(DEPTH_WIDTH, DEPTH_HEIGHT);  // set up the blur shader
 	thresh=300;
@@ -77,7 +80,8 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
-	ofBackground(0,0,0);
+	//ofBackground(0,0,0);
+	ofBackground(bgColor.r,bgColor.g,bgColor.b);
 	g_kinectGrabber.Kinect_Update();
 	//conference_update();
     
@@ -139,8 +143,8 @@ void testApp::update(){
 		}
 
 		//talk bubbles update
-		int headPositionX = g_kinectGrabber.headXValues[i];
-		int headPositionY = g_kinectGrabber.headYValues[i];
+		int headPositionX = g_kinectGrabber.rightShoulderXValues[i]+25;
+		int headPositionY = g_kinectGrabber.headYValues[i]-30;
 		talkBubbles[i]->updatePosition(headPositionX,headPositionY);
 		talkBubbles[i]->updateTimer();
 	}
@@ -191,7 +195,8 @@ void testApp::draw(){
 	ofDisableAlphaBlending();
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
-	ofSetColor(0x000000);
+	//ofSetColor(0x000000);
+	ofSetColor(bgColor.r,bgColor.g,bgColor.b);
 	ofRect(640,0+25,VIDEO_WIDTH,ofGetHeight());
 	ofSetColor(0xffffff);
 
@@ -217,7 +222,7 @@ void testApp::draw(){
 	// gui interface
 	header.draw(0,0);
 	header2.draw(640+20,0);
-	bg.draw(1,500);
+	//bg.draw(1,500);
 
 	ofEnableAlphaBlending();
 	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom

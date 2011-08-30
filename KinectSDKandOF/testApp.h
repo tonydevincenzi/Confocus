@@ -56,6 +56,7 @@ class testApp : public ofBaseApp{
 		float           maskValue;
 		
 		//GUI
+		ofColor         bgColor;
 		int             thresh;
 		bool            activeFocus; //to deside the active or inActive focus
 		
