@@ -1,0 +1,28 @@
+Using Git through Git Bash terminal window:
+After setting up git : http://help.github.com/win-set-up-git/
+
+< for the first time, copy the entire folder to your local directory>
+$ git clone git@github.com: tonydevencenzi/KinectedConference.git
+
+<navigate to the right folder which includes the file you are going to push>
+$ cd ~/KinectedConference
+$ cd KinectSDKandOF
+
+<push the file you want to update>
+$ git add testApp.cpp testApp.h grabVideo.h grabVideo.cpp
+$ git commit -m ‘what have been changed’
+
+<add remote origion, this is only needed to be done once>
+$ git remote add origin git@github.com: tonydevincenzi/KinectedConference.git
+
+<confirm pushing>
+$ git push origin master
+
+
+(Fetch updates)
+git fetch
+git merge origin/master
+
+
+merge help:
+http://learn.github.com/p/branching.html
