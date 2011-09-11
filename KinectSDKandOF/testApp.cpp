@@ -78,6 +78,8 @@ void testApp::setup(){
 	sketchShareView.initViewer();
 
 	//other parameters
+	confirmSelection=false;
+	lockedPersonID=0;
 
 }
 
@@ -103,7 +105,8 @@ void testApp::update(){
 	// load the RGBA values into the blur and focus textures for the diminshed reality image
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
 	if(buttonPressed[1]) focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],maskValue);	
-	if(buttonPressed[2]) focusRGB_manual(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],mouseX,mouseY);	
+	else if(buttonPressed[2] && !confirmSelection) focusRGB_manual(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],mouseX,mouseY);	
+	else if(buttonPressed[2] && confirmSelection)  focusRGB_manualLocked(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],lockedPersonID);	
 	/*
 	if(focusPixels != NULL) {
 		
@@ -127,8 +130,8 @@ void testApp::update(){
 	printf("-------------------------------------------\n"); 
 	printf(" Head Positions \n"); 
 	printf("-------------------------------------------\n"); 
-	//printf("peopleSelectedbyMouse \n", peopleSelectedbyMouse);
 	
+	bool peopleSelectedbyMouse[6];
 	// Loop through all of the 
 	for (int i = 0; i < 6; i ++) { 
 	// TODO: value should be some constant indicating number of skeletons
@@ -141,16 +144,6 @@ void testApp::update(){
 		if (discrepancy < minSoundDiscrepancy) {
 			minSoundDiscrepancy = discrepancy;
 			g_kinectGrabber.minDiscrepancyIdx = i;
-
-			/*
-			if(buttonPressed[1]) talkBubbles[i]->active=true; //the active talk bubbles
-			if(buttonPressed[2]){
-				if (peopleSelectedbyMouse) talkBubbles[i]->active=true;
-				else talkBubbles[i]->active=false;
-			}
-			for(int j=i+1;j<6;j++) talkBubbles[j]->active=false; //de-active other bubbles
-			for(int j=i-1;j>=0;j--) talkBubbles[j]->active=false;
-			*/
 		}
 
 		//talk bubbles update
@@ -162,12 +155,17 @@ void testApp::update(){
 		//manual selection match tracked head; activating talkBubble in manual mode
 		int closestPersonDepth=g_kinectGrabber.headZValues[i];
 		int mouseDepth=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
-		bool peopleSelectedbyMouse;
-		if (ABS(mouseDepth-closestPersonDepth)< DEPTH_THRESHOLD) peopleSelectedbyMouse=true;
-		else   peopleSelectedbyMouse=false;
+		if (ABS(mouseDepth-closestPersonDepth)< DEPTH_THRESHOLD) {
+			peopleSelectedbyMouse[i]=true;
+			lockedPersonID=i;
+		} else if (confirmSelection){
+			peopleSelectedbyMouse[i]=true;
+		} else {
+			peopleSelectedbyMouse[i]=false;
+		}
 		
 		if(buttonPressed[2]){
-			if (peopleSelectedbyMouse) talkBubbles[i]->active=true;
+			if (peopleSelectedbyMouse[i] && lockedPersonID==i) talkBubbles[i]->active=true;
 			else talkBubbles[i]->active=false;
 		}
 	}
@@ -175,6 +173,7 @@ void testApp::update(){
 	// print the closest match
 	int closestID=g_kinectGrabber.minDiscrepancyIdx;
 	printf(" closest person : %i \n", closestID); 
+	//printf("confirmed selection?: %s",(confirmSelection)?"true":"false");
 	printf("-------------------------------------------\n"); 
 
 	//activating talkBubble in auto mode
@@ -300,9 +299,15 @@ void testApp::exit(){
 void testApp::keyPressed(int key){
 	
 	for (int i=0;i<nBubbles;i++){
-		if (talkBubbles[i]->active) {
-			if(key == '-') talkBubbles[i]->name.erase();
-			else  talkBubbles[i]->name.append(1,(char)key);
+		if (talkBubbles[i]->active && buttonPressed[1]) {
+			if(key == '-') talkBubbles[i]->name.erase();  //erase name input for the active bubble
+			else talkBubbles[i]->name.append(1,(char)key); //type in name for the active bubble
+		}
+	}
+
+	if(buttonPressed[2]){
+		if(key == 'l') {
+			confirmSelection=!confirmSelection;
 		}
 	}
 	

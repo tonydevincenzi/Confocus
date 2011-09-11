@@ -19,6 +19,7 @@ void conference_init();
 // sets the color pixels for display_activeMode
 void focusRGB(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, bool focusMode, bool blackMode, bool zoomMode, float maskValue);
 void focusRGB_manual(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, bool focusMode, bool blackMode, bool zoomMode, int mouseX, int mouseY);
+void focusRGB_manualLocked(BYTE* videoBuff, USHORT* playerBuff, BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, bool focusMode, bool blackMode, bool zoomMode, int lockedPersonID);
 
 //void focusRGB(BYTE* videoBuff, USHORT* depthBuff,BYTE* focusBuff, BYTE* blurBuff, KinectGrabber* kinectGrabber, int pointX, int pointY, bool activeFocus);
 

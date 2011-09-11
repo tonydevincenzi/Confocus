@@ -78,8 +78,9 @@ class testApp : public ofBaseApp{
 		//sketch viewer
 		SketchShareView sketchShareView;
 
-		//others
-		//bool            peopleSelectedbyMouse[6];
+		//lock to a tracked person in manual mode
+		bool            confirmSelection;  //confirm selection by pressing a button
+		int             lockedPersonID;    
 };
 
 #endif

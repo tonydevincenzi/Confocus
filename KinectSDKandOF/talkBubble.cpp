@@ -46,21 +46,22 @@ void talkBubble::draw(){
 	//ofPushMatrix();
 	//ofTranslate(0, 0, z);
 	//	ofEnableAlphaBlending();
-	
+		ofEnableAlphaBlending();
 		if (active == 1) {
 			ofSetColor(255,255,255,255);
 		} else {
 			ofSetColor(255,255,255,25);
 		}
-
-	    
-		ofEnableAlphaBlending();
 		backgroundImage.draw(x, y);
 	
 		
-		ofSetColor(0,0,0,255);
+		if (active == 1) {
+			ofSetColor(0,0,0,255);
+		} else {
+			ofSetColor(255,255,255,25);
+		}
 		font.drawString(name,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)-13);
-		ofSetColor(255,255,255,255);
+
 		
 		//FORMAT TALK TIME	
 		if (totalTime > 59) {
@@ -76,11 +77,17 @@ void talkBubble::draw(){
 			cleanSeconds = ofToString(sec);
 		}
 
+		
+		if (active == 1) {
+			ofSetColor(255,255,255,255);
+		} else {
+			ofSetColor(255,255,255,25);
+		}
 		font.drawString(ofToString(min) + ":" + cleanSeconds,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)+20);
 		ofDisableAlphaBlending();
 
 		//ofPopMatrix();
-		//ofSetColor(255,255,255,255);		
+		ofSetColor(255,255,255,255);		
 }
 
 
