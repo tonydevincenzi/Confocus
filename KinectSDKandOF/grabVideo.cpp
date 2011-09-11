@@ -142,6 +142,7 @@ HRESULT KinectGrabber::Kinect_Init() {
 	//return hr;
 
 	// audio initialization
+	minDiscrepancyIdx=0;
 	hr = S_OK;
     CoInitialize(NULL);
     int  iMicDevIdx = -1; 
@@ -188,6 +189,7 @@ HRESULT KinectGrabber::Kinect_Init() {
 
 	exit:
     puts("Press any key to continue");   
+
 }
 
 

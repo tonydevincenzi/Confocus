@@ -75,7 +75,10 @@ void testApp::setup(){
 	talkBubbles[5] = new talkBubble(0,0,"name 5", 100);
 
 	//sketch viewer
-	sketchShareView.initViewer();	
+	sketchShareView.initViewer();
+
+	//other parameters
+
 }
 
 //--------------------------------------------------------------
@@ -124,6 +127,8 @@ void testApp::update(){
 	printf("-------------------------------------------\n"); 
 	printf(" Head Positions \n"); 
 	printf("-------------------------------------------\n"); 
+	//printf("peopleSelectedbyMouse \n", peopleSelectedbyMouse);
+	
 	// Loop through all of the 
 	for (int i = 0; i < 6; i ++) { 
 	// TODO: value should be some constant indicating number of skeletons
@@ -137,9 +142,15 @@ void testApp::update(){
 			minSoundDiscrepancy = discrepancy;
 			g_kinectGrabber.minDiscrepancyIdx = i;
 
-			talkBubbles[i]->active=true; //the active talk bubbles
+			/*
+			if(buttonPressed[1]) talkBubbles[i]->active=true; //the active talk bubbles
+			if(buttonPressed[2]){
+				if (peopleSelectedbyMouse) talkBubbles[i]->active=true;
+				else talkBubbles[i]->active=false;
+			}
 			for(int j=i+1;j<6;j++) talkBubbles[j]->active=false; //de-active other bubbles
 			for(int j=i-1;j>=0;j--) talkBubbles[j]->active=false;
+			*/
 		}
 
 		//talk bubbles update
@@ -147,10 +158,31 @@ void testApp::update(){
 		int headPositionY = g_kinectGrabber.headYValues[i]-30;
 		talkBubbles[i]->updatePosition(headPositionX,headPositionY);
 		talkBubbles[i]->updateTimer();
+
+		//manual selection match tracked head; activating talkBubble in manual mode
+		int closestPersonDepth=g_kinectGrabber.headZValues[i];
+		int mouseDepth=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
+		bool peopleSelectedbyMouse;
+		if (ABS(mouseDepth-closestPersonDepth)< DEPTH_THRESHOLD) peopleSelectedbyMouse=true;
+		else   peopleSelectedbyMouse=false;
+		
+		if(buttonPressed[2]){
+			if (peopleSelectedbyMouse) talkBubbles[i]->active=true;
+			else talkBubbles[i]->active=false;
+		}
 	}
+
 	// print the closest match
-	printf(" closest person : %i \n", g_kinectGrabber.minDiscrepancyIdx); 
+	int closestID=g_kinectGrabber.minDiscrepancyIdx;
+	printf(" closest person : %i \n", closestID); 
 	printf("-------------------------------------------\n"); 
+
+	//activating talkBubble in auto mode
+	if(buttonPressed[1]) {
+		talkBubbles[closestID]->active=true; //the active talk bubbles
+		for(int j=closestID+1;j<6;j++) talkBubbles[j]->active=false; //de-active other bubbles
+		for(int j=closestID-1;j>=0;j--) talkBubbles[j]->active=false;
+	}
 
 	//sketch viewer
 	sketchShareView.update(g_kinectGrabber.handRight_x,g_kinectGrabber.handRight_y,640+20,0+25);

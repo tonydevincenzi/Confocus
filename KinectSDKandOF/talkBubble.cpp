@@ -50,7 +50,7 @@ void talkBubble::draw(){
 		if (active == 1) {
 			ofSetColor(255,255,255,255);
 		} else {
-			ofSetColor(255,255,255,100);
+			ofSetColor(255,255,255,25);
 		}
 
 	    

@@ -51,6 +51,7 @@ class testApp : public ofBaseApp{
 
 		int headPositionX, headPositionY, headPositionZ;
 		int neckPositionX, neckPositionY, leftShoulderX, leftShoulderY, rightShoulderX, rightShoulderY,leftHandPX, leftHandPY, rightHandPX, rightHandPY;
+		bool peopleSelectedbyMouse;
 		
 		shaderBlur      blur;
 		float           maskValue;
@@ -76,6 +77,9 @@ class testApp : public ofBaseApp{
 
 		//sketch viewer
 		SketchShareView sketchShareView;
+
+		//others
+		//bool            peopleSelectedbyMouse[6];
 };
 
 #endif

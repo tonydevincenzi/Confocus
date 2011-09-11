@@ -10,6 +10,7 @@ struct conferenceManager {
 
 void conference_init() {
 	conference.appState = IDLE;
+	//peopleSelectedbyMouse=false;
 }
 
 
@@ -149,18 +150,20 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 				//TODO: change the 6 to some constant indicating that total number of skeletons, like NUI_SKELETON_COUNT
 				{
 					
-					// Get the head's depth of the person's X value that is closest to the audio
-					//if that pixel's depth is near the speaker, make the blurred image invisible (alpha = 255)
-					//otherwise, set the blur visible (alpha = 0)
-					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
-
-
+					// Get the depth of the pixels where the mouse is pointing at
 					int pointingPositionZ=depthBuff[mouseY*DEPTH_WIDTH+mouseX];
 					if (depthBuff[index] > pointingPositionZ + DEPTH_THRESHOLD  || depthBuff[index] < pointingPositionZ - DEPTH_THRESHOLD ) {
 						blurBuff[4*index + 3] = 255; //fully opaque
 					} else {
 						blurBuff[4*index + 3] = 0;   //fully transparent
 					}
+
+					// Get the depth of the pixels where the head is
+					int headPositionZ = kinectGrabber->headZValues[kinectGrabber->minDiscrepancyIdx];
+					//printf("pointingPositionZ %d \n",pointingPositionZ);
+					//printf("headPositionZ %d \n",headPositionZ);
+					//if (ABS(pointingPositionZ-headPositionZ)< 3000) peopleSelectedbyMouse=true;
+					//else peopleSelectedbyMouse=false;
 					
 				// If there are no detected skeletons, just fade out everything
 				} else {
