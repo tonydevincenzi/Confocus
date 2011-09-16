@@ -16,6 +16,7 @@
 #include "talkBubble.h"
 #include "SketchShareView.h"
 #include <ctime>
+#include "webRender.h"
 
 //const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
@@ -80,6 +81,9 @@ class testApp : public ofBaseApp{
 
 		//sketch viewer
 		SketchShareView sketchShareView;
+
+		//webRender
+		WebRender webRender;
 
 		//lock to a tracked person in manual mode
 		bool            confirmSelection;  //confirm selection by pressing a button

@@ -62,6 +62,9 @@
     <ClCompile Include="SketchShareView.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="webRender.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addons\ofxFBOTexture.h">
@@ -107,6 +110,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SketchShareView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="webRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

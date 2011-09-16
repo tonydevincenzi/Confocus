@@ -79,6 +79,9 @@ void testApp::setup(){
 	//sketch viewer
 	sketchShareView.initViewer();
 
+	//webRender
+	webRender.setupWebcore();
+
 	//other parameters
 	confirmSelection=false;
 	lockedPersonID=0;
@@ -190,6 +193,9 @@ void testApp::update(){
 	if(buttonPressed[6]) sketchShareView.close=false;
 	else if(!buttonPressed[6]) sketchShareView.close=true;
 
+	//webRender
+	webRender.updateWebcore();
+
 }
 
 //--------------------------------------------------------------
@@ -295,6 +301,9 @@ void testApp::draw(){
 		sketchShareView.drawVideo();
 	}
 	ofDisableAlphaBlending();
+
+	//webRender
+	webRender.drawWebcore();
 
 	// draw roster
 	talkBubbles[0]->drawName(746,699);
