@@ -15,7 +15,10 @@ public:
 	void updateAttributes(string name);
 	void setPosition();
 	void timer();
-	
+	void drawName(int xPosition, int yPosition);
+	void drawElapsedTime(int xPosition, int yPosition);
+	void drawDate(int xPosition, int yPosition);
+
 	talkBubble(float x, float y,string message, int talkTime);
 	
 	ofImage	backgroundImage;

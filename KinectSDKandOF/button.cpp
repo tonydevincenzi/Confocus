@@ -8,7 +8,6 @@ button::button(string _buttonName, int _originX, int _originY, int _bWidth, int 
 	buttonName=_buttonName;	
 	fontSize=16;
 	font.loadFont("Sudbury_Basin_3D.ttf", fontSize);
-	//font.loadFont("castaway.ttf",32);
 
 	originX=_originX;
 	originY=_originY;

@@ -15,6 +15,7 @@ public:
 
 	ofImage             bgSmall, bgBig;
 	int                 bgX_small, bgY_small;
+	int                 bgX_small_current, bgY_small_current;
 	int                 bgX_large, bgY_large;
 	
 	bool                zoomIn;

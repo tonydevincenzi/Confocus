@@ -62,17 +62,19 @@ void testApp::setup(){
 	header.loadImage("images/head.png");
 	header2.loadImage("images/raw.png");
 	bg.loadImage("images/bg.png");
+	sharedMediaSpace.loadImage("images/sharedMedia.png");
+	roster.loadImage("images/roster.png");
 
 	
 	//talk bubbles
 	nBubbles = 6; 
 	talkBubbles = new talkBubble*[nBubbles];   
-	talkBubbles[0] = new talkBubble(0,0,"name 0", 100);
-	talkBubbles[1] = new talkBubble(0,0,"name 1", 100);
-	talkBubbles[2] = new talkBubble(0,0,"name 2", 100);
-	talkBubbles[3] = new talkBubble(0,0,"name 3", 100);	
-	talkBubbles[4] = new talkBubble(0,0,"name 4", 100);	
-	talkBubbles[5] = new talkBubble(0,0,"name 5", 100);
+	talkBubbles[0] = new talkBubble(0,0,"--", 100);
+	talkBubbles[1] = new talkBubble(0,0,"--", 100);
+	talkBubbles[2] = new talkBubble(0,0,"--", 100);
+	talkBubbles[3] = new talkBubble(0,0,"--", 100);	
+	talkBubbles[4] = new talkBubble(0,0,"--", 100);	
+	talkBubbles[5] = new talkBubble(0,0,"--", 100);
 
 	//sketch viewer
 	sketchShareView.initViewer();
@@ -231,6 +233,9 @@ void testApp::draw(){
 	ofRect(640,0+25,VIDEO_WIDTH,ofGetHeight());
 	ofSetColor(0xffffff);
 
+	
+	////////////////////////////////////////////////////////// RGB video and Skeleton Tracking Visualization
+	/*
 	//video image
 	texColorAlpha.draw(640+20,0+25,VIDEO_WIDTH, VIDEO_HEIGHT);
 
@@ -249,13 +254,18 @@ void testApp::draw(){
 	//ofSetColor(0x00000);
 	//ofDrawBitmapString(eventString, 650, 500);
 	//ofSetColor(0xffffff);
+	*/
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// gui interface
-	header.draw(0,0);
-	header2.draw(640+20,0);
-	//bg.draw(1,500);
-
 	ofEnableAlphaBlending();
+	header.draw(0,0);
+	//header2.draw(640+20,0);
+	//bg.draw(1,500);
+	sharedMediaSpace.draw(643,0+25);
+	roster.draw(643,529);
+
+	//ofEnableAlphaBlending();
 	for(int i=0;i<3;i++) buttons[i]->drawFont(buttonPressed[i]);   //draw 3 buttons always existing at the bottom
 	buttons[6]->drawFont(buttonPressed[6]); //draw 7th button always existing
 	buttons[7]->drawFont(buttonPressed[7]);
@@ -286,6 +296,15 @@ void testApp::draw(){
 	}
 	ofDisableAlphaBlending();
 
+	// draw roster
+	talkBubbles[0]->drawName(746,699);
+	talkBubbles[1]->drawName(1030,699);
+	talkBubbles[2]->drawName(746,727);
+	talkBubbles[3]->drawName(1030,726);
+	talkBubbles[4]->drawName(746,756);
+	talkBubbles[5]->drawName(1030,755);
+	talkBubbles[0]->drawElapsedTime(769,638);
+	talkBubbles[0]->drawDate(769,609);
 	
 }
 //-------------------------------------------------------------

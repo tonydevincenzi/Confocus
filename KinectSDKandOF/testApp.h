@@ -15,6 +15,7 @@
 #include "slider.h"
 #include "talkBubble.h"
 #include "SketchShareView.h"
+#include <ctime>
 
 //const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
@@ -70,6 +71,8 @@ class testApp : public ofBaseApp{
 		ofImage         header;
 		ofImage         header2;
 		ofImage         bg;
+		ofImage         sharedMediaSpace;
+		ofImage         roster;
 		
 		//talk bubbles
 		talkBubble** talkBubbles;  

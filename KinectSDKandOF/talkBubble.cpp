@@ -20,8 +20,6 @@ talkBubble::talkBubble(float _x, float _y, string _name, int _talkTime)
 	scale = .5;
 	
 	totalTime=0;
-	//clickCount = 0;
-	//name="default";
 	active=false;
 	
 	bubbleState = 0; // Default 0, no pos parameters set
@@ -42,10 +40,7 @@ void talkBubble::updateTimer(){
 }
 
 void talkBubble::draw(){
-	
-	//ofPushMatrix();
-	//ofTranslate(0, 0, z);
-	//	ofEnableAlphaBlending();
+
 		ofEnableAlphaBlending();
 		if (active == 1) {
 			ofSetColor(255,255,255,255);
@@ -86,50 +81,19 @@ void talkBubble::draw(){
 		font.drawString(ofToString(min) + ":" + cleanSeconds,x + (backgroundImage.width/2)-50, y + (backgroundImage.height/2)+20);
 		ofDisableAlphaBlending();
 
-		//ofPopMatrix();
 		ofSetColor(255,255,255,255);		
 }
 
 
 void talkBubble::updateAttributes(string _name)
 {
-	//active = _active;
-	name = _name;
-	
+	name = _name;	
 }
 
 void talkBubble::updatePosition(int _x, int _y)
 {
 	x=_x;
 	y=_y;
-
-
-
-    /*
-	x=_x;
-	y=_y;
-	z=_z;
-	
-	switch (bubbleState)
-	{
-		case 0:
-			x = _x;
-			y = _y;
-			z = _z;	
-			
-			break;
-		case 1:
-			x = _x;
-			y = _y;
-			break;
-		case 2:
-			//
-			break;
-		default:
-			//
-			break;
-	}
-	*/
 }
 
 void talkBubble::setPosition()
@@ -168,4 +132,18 @@ void talkBubble::timer(){
 		deltaTime = 0;
 		startTime = ofGetElapsedTimeMillis();
 	}
+}
+
+void talkBubble::drawName(int xPosition, int yPosition){
+	font.drawString(name,xPosition, yPosition);
+}
+
+void talkBubble::drawElapsedTime(int xPosition, int yPosition){
+	font.drawString(ofToString((int)(ofGetElapsedTimef())/60) + "'" + " " + ofToString((int)(ofGetElapsedTimef())%60) + "''",xPosition, yPosition);
+}
+
+void talkBubble::drawDate(int xPosition, int yPosition){
+	time_t rawtime;
+	time ( &rawtime );
+	font.drawString(ctime (&rawtime), xPosition, yPosition);
 }
