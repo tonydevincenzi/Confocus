@@ -12,7 +12,7 @@ class WebRender
 public:
 	#define WEB_WIDTH   1440
 	#define WEB_HEIGHT  900
-	#define URL "http://awwapp.com/draw.html#w7vDoh7Crc"
+#define URL "http://awwapp.com/draw.html#wqHCqkh2S8"
 	#define SCROLLBAR_CSS   "::-webkit-scrollbar { width: 0px; height: 0px; } "
 
 
@@ -27,11 +27,8 @@ public:
 	int                 bgX_large, bgY_large;
 	
 	bool                zoomIn;
+	bool                close;
 
-	void initViewer();
-	void update(int _xSmall, int _ySmall, int _xLarge, int _yLarge);
-	void drawBg();
-	void zoomDetect(int mouseX, int mouseY);
 
 
 	
@@ -53,5 +50,10 @@ public:
 	void injectMouseDragged(int x, int y);
 	void injectMousePressed();
 	void injectMouseReleased();
+
+	//UI fuction
+	void updateWebcoreCoord(int _xSmall, int _ySmall, int _xLarge, int _yLarge);
+	void drawBg();
+	void zoomDetect(int mouseX, int mouseY);
 };
 

@@ -83,7 +83,11 @@ public:
 
 	int             leftShoulderXValues[NUI_SKELETON_COUNT];
 	int             rightShoulderXValues[NUI_SKELETON_COUNT];
+	
 	int             leftHandXValues[NUI_SKELETON_COUNT];
+	int             leftHandYValues[NUI_SKELETON_COUNT];
+	
+	int             rightHandYValues[NUI_SKELETON_COUNT];
 	int             rightHandXValues[NUI_SKELETON_COUNT];
 
 

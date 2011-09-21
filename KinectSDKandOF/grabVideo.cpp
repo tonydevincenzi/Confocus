@@ -487,7 +487,10 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 			rightShoulderXValues[i]=m_Points[8].x;
 
 			leftHandXValues[i]=m_Points[7].x;
+			leftHandYValues[i]=m_Points[7].y;
+
 			rightHandXValues[i]=m_Points[11].x;
+			rightHandYValues[i]=m_Points[11].y;
 			/*
 			if(m_Points[3].x!=0){
 				//printf("headPosition");

@@ -25,6 +25,8 @@ void SketchShareView::initViewer()
 	bgY_small_current=0;
 	bgX_large=0;
 	bgY_large=0;
+
+	scale=1;
 }
 
 void SketchShareView::update(int _xSmall, int _ySmall, int _xLarge, int _yLarge){
@@ -58,7 +60,7 @@ void SketchShareView::drawVideo(){
 		ofSetColor(0xffffff);
 		if(!zoomIn){
 			ofTranslate(bgX_small, bgY_small);
-			vidGrabber.draw(3,36,camWidth_s,camHeight_s);
+			vidGrabber.draw(3,36,camWidth_s*scale,camHeight_s*scale);
 		} else {
 			ofTranslate(bgX_large, bgY_large);
 			vidGrabber.draw(20,40,camWidth_l,camHeight_l);

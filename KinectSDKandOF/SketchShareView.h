@@ -12,6 +12,7 @@ public:
 	int 				camHeight_s;
 	int                 camWidth_l;
 	int                 camHeight_l;
+	float               scale;
 
 	ofImage             bgSmall, bgBig;
 	int                 bgX_small, bgY_small;

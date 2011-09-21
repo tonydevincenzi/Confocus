@@ -5,9 +5,9 @@
 void testApp::setup(){	
 
 	//ofEnableAlphaBlending();
-	bgColor.r=20;
-	bgColor.g=20;
-	bgColor.b=24;
+	bgColor.r=0;//20;
+	bgColor.g=0;//20;
+	bgColor.b=0;//24;
 	ofBackground(bgColor.r,bgColor.g,bgColor.b);	            // Set the background color (right now, white)
 	
 	blur.setup(DEPTH_WIDTH, DEPTH_HEIGHT);  // set up the blur shader
@@ -35,7 +35,7 @@ void testApp::setup(){
 	//gui interface
 	nButtons=9;
 	buttons=new button*[nButtons];
-	buttons[0]=new button("setup",55,759,100,30,true,"images/set_a.png","images/set_b.png");
+	buttons[0]=new button("setup",55,752,37,30,true,"images/set_a.png","images/set_b.png");
 	buttons[1]=new button("active",234,759,100,30,true,"images/auto_a.png","images/auto_b.png");
 	buttons[2]=new button("manual",326,759,100,30,true,"images/manual_a.png","images/manual_b.png");
 	
@@ -43,9 +43,9 @@ void testApp::setup(){
 	buttons[4]=new button("black",29,599,100,30,false,"images/mask_a.png","images/mask_b.png");
 	buttons[5]=new button("zoom", 29,667,100,30,false,"images/zoom_a.png","images/zoom_b.png");
 	
-	buttons[6]=new button("sketchViewer", 522,759,100,30,true,"images/sketch_a.png","images/sketch_b.png");
-	buttons[7]=new button("bubble", 107,759,100,30,true,"images/bubble_a.png","images/bubble_b.png");
-	buttons[8]=new button("ipad", 570,759,100,30,true,"images/ipad_a.png","images/ipad_b.png");
+	buttons[6]=new button("sketchViewer", 524,752,37,30,true,"images/sketch_a.png","images/sketch_b.png");
+	buttons[7]=new button("bubble", 110,752,37,30,true,"images/bubble_a.png","images/bubble_b.png");
+	buttons[8]=new button("ipad", 570,752,37,30,true,"images/ipad_a.png","images/ipad_b.png");
 
 	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
 	buttonPressed[1]=true;
@@ -176,7 +176,7 @@ void testApp::update(){
 	}
 
 	// print the closest match
-	int closestID=g_kinectGrabber.minDiscrepancyIdx;
+	closestID=g_kinectGrabber.minDiscrepancyIdx;
 	printf(" closest person : %i \n", closestID); 
 	//printf("confirmed selection?: %s",(confirmSelection)?"true":"false");
 	printf("-------------------------------------------\n"); 
@@ -189,13 +189,15 @@ void testApp::update(){
 	}
 
 	//sketch viewer
-	sketchShareView.update(g_kinectGrabber.handRight_x,g_kinectGrabber.handRight_y,640+20,0+25);
+	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID],g_kinectGrabber.rightHandYValues[closestID],640+20,0+25);
 	if(buttonPressed[6]) sketchShareView.close=false;
 	else if(!buttonPressed[6]) sketchShareView.close=true;
 
 	//webRender
 	webRender.updateWebcore();
-
+	webRender.updateWebcoreCoord(g_kinectGrabber.leftHandXValues[closestID],g_kinectGrabber.leftHandYValues[closestID],640+20,0+25);
+	if(buttonPressed[8]) webRender.close=false;
+	else if(!buttonPressed[8]) webRender.close=true;
 }
 
 //--------------------------------------------------------------
@@ -224,6 +226,14 @@ void testApp::draw(){
 
 	//diminished image
 	ofEnableAlphaBlending();
+	/*
+	if(buttonPressed[5]){
+		ofPushMatrix();
+		ofTranslate(g_kinectGrabber.headXValues[closestID],g_kinectGrabber.headYValues[closestID]);
+		texFocus.draw(0,0+25,DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam); //draw the focus texture
+		ofPopMatrix();
+	} else 
+	*/
 	texFocus.draw(0,0+25,DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam); //draw the focus texture	
 	
 	blur.setBlurParams(4,(float)blurParam/100);
@@ -284,7 +294,7 @@ void testApp::draw(){
 		//for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(80,400);
 		sliders[0]->drawSlider(80,400);
 		sliders[1]->drawSlider(4,0.01);
-		sliders[2]->drawSlider(0.8,1.5);
+		sliders[2]->drawSlider(1,0.1);
 	} else if(!buttonPressed[0]){
 		for(int i=3;i<6;i++) buttons[i]->trigger=false;
 	}
@@ -297,13 +307,18 @@ void testApp::draw(){
 	//sketch viewer
 	ofEnableAlphaBlending();
 	if(!sketchShareView.close){
+		sketchShareView.scale=ofMap(sliders[2]->value,1,0.1,1,4);
 		sketchShareView.drawBg();
 		sketchShareView.drawVideo();
 	}
 	ofDisableAlphaBlending();
 
 	//webRender
-	webRender.drawWebcore();
+	ofEnableAlphaBlending();
+	if(!webRender.close){
+		webRender.drawBg();
+		webRender.drawWebcore();
+	}
 
 	// draw roster
 	talkBubbles[0]->drawName(746,699);
@@ -359,13 +374,16 @@ void testApp::keyReleased(int key){
 //------------- -------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
 	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
-		
+	
+	if(buttonPressed[8]) webRender.injectMouseMoved(x,y);	
 }
 
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
 	for(int i=0;i<nSliders;i++) sliders[i]->getSliderPosX(x,y);
+
+	if(buttonPressed[8]) webRender.injectMouseDragged(x,y);
 }
 
 //--------------------------------------------------------------
@@ -373,6 +391,8 @@ void testApp::mousePressed(int x, int y, int button){
 	//button pressing
 	if(buttons[0]->buttonPressed(x,y)) buttonPressed[0]=!buttonPressed[0]; //setUpbutton
 	if(buttons[6]->buttonPressed(x,y)) buttonPressed[6]=!buttonPressed[6]; //turn on/off the sketchviewer
+	if(buttons[7]->buttonPressed(x,y)) buttonPressed[7]=!buttonPressed[7]; //turn on/off the talkBubble
+	if(buttons[8]->buttonPressed(x,y)) buttonPressed[8]=!buttonPressed[8]; //turn on/off the iPad
 	
 	if(buttons[1]->buttonPressed(x,y)){
 		buttonPressed[1]=true;
@@ -402,12 +422,17 @@ void testApp::mousePressed(int x, int y, int button){
 
 	//sketchViewer
 	//sketchShareView.closeDetect(x,y);
-	sketchShareView.zoomDetect(x,y);
+	if(buttonPressed[6]) sketchShareView.zoomDetect(x,y);
+	
+	if(buttonPressed[8]){
+	webRender.zoomDetect(x,y);
+	webRender.injectMousePressed();
+	}
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-
+	webRender.injectMouseReleased();
 }
 
 //--------------------------------------------------------------

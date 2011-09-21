@@ -88,6 +88,9 @@ class testApp : public ofBaseApp{
 		//lock to a tracked person in manual mode
 		bool            confirmSelection;  //confirm selection by pressing a button
 		int             lockedPersonID;    
+
+		//the activated skeleton
+		int             closestID;
 };
 
 #endif
