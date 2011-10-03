@@ -30,6 +30,7 @@ public:
 	void drawVideo();
 	void zoomDetect(int mouseX, int mouseY);
 	void closeDetect(int mouseX, int mouseY);
+	void setSmallViewOrigin(int scale);
 	//void switchMode(int x);
 };
 

@@ -7,7 +7,7 @@ button::button(string _buttonName, int _originX, int _originY, int _bWidth, int 
 {
 	buttonName=_buttonName;	
 	fontSize=16;
-	font.loadFont("Sudbury_Basin_3D.ttf", fontSize);
+	font.loadFont("DIN.otf",12);
 
 	originX=_originX;
 	originY=_originY;
@@ -43,4 +43,10 @@ bool button::buttonPressed(int x, int y){
 		}else{
 			return false;
 		}
+}
+
+void button::typeWindow(int xPosition, int yPosition){
+	ofSetColor(0,0,0,255);
+	ofRect(xPosition,yPosition,60,20);
+	font.drawString(typeContents,xPosition, yPosition);
 }

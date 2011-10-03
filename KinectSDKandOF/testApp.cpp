@@ -47,6 +47,10 @@ void testApp::setup(){
 	buttons[7]=new button("bubble", 110,752,37,30,true,"images/bubble_a.png","images/bubble_b.png");
 	buttons[8]=new button("ipad", 570,752,37,30,true,"images/ipad_a.png","images/ipad_b.png");
 
+	webRenderButton=new button*[1];
+	webRenderButton[0]=new button("drawapp",1000,752,37,30,false,"images/ipad_a.png","images/ipad_b.png");
+	webRButtonPressed=true;
+
 	for(int i=0;i<nButtons;i++) buttonPressed[i]=false;
 	buttonPressed[1]=true;
 	buttonPressed[0]=true;
@@ -155,7 +159,7 @@ void testApp::update(){
 		//talk bubbles update
 		int headPositionX = g_kinectGrabber.rightShoulderXValues[i]+25;
 		int headPositionY = g_kinectGrabber.headYValues[i]-30;
-		talkBubbles[i]->updatePosition(headPositionX,headPositionY);
+		talkBubbles[i]->updatePosition(headPositionX*scaleParam,headPositionY*scaleParam);
 		talkBubbles[i]->updateTimer();
 
 		//manual selection match tracked head; activating talkBubble in manual mode
@@ -196,13 +200,14 @@ void testApp::update(){
 	}
 
 	//sketch viewer
-	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID],g_kinectGrabber.rightHandYValues[closestID],640+20,0+25);
+	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID]*scaleParam,g_kinectGrabber.rightHandYValues[closestID]*scaleParam,640+20,0+25);
 	if(buttonPressed[6]) sketchShareView.close=false;
 	else if(!buttonPressed[6]) sketchShareView.close=true;
+	//sketchShareView.setSmallViewOrigin(scaleParam);
 
 	//webRender
 	webRender.updateWebcore();
-	webRender.updateWebcoreCoord(g_kinectGrabber.leftHandXValues[closestID],g_kinectGrabber.leftHandYValues[closestID],640+20,0+25);
+	webRender.updateWebcoreCoord(g_kinectGrabber.leftHandXValues[closestID]*scaleParam,g_kinectGrabber.leftHandYValues[closestID]*scaleParam,640+20,0+25);
 	if(buttonPressed[8]) webRender.close=false;
 	else if(!buttonPressed[8]) webRender.close=true;
 }
@@ -212,7 +217,7 @@ void testApp::draw(){
 	ofEnableSmoothing();
 
 	int blurParam; //different mode has different blurParameter control
-	float scaleParam;	
+	//float scaleParam;	
 	//for(int i=0;i<3;i++){
 	//	if(buttonPressed[i+3]) blurParam=sliders[i]->value;
 	//}
@@ -222,12 +227,12 @@ void testApp::draw(){
 		scaleParam=1;
 	}
 	if(buttonPressed[4]) {
-		blurParam=60;
+		blurParam=110;
 		scaleParam=1;
 		maskValue=sliders[1]->value;
 	}
 	if(buttonPressed[5]) {
-		blurParam=60;
+		blurParam=110;
 		scaleParam=sliders[2]->value;
 	}
 
@@ -241,8 +246,10 @@ void testApp::draw(){
 		ofPopMatrix();
 	} else 
 	*/
+	//draw a layer with clear focus everywhere
 	texFocus.draw(0,0+25,DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam); //draw the focus texture	
 	
+	//if skeleton was tracked,draw a layer with the skeleton transparent
 	if(g_kinectGrabber.isSkeletonTracked){
 		blur.setBlurParams(4,(float)blurParam/100);
 		blur.beginRender();
@@ -284,8 +291,6 @@ void testApp::draw(){
 	// gui interface
 	ofEnableAlphaBlending();
 	header.draw(0,0);
-	//header2.draw(640+20,0);
-	//bg.draw(1,500);
 	sharedMediaSpace.draw(643,0+25);
 	roster.draw(643,529);
 
@@ -308,6 +313,7 @@ void testApp::draw(){
 	}
 	ofDisableAlphaBlending();
 	//ofSetColor(0xffffff);
+	webRenderButton[0]->drawFont(webRButtonPressed);
 
 	//talk bubble
 	for(int i=0;i<nBubbles;i++) talkBubbles[i]->draw();
@@ -354,6 +360,11 @@ void testApp::keyPressed(int key){
 			if(key == '-') talkBubbles[i]->name.erase();  //erase name input for the active bubble
 			else talkBubbles[i]->name.append(1,(char)key); //type in name for the active bubble
 		}
+	}
+
+	if(webRButtonPressed){
+		if(key == '-') webRenderButton[0]->typeContents.erase();  //erase name input for the active bubble
+		else webRenderButton[0]->typeContents.append(1,(char)key); //type in name for the active bubble
 	}
 
     

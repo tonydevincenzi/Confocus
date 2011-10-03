@@ -83,8 +83,8 @@ void WebRender::drawWebcore(){
 		//ofTranslate(bgX,bgY);
 		ofSetColor(0xffffff);
 		if(!zoomIn){
-			ofTranslate(bgX_small, bgY_small);
-			texColor.draw(3,36,webWidth_s,webHeight_s);
+			ofTranslate(bgX_small*scale, bgY_small*scale);
+			texColor.draw(3,36,webWidth_s*scale,webHeight_s*scale);
 		} else {
 			ofTranslate(bgX_large, bgY_large);
 			texColor.draw(20,40,webWidth_l,webHeight_l);

@@ -67,8 +67,11 @@ class testApp : public ofBaseApp{
 		button**        buttons;
 		int             nButtons;
 		bool            buttonPressed[9]; //the number of the boolean should equal to nButtons
+		button**        webRenderButton;
+		bool            webRButtonPressed;
 		slider**        sliders;
 		int             nSliders;
+		float           scaleParam; //for Zoom slider
 		ofImage         header;
 		ofImage         header2;
 		ofImage         bg;

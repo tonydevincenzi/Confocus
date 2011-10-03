@@ -28,6 +28,7 @@ public:
 	
 	bool                zoomIn;
 	bool                close;
+	float               scale;
 
 
 

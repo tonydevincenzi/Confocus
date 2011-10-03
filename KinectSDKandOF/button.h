@@ -10,6 +10,7 @@ public:
 	int originX, originY;   //where the button starts
 	int bWidth, bHeight;    //the size of the button
 	string buttonName;
+	string typeContents;
 	ofTrueTypeFont font;
 	ofColor selectedC, defaultC;
 	int fontSize;
@@ -22,6 +23,7 @@ public:
 	//functionality
 	void drawFont(bool _buttonPressed);
 	bool buttonPressed(int x, int y);
+	void typeWindow(int xPosition, int yPosition);
 };
 
 #endif
