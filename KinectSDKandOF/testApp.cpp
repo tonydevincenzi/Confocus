@@ -150,7 +150,7 @@ void testApp::update(){
 		if (discrepancy < minSoundDiscrepancy) {
 			minSoundDiscrepancy = discrepancy;
 			g_kinectGrabber.minDiscrepancyIdx = i;
-		}
+		} 
 
 		//talk bubbles update
 		int headPositionX = g_kinectGrabber.rightShoulderXValues[i]+25;
@@ -184,6 +184,8 @@ void testApp::update(){
 	}
 	printf(" closest person : %i \n", closestID); 
 	//printf("confirmed selection?: %s",(confirmSelection)?"true":"false");
+	printf("-------------------------------------------\n"); 
+	printf("skeleton tracked?: %s",	(g_kinectGrabber.isSkeletonTracked)? "true":"false");
 	printf("-------------------------------------------\n"); 
 
 	//activating talkBubble in auto mode
@@ -241,15 +243,16 @@ void testApp::draw(){
 	*/
 	texFocus.draw(0,0+25,DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam); //draw the focus texture	
 	
-	blur.setBlurParams(4,(float)blurParam/100);
-	blur.beginRender();
-	texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
-	blur.endRender();
-	blur.draw(0, 0+25, DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam, true);
-	ofDisableAlphaBlending();
+	if(g_kinectGrabber.isSkeletonTracked){
+		blur.setBlurParams(4,(float)blurParam/100);
+		blur.beginRender();
+		texBlur.draw(0,0,DEPTH_WIDTH, DEPTH_HEIGHT); //always 0
+		blur.endRender();
+		blur.draw(0, 0+25, DEPTH_WIDTH*scaleParam, DEPTH_HEIGHT*scaleParam, true);
+		ofDisableAlphaBlending();
+	} 
 	//texGray.draw(640,0,DEPTH_WIDTH,DEPTH_HEIGHT);
 
-	//ofSetColor(0x000000);
 	ofSetColor(bgColor.r,bgColor.g,bgColor.b);
 	ofRect(640,0+25,VIDEO_WIDTH,ofGetHeight());
 	ofSetColor(0xffffff);

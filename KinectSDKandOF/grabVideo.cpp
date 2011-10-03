@@ -188,7 +188,10 @@ HRESULT KinectGrabber::Kinect_Init() {
 
 
 	exit:
-    puts("Press any key to continue");   
+    puts("Press any key to continue"); 
+
+	//init other added parameters
+	isSkeletonTracked=false;
 
 }
 
@@ -450,15 +453,14 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
 
     HRESULT hr = NuiSkeletonGetNextFrame( 0, &SkeletonFrame );
 
-    bool bFoundSkeleton = true;
+	isSkeletonTracked=false;
 	//POINT         m_Points[NUI_SKELETON_POSITION_COUNT];
 
     for( int i = 0 ; i < NUI_SKELETON_COUNT ; i++ )
     {
         if( SkeletonFrame.SkeletonData[i].eTrackingState == NUI_SKELETON_TRACKED )
         {
-            bFoundSkeleton = false;
-
+			isSkeletonTracked=true;
 			
 			int scaleX = VIDEO_WIDTH; //scaling up to image coordinates
 			int scaleY = VIDEO_HEIGHT;
@@ -520,7 +522,7 @@ void KinectGrabber::Kinect_GotSkeletonAlert( )
     }
 
     // no skeletons!
-    if( bFoundSkeleton )
+    if( !isSkeletonTracked )
     {
         return;
     }

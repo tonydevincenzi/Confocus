@@ -62,6 +62,7 @@ public:
 	////////////////////////////////////////////////////////////////////////
 	void			getJointsPoints();
 	void			Kinect_ColorFromDepth(LONG depthX, LONG depthY, LONG *pColorX, LONG *pColorY);
+	bool            isSkeletonTracked; //flag to indicate if there are skeletons being tracked
 	
 	// Joint location data for last tracked player
 	int           headJoints_x;
