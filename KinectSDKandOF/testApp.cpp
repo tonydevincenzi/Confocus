@@ -353,11 +353,16 @@ void testApp::keyPressed(int key){
 		}
 	}
 
+    
+	/*
+	//press "l" to lock to the selected person
 	if(buttonPressed[2]){
 		if(key == 'l') {
 			confirmSelection=!confirmSelection;
 		}
 	}
+	*/
+	
 	
 	/*switch (key){
 		case '+':
@@ -432,6 +437,11 @@ void testApp::mousePressed(int x, int y, int button){
 	if(buttonPressed[8]){
 	webRender.zoomDetect(x,y);
 	webRender.injectMousePressed();
+	}
+
+	//manual mode, click to lock to the selected person
+	if(buttonPressed[2] && y<480){
+			confirmSelection=!confirmSelection;
 	}
 }
 

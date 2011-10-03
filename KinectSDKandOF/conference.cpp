@@ -146,7 +146,7 @@ void focusRGB_manual(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff, BYTE*
 				}
 				// Determine which pixels on the blur layer should be visible.
 				// If there are any detected skeletons, we want to focus in on one of them
-				if (kinectGrabber->minDiscrepancyIdx > 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
+				if (kinectGrabber->minDiscrepancyIdx >= 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
 				//TODO: change the 6 to some constant indicating that total number of skeletons, like NUI_SKELETON_COUNT
 				{
 					
@@ -217,7 +217,7 @@ void focusRGB_manualLocked(BYTE* videoBuff, USHORT* depthBuff, BYTE * focusBuff,
 				}
 				// Determine which pixels on the blur layer should be visible.
 				// If there are any detected skeletons, we want to focus in on one of them
-				if (kinectGrabber->minDiscrepancyIdx > 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
+				if (kinectGrabber->minDiscrepancyIdx >= 0 &&  kinectGrabber->minDiscrepancyIdx <= 6)
 				//TODO: change the 6 to some constant indicating that total number of skeletons, like NUI_SKELETON_COUNT
 				{
 					int headPositionZ = kinectGrabber->headZValues[lockedPersonID];
