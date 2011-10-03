@@ -107,8 +107,8 @@ void testApp::update(){
 		texGray.loadData(grayPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}*/
 	
-	// load the RGBA values into the blur and focus textures for the diminshed reality image
 	USHORT* depthBuff = g_kinectGrabber.Kinect_getDepthBuffer();
+
 	if(buttonPressed[1]) focusRGB(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],maskValue);	
 	else if(buttonPressed[2] && !confirmSelection) focusRGB_manual(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],mouseX,mouseY);	
 	else if(buttonPressed[2] && confirmSelection)  focusRGB_manualLocked(colorAlphaPixels, depthBuff, focusPixels, blurPixels, &g_kinectGrabber,buttonPressed[3],buttonPressed[4],buttonPressed[5],lockedPersonID);	
@@ -119,6 +119,7 @@ void testApp::update(){
 		texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	}
 	*/
+
 	texFocus.loadData(focusPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 	texBlur.loadData(blurPixels,DEPTH_WIDTH,DEPTH_HEIGHT, GL_RGBA);
 
@@ -176,7 +177,11 @@ void testApp::update(){
 	}
 
 	// print the closest match
-	closestID=g_kinectGrabber.minDiscrepancyIdx;
+	if(g_kinectGrabber.minDiscrepancyIdx>=0 && g_kinectGrabber.minDiscrepancyIdx<=6) {
+		closestID=g_kinectGrabber.minDiscrepancyIdx;
+	} else {
+		closestID=0;
+	}
 	printf(" closest person : %i \n", closestID); 
 	//printf("confirmed selection?: %s",(confirmSelection)?"true":"false");
 	printf("-------------------------------------------\n"); 
@@ -292,7 +297,7 @@ void testApp::draw(){
 			buttons[i]->drawFont(buttonPressed[i]);
 		}
 		//for(int i=0;i<nSliders;i++) sliders[i]->drawSlider(80,400);
-		sliders[0]->drawSlider(80,400);
+		sliders[0]->drawSlider(110,400);
 		sliders[1]->drawSlider(4,0.01);
 		sliders[2]->drawSlider(1,0.1);
 	} else if(!buttonPressed[0]){

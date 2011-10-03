@@ -142,7 +142,7 @@ HRESULT KinectGrabber::Kinect_Init() {
 	//return hr;
 
 	// audio initialization
-	minDiscrepancyIdx=0;
+	minDiscrepancyIdx=7;  //when skeleton is detected, the number should be between 0 to 6. Set it to a random number beyond this range is OK
 	hr = S_OK;
     CoInitialize(NULL);
     int  iMicDevIdx = -1; 
