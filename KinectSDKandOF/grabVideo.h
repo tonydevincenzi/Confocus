@@ -41,12 +41,12 @@ public:
 	////////////////////////////////////////////////////////////////////////
 	// Pixel Buffers
 	////////////////////////////////////////////////////////////////////////
-	RGBQUAD*		Kinect_getDepthPixels();
-	BYTE*			Kinect_getAlphaPixels();
-	BYTE*			Kinect_getRGBBuffer();
-	USHORT*			Kinect_getDepthBuffer();
+	RGBQUAD*		Kinect_getDepthPixels(); //store RGBQUARD (3 bytes) pointers pointing to (R,G,B as a whole) of each pixel; in total it has 1* width * height
+	BYTE*			Kinect_getAlphaPixels(); 
+	BYTE*			Kinect_getRGBBuffer();  // store byte pointers pointing to R,G,B,A for each pixel; in total it has 4 * width * height
+	USHORT*			Kinect_getDepthBuffer();// store byte pointers pointing to R,G,B for each pixel;   in total it has 3 * width * height
 	USHORT*			Kinect_getPlayerBuffer();
-	void			Kinect_makeRGBFromRGBA();
+	void			Kinect_makeRGBFromRGBA(); // store unsigned short (2 bytes) pointers pointing to each pixels's depth in milimeter; in total it has 1 * width * height
 
 	
 	////////////////////////////////////////////////////////////////////////
