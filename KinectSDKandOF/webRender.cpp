@@ -78,12 +78,12 @@ void WebRender::updateWebcore(){
 	texColor.loadData(rightPixelBuffer, WEB_WIDTH, WEB_HEIGHT, GL_RGB);	
 }
 
-void WebRender::drawWebcore(){
+void WebRender::drawWebcore(int scale){
 	ofPushMatrix();	
 		//ofTranslate(bgX,bgY);
 		ofSetColor(0xffffff);
 		if(!zoomIn){
-			ofTranslate(bgX_small*scale, bgY_small*scale);
+			ofTranslate(bgX_small, bgY_small);
 			texColor.draw(3,36,webWidth_s*scale,webHeight_s*scale);
 		} else {
 			ofTranslate(bgX_large, bgY_large);

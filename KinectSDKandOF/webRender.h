@@ -45,7 +45,7 @@ public:
 	//webRender function
 	void setupWebcore();
 	void updateWebcore();
-	void drawWebcore();
+	void drawWebcore(int scale);
 	void convertBGRAToRGB(unsigned char* bgraBuffer, unsigned char* rgbBuffer, int width, int height);
 	void injectMouseMoved(int x, int y);
 	void injectMouseDragged(int x, int y);

@@ -313,7 +313,7 @@ void testApp::draw(){
 	}
 	ofDisableAlphaBlending();
 	//ofSetColor(0xffffff);
-	webRenderButton[0]->drawFont(webRButtonPressed);
+	//webRenderButton[0]->drawFont(webRButtonPressed);
 
 	//talk bubble
 	for(int i=0;i<nBubbles;i++) talkBubbles[i]->draw();
@@ -331,7 +331,7 @@ void testApp::draw(){
 	ofEnableAlphaBlending();
 	if(!webRender.close){
 		webRender.drawBg();
-		webRender.drawWebcore();
+		webRender.drawWebcore(ofMap(sliders[2]->value,1,0.1,1,4));
 	}
 
 	// draw roster
