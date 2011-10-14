@@ -201,8 +201,13 @@ void testApp::update(){
 
 	//sketch viewer
 	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID]*scaleParam,g_kinectGrabber.rightHandYValues[closestID]*scaleParam,640+20,0+25);
+	if(buttonPressed[6] && g_kinectGrabber.rightHandXValues[closestID]>500)  sketchShareView.zoomIn=true;
 	if(buttonPressed[6]) sketchShareView.close=false;
-	else if(!buttonPressed[6]) sketchShareView.close=true;
+	else if(!buttonPressed[6]) {
+		sketchShareView.close=true;
+		sketchShareView.zoomIn=false;
+	}
+	
 	//sketchShareView.setSmallViewOrigin(scaleParam);
 
 	//webRender
@@ -353,19 +358,28 @@ void testApp::exit(){
 	free(blurPixels);
 }
 //--------------------------------------------------------------
+int isNameTyping=false;
 void testApp::keyPressed(int key){
-	
-	for (int i=0;i<nBubbles;i++){
-		if (talkBubbles[i]->active && buttonPressed[1]) {
-			if(key == '-') talkBubbles[i]->name.erase();  //erase name input for the active bubble
-			else talkBubbles[i]->name.append(1,(char)key); //type in name for the active bubble
-		}
-	}
+    
+    
+    if(key == '=') isNameTyping=true;
+    else if(key == '0') isNameTyping=false;
 
-	if(webRButtonPressed){
-		if(key == '-') webRenderButton[0]->typeContents.erase();  //erase name input for the active bubble
-		else webRenderButton[0]->typeContents.append(1,(char)key); //type in name for the active bubble
-	}
+    for (int i=0;i<nBubbles;i++){
+        if (talkBubbles[i]->active && buttonPressed[1] && isNameTyping) {
+            if(key == '-') talkBubbles[i]->name.erase();  //erase name input for the active bubble
+            else talkBubbles[i]->name.append(1,(char)key); //type in name for the active bubble
+        }
+    }
+
+    if(webRButtonPressed){
+        if(key == '-') webRenderButton[0]->typeContents.erase();  //erase name input for the active bubble
+        else webRenderButton[0]->typeContents.append(1,(char)key); //type in name for the active bubble
+    }
+
+    if ((key == 'h' || key == 'g' || key == 't' || key == 'f' || key == 'v'|| key == 'e' || key == 'd' || key == 'r'|| key == '4' || key == '5') && !isNameTyping) {
+        buttonPressed[6]=true;
+    }
 
     
 	/*
