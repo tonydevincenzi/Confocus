@@ -62,6 +62,7 @@ class testApp : public ofBaseApp{
 		ofColor         bgColor;
 		int             thresh;
 		bool            activeFocus; //to deside the active or inActive focus
+
 		
 		//gui buttons
 		button**        buttons;
@@ -84,7 +85,8 @@ class testApp : public ofBaseApp{
 
 		//sketch viewer
 		SketchShareView sketchShareView;
-
+		bool            firstTimeSketchTrigger;
+		
 		//webRender
 		WebRender webRender;
 

@@ -82,6 +82,7 @@ void testApp::setup(){
 
 	//sketch viewer
 	sketchShareView.initViewer();
+	firstTimeSketchTrigger=true;
 
 	//webRender
 	webRender.setupWebcore();
@@ -201,13 +202,17 @@ void testApp::update(){
 
 	//sketch viewer
 	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID]*scaleParam,g_kinectGrabber.rightHandYValues[closestID]*scaleParam,640+20,0+25);
-	if(buttonPressed[6] && g_kinectGrabber.rightHandXValues[closestID]>500)  sketchShareView.zoomIn=true;
+	if(buttonPressed[6] && g_kinectGrabber.rightHandXValues[closestID]>500)  sketchShareView.zoomIn=true; //right hand moving right to trigger the moving effect
+	if(buttonPressed[6] && firstTimeSketchTrigger) {
+		sliders[2]->sliderPosX=337;
+		firstTimeSketchTrigger=false;
+	}
 	if(buttonPressed[6]) sketchShareView.close=false;
 	else if(!buttonPressed[6]) {
 		sketchShareView.close=true;
 		sketchShareView.zoomIn=false;
 	}
-	
+
 	//sketchShareView.setSmallViewOrigin(scaleParam);
 
 	//webRender
