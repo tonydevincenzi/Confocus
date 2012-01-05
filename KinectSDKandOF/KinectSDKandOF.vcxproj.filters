@@ -65,6 +65,9 @@
     <ClCompile Include="webRender.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="gesture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\addons\ofxFBOTexture.h">
@@ -113,6 +116,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="webRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gesture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

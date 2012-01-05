@@ -91,6 +91,7 @@ void testApp::setup(){
 	confirmSelection=false;
 	lockedPersonID=0;
 
+	//gesture
 }
 
 //--------------------------------------------------------------
@@ -193,6 +194,10 @@ void testApp::update(){
 	printf("skeleton tracked?: %s",	(g_kinectGrabber.isSkeletonTracked)? "true":"false");
 	printf("-------------------------------------------\n"); 
 
+
+	//gesture
+	gesture.cur_rhPx=g_kinectGrabber.rightHandXValues[closestID];
+	
 	//activating talkBubble in auto mode
 	if(buttonPressed[1]) {
 		talkBubbles[closestID]->active=true; //the active talk bubbles
@@ -201,10 +206,24 @@ void testApp::update(){
 	}
 
 	//sketch viewer
+	if(g_kinectGrabber.headZValues[closestID]>1300) buttonPressed[6]=true; 
+	else buttonPressed[6]=false;
+
+
 	sketchShareView.update(g_kinectGrabber.rightHandXValues[closestID]*scaleParam,g_kinectGrabber.rightHandYValues[closestID]*scaleParam,640+20,0+25);
-	if(buttonPressed[6] && g_kinectGrabber.rightHandXValues[closestID]>500)  sketchShareView.zoomIn=true; //right hand moving right to trigger the moving effect
+	//if(buttonPressed[6] && g_kinectGrabber.rightHandXValues[closestID]>500)  sketchShareView.zoomIn=true; //right hand moving right to trigger the moving effect
+
+	if((gesture.last_rhPx!=0) && (gesture.cur_rhPx-gesture.last_rhPx)>100 && buttonPressed[6]){
+		sketchShareView.zoomIn=true;
+		gesture.last_rhPx=gesture.cur_rhPx;
+	}else if (((gesture.cur_rhPx-gesture.last_rhPx)<100 && buttonPressed[6]) || (gesture.last_rhPx==0)) {
+		gesture.last_rhPx=gesture.cur_rhPx;
+	}
+
+
+
 	if(buttonPressed[6] && firstTimeSketchTrigger) {
-		sliders[2]->sliderPosX=337;
+		sliders[2]->sliderPosX=137;
 		firstTimeSketchTrigger=false;
 	}
 	if(buttonPressed[6]) sketchShareView.close=false;
@@ -363,15 +382,17 @@ void testApp::exit(){
 	free(blurPixels);
 }
 //--------------------------------------------------------------
-int isNameTyping=false;
+//int isNameTyping=false;
 void testApp::keyPressed(int key){
     
     
-    if(key == '=') isNameTyping=true;
+    /*
+	if(key == '=') isNameTyping=true;
     else if(key == '0') isNameTyping=false;
+	*/
 
     for (int i=0;i<nBubbles;i++){
-        if (talkBubbles[i]->active && buttonPressed[1] && isNameTyping) {
+        if (talkBubbles[i]->active && buttonPressed[1]) {
             if(key == '-') talkBubbles[i]->name.erase();  //erase name input for the active bubble
             else talkBubbles[i]->name.append(1,(char)key); //type in name for the active bubble
         }
@@ -382,9 +403,11 @@ void testApp::keyPressed(int key){
         else webRenderButton[0]->typeContents.append(1,(char)key); //type in name for the active bubble
     }
 
-    if ((key == 'h' || key == 'g' || key == 't' || key == 'f' || key == 'v'|| key == 'e' || key == 'd' || key == 'r'|| key == '4' || key == '5') && !isNameTyping) {
+    /*
+	if ((key == 'h' || key == 'g' || key == 't' || key == 'f' || key == 'v'|| key == 'e' || key == 'd' || key == 'r'|| key == '4' || key == '5') && !isNameTyping) {
         buttonPressed[6]=true;
     }
+	*/
 
     
 	/*

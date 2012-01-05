@@ -17,6 +17,7 @@
 #include "SketchShareView.h"
 #include <ctime>
 #include "webRender.h"
+#include "gesture.h"
 
 //const int DEPTH_THRESHOLD = 350;
 class testApp : public ofBaseApp{
@@ -96,6 +97,11 @@ class testApp : public ofBaseApp{
 
 		//the activated skeleton
 		int             closestID;
+
+		//gesture
+		Gesture         gesture;
+
+
 };
 
 #endif
